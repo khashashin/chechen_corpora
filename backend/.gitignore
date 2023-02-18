@@ -7,7 +7,6 @@
 *.pyc
 __pycache__/
 local.py
-production.py
 db.sqlite3
 db.sqlite3-journal
 media
