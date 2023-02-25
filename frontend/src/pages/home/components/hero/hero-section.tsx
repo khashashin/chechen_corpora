@@ -9,11 +9,15 @@ import {
 	useMantineTheme,
 	Stack,
 	Image,
+	UnstyledButton,
 } from '@mantine/core';
 import { AiOutlineSearch } from 'react-icons/ai';
 import { BsArrowRightShort } from 'react-icons/bs';
-import { useNavigate } from '@tanstack/react-location';
+import { Link, useNavigate } from '@tanstack/react-location';
 import image from '../../../../assets/language-corpora_hero2.png';
+import { getStats } from '../../../../shared/api';
+import { useQuery } from '@tanstack/react-query';
+import { getSearchResult } from '../../../search/services/api';
 
 const BREAKPOINT = '@media (max-width: 755px)';
 
@@ -67,6 +71,7 @@ function HeroSection() {
 	const { classes } = useStyles();
 	const theme = useMantineTheme();
 	const navigate = useNavigate();
+	const { data: stats } = useQuery(['appStats'], () => getStats());
 
 	const handleSearchActive = () => {
 		return navigate({ to: '/search' });
@@ -89,7 +94,11 @@ function HeroSection() {
 					</Title>
 
 					<Text fz='lg' color='dimmed'>
-						представительная коллекция текстов на чеченском языке
+						представительная коллекция текстов на чеченском языке,{' '}
+						<UnstyledButton component={Link} to='/words'>
+							<u>{stats?.data.words} уникальных форм</u>
+						</UnstyledButton>{' '}
+						и словосочетаний.
 					</Text>
 				</Stack>
 			</Group>
