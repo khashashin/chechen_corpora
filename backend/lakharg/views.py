@@ -3,6 +3,7 @@ from nltk import tokenize
 from rest_framework.views import APIView
 from rest_framework.response import Response
 
+from lakharg.models import Words
 from zubdarg.models import Page, Book
 
 
@@ -60,5 +61,29 @@ class SearchView(APIView):
                             'sources': [source.name for source in page.book.sources.all()],
                         }
                     })
+
+        return Response(response, status=200)
+
+
+class WordsView(APIView):
+
+    def get(self, request, format=None):
+        query = request.GET.get('q')
+        if not query:
+            words = Words.objects.order_by('word')
+        else:
+            # get all words that start with query
+            words = Words.objects.filter(word__istartswith=query).order_by('word')
+
+        # dictionary of words where key is the first letter of the word
+        response = {}
+        for word in words:
+            if not len(word.word) or word.word[0] == 'ъ' or word.word[0] == 'ь':
+                continue
+
+            if word.word[0] not in response:
+                response[word.word[0]] = []
+
+            response[word.word[0]].append(word.word)
 
         return Response(response, status=200)
