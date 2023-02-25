@@ -87,3 +87,14 @@ class WordsView(APIView):
             response[word.word[0]].append(word.word)
 
         return Response(response, status=200)
+
+
+class StatsView(APIView):
+
+    def get(self, request, format=None):
+        stats = {
+            'unique_words': Words.objects.count(),
+            'books': Book.objects.count(),
+        }
+
+        return Response(stats, status=200)
