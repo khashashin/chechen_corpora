@@ -15,20 +15,11 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from rest_framework import routers
-
-from zubdarg import views
-
-
-router = routers.DefaultRouter()
-router.register(r'books', views.BookViewSet)
+from rest_framework.schemas import get_schema_view
 
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/', include(router.urls)),
-    path('api/upload/pdf/', views.PDFParserView.as_view()),
-    path('api/upload/json/', views.UploadJSONView.as_view()),
-    path('api/upload/csv/', views.UploadCSVView.as_view()),
-    path('api/upload/txt/', views.UploadTXTView.as_view()),
+    path('api/', include('zubdarg.urls')),
+    path('api/', include('lakharg.urls')),
 ]
