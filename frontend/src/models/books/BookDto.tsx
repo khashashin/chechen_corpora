@@ -6,6 +6,7 @@ export interface PageRead {
 }
 
 export interface PageCreate {
+	id?: string;
 	number: number;
 	text: string;
 }
@@ -18,6 +19,15 @@ export interface Book {
 	publication_date: string;
 	author: number;
 	pages?: PageRead[];
+}
+
+export interface BookCreate {
+	title: string;
+	summary: string;
+	isbn: string;
+	publication_date: string;
+	author: number;
+	pages: PageCreate[];
 }
 
 export interface BookResponse {

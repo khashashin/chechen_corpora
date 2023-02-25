@@ -11,6 +11,7 @@ import BookUpload from '../../pages/books/book-upload';
 import AuthOnly from '../components/auth-only.component';
 import HomePage from '../../pages/home';
 import AppShell from '../../layout/shell';
+import WordsPage from '../../pages/words';
 
 const coreRoutes: Route[] = [
 	{
@@ -22,6 +23,11 @@ const coreRoutes: Route[] = [
 		id: 'search',
 		path: '/search',
 		element: <SearchPage />,
+	},
+	{
+		id: 'words',
+		path: '/words',
+		element: <WordsPage />,
 	},
 	{
 		id: 'admin',
