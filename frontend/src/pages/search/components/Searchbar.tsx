@@ -1,17 +1,17 @@
 import {
 	ActionIcon,
-	Autocomplete,
 	Box,
 	createStyles,
 	Group,
 	Loader,
 	Text,
+	TextInput,
 	useMantineTheme,
 } from '@mantine/core';
 import { AiOutlineSearch } from 'react-icons/ai';
 import { BsArrowRightShort } from 'react-icons/bs';
-import { useEffect, useState } from 'react';
-import { useDebouncedValue } from '@mantine/hooks';
+import { memo, useEffect, useState } from 'react';
+import { useDebouncedValue, useFocusTrap } from '@mantine/hooks';
 
 const BREAKPOINT = '@media (max-width: 755px)';
 
@@ -39,6 +39,7 @@ function Searchbar(props: SearchbarProps) {
 
 	const [searchQuery, setSearchQuery] = useState<string>('');
 	const [debouncedResult] = useDebouncedValue(searchQuery, 500);
+	const focusTrapRef = useFocusTrap();
 
 	const theme = useMantineTheme();
 	const { classes } = useStyles();
@@ -52,17 +53,9 @@ function Searchbar(props: SearchbarProps) {
 	return (
 		<Group className={classes.controls} spacing={3}>
 			<Text fz='sm'>Введите слово или словосочетание для поиска</Text>
-			<Autocomplete
-				data={[
-					{ label: 'Аббревиатура', value: 'Аббревиатура' },
-					{ label: 'Абсолютный', value: 'Абсолютный' },
-					{ label: 'Абсолютный', value: 'Абсолютный' },
-					{ label: 'Абсолютный', value: 'Абсолютный' },
-				]}
+			<TextInput
+				ref={focusTrapRef}
 				value={searchQuery}
-				transition='pop-top-left'
-				transitionDuration={80}
-				transitionTimingFunction='ease'
 				icon={<AiOutlineSearch size={24} />}
 				size='lg'
 				rightSection={
@@ -73,7 +66,9 @@ function Searchbar(props: SearchbarProps) {
 				placeholder='Поиск по корпусу'
 				rightSectionWidth={42}
 				className={classes.control}
-				onChange={setSearchQuery}
+				onChange={(event) => {
+					setSearchQuery(event.currentTarget.value);
+				}}
 			/>
 			{isLoading && (
 				<Box
@@ -93,4 +88,4 @@ function Searchbar(props: SearchbarProps) {
 	);
 }
 
-export default Searchbar;
+export default memo(Searchbar);

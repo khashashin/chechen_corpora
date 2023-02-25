@@ -17,6 +17,10 @@ function SearchPage() {
 		}
 	);
 
+	useEffect(() => {
+		console.log('searchResults', searchResults);
+	}, [searchResults]);
+
 	const onSearchResult = (result: string) => {
 		setQuery(result);
 	};
@@ -25,7 +29,11 @@ function SearchPage() {
 		<Container size='lg'>
 			<SearchHeader />
 			<Searchbar onSearchResult={onSearchResult} isLoading={isInitialLoading} />
-			<SearchResults searchData={searchResults} isLoading={isInitialLoading} />
+			<SearchResults
+				searchData={searchResults?.data}
+				isLoading={isInitialLoading}
+				searchQuery={query}
+			/>
 			<FooterSection />
 		</Container>
 	);
