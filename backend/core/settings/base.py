@@ -35,6 +35,7 @@ INSTALLED_APPS = [
     'django_appwrite',
     'rest_framework',
     'zubdarg',
+    'lakharg',
 ]
 
 MIDDLEWARE = [
