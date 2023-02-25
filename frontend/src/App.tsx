@@ -1,4 +1,5 @@
 import { ColorScheme, ColorSchemeProvider, MantineProvider } from '@mantine/core';
+import { NotificationsProvider } from '@mantine/notifications';
 import { useState } from 'react';
 import { ReactLocation } from '@tanstack/react-location';
 import AppRoutes from './routes/main';
@@ -16,7 +17,9 @@ function App() {
 				theme={{ colorScheme, primaryColor: 'green' }}
 				withGlobalStyles
 				withNormalizeCSS>
-				<AppRoutes location={location} />
+				<NotificationsProvider>
+					<AppRoutes location={location} />
+				</NotificationsProvider>
 			</MantineProvider>
 		</ColorSchemeProvider>
 	);
