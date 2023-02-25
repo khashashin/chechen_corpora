@@ -20,17 +20,22 @@ import {
 	IconFileX,
 	IconBookUpload,
 } from '@tabler/icons';
+import { useMutation } from '@tanstack/react-query';
 import BookMetaDrawer from './components/BookMetaInfo';
 import { BookMeta } from '../../models/books/BookMeta';
 import { BookUtils } from './services/utils';
 import { BookResponse, PageCreate } from '../../models/books/BookDto';
 import UploadFileModal from './components/UploadFileModal';
+import { createBook } from './services/api';
+import SharedUtils from '../../shared/utils';
 
 const PAGE_SIZE = 1;
 
 function BooksAdd() {
 	const [drawerOpen, setDrawerOpen] = useState(false);
-	const [pages, setPages] = useState<PageCreate[]>([{ text: '', number: 1 }]);
+	const [pages, setPages] = useState<PageCreate[]>([
+		{ text: '', number: 1, id: SharedUtils.uuidv4 },
+	]);
 	const [page, setPage] = useState(1);
 	const [records, setRecords] = useState(pages.slice(0, PAGE_SIZE));
 	const [isSaved, setIsSaved] = useState(false);
@@ -45,37 +50,40 @@ function BooksAdd() {
 	});
 	const [dropZoneOpened, setDropZoneOpened] = useState(false);
 	const [isLoading, setIsLoading] = useState(false);
+	const mutation = useMutation({
+		mutationFn: createBook,
+	});
 
-	useEffect(() => {
-		// const unsavedBook = BookUtils.getUnsavedBook();
-		// console.log('unsavedBook', unsavedBook);
-		// if (unsavedBook) {
-		// 	const isConfirmed = window.confirm('У вас есть несохраненная книга. Хотите продолжить ее редактирование?');
-		// 	if (!isConfirmed) {
-		// 		BookUtils.removeUnsavedBook();
-		// 		return;
-		// 	}
-		// 	setBookMeta(unsavedBook.meta);
-		// 	setPages(unsavedBook.pages);
-		// }
-
-		return () => {
-			if (
-				!isSaved &&
-				(bookMeta.title ||
-					bookMeta.summary ||
-					bookMeta.isbn ||
-					bookMeta.publication_date ||
-					bookMeta.sources.length > 0 ||
-					pages.length > 1)
-			) {
-				BookUtils.saveUnsavedBook({
-					meta: bookMeta,
-					pages,
-				});
-			}
-		};
-	}, [bookMeta, isSaved, pages]);
+	// useEffect(() => {
+	// 	// const unsavedBook = BookUtils.getUnsavedBook();
+	// 	// console.log('unsavedBook', unsavedBook);
+	// 	// if (unsavedBook) {
+	// 	// 	const isConfirmed = window.confirm('У вас есть несохраненная книга. Хотите продолжить ее редактирование?');
+	// 	// 	if (!isConfirmed) {
+	// 	// 		BookUtils.removeUnsavedBook();
+	// 	// 		return;
+	// 	// 	}
+	// 	// 	setBookMeta(unsavedBook.meta);
+	// 	// 	setPages(unsavedBook.pages);
+	// 	// }
+	//
+	// 	return () => {
+	// 		if (
+	// 			!isSaved &&
+	// 			(bookMeta.title ||
+	// 				bookMeta.summary ||
+	// 				bookMeta.isbn ||
+	// 				bookMeta.publication_date ||
+	// 				bookMeta.sources?.length > 0 ||
+	// 				pages.length > 1)
+	// 		) {
+	// 			BookUtils.saveUnsavedBook({
+	// 				meta: bookMeta,
+	// 				pages,
+	// 			});
+	// 		}
+	// 	};
+	// }, [bookMeta, isSaved, pages]);
 
 	useEffect(() => {
 		const from = (page - 1) * PAGE_SIZE;
@@ -96,8 +104,24 @@ function BooksAdd() {
 
 		setIsSaved(true);
 
-		console.log('bookMeta', bookMeta);
-		console.log('pages', pages);
+		// remove id property from pages
+		const pagesWithoutId = pages.map((p) => {
+			const { id, ...rest } = p;
+			return rest;
+		});
+
+		const date = new Date(bookMeta.publication_date);
+
+		const book = {
+			title: bookMeta.title,
+			summary: bookMeta.summary,
+			isbn: bookMeta.isbn,
+			publication_date: `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`,
+			sources: bookMeta.sources,
+			pages: pagesWithoutId,
+		} as any;
+
+		mutation.mutate(book);
 	};
 
 	const handlePageTextChange = (value: string, index: number) => {
@@ -107,7 +131,7 @@ function BooksAdd() {
 	};
 
 	const onAddPageClick = () => {
-		setPages([...pages, { text: '', number: pages.length + 1 }]);
+		setPages([...pages, { text: '', number: pages.length + 1, id: SharedUtils.uuidv4 }]);
 		setPage(pages.length + 1);
 	};
 
@@ -129,10 +153,14 @@ function BooksAdd() {
 		setIsLoading(true);
 		setDropZoneOpened(false);
 		setBookMeta({} as BookMeta);
+		const newPages: PageCreate[] = [];
 		Object.keys(book).forEach((key) => {
 			const pageText = book[key];
-			setPages([...pages, { text: pageText, number: parseInt(key, 10) }]);
+			newPages.push({ text: pageText, number: parseInt(key, 10), id: SharedUtils.uuidv4 });
 		});
+
+		setIsLoading(false);
+		setPages(newPages);
 	};
 
 	return (

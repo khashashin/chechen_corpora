@@ -3,8 +3,9 @@ import { Button, createStyles, Group, Modal, Text } from '@mantine/core';
 import { IconCloudUpload, IconDownload, IconX } from '@tabler/icons';
 import { memo, useRef } from 'react';
 import { useMutation } from '@tanstack/react-query';
+import { showNotification, updateNotification } from '@mantine/notifications';
 import { uploadJson } from '../services/api';
-import { JSONFile } from '../modals';
+import { JSONFile } from '../models';
 import { BookResponse } from '../../../models/books/BookDto';
 
 const useStyles = createStyles((theme) => ({
@@ -41,26 +42,50 @@ function UploadFileModal(props: UploadFileModalProps) {
 	const { dropZoneOpened, setDropZoneOpened, setIsLoading, onBookUpload } = props;
 	const { classes, theme } = useStyles();
 	const dropZoneRef = useRef<() => void>(null);
-	const { mutate, isLoading } = useMutation(uploadJson, {
-		onSuccess: (res: BookResponse) => {
-			onBookUpload(res);
-			setDropZoneOpened(false);
-			setIsLoading(false);
-		},
-		onError: () => {
-			setDropZoneOpened(false);
-			setIsLoading(false);
-		},
+	const mutation = useMutation({
+		mutationFn: uploadJson,
 	});
 
 	const handleJsonFile = (file: File) => {
-		setIsLoading(isLoading);
-		const reader = new FileReader();
-		reader.readAsText(file);
-		reader.onload = async () => {
-			const json = JSON.parse(reader.result as string) as JSONFile;
-			mutate(json);
-		};
+		setIsLoading(mutation.isLoading);
+		showNotification({
+			id: 'uploadingJSON',
+			loading: true,
+			title: 'Загрузка книги',
+			message: 'Загрузка книги в процессе',
+			autoClose: false,
+			disallowClose: true,
+		});
+		try {
+			const reader = new FileReader();
+			reader.readAsText(file);
+			reader.onload = async () => {
+				const json = JSON.parse(reader.result as string) as JSONFile;
+				const response = await mutation.mutateAsync(json);
+				onBookUpload(response as BookResponse);
+				updateNotification({
+					id: 'uploadingJSON',
+					loading: false,
+					title: 'Успешно',
+					message: 'Книга успешно загружена',
+					autoClose: true,
+				});
+
+				return setDropZoneOpened(false);
+			};
+		} catch (e) {
+			updateNotification({
+				id: 'uploadingJSON',
+				loading: false,
+				title: 'Ошибка',
+				message: 'Ошибка при загрузке книги',
+				autoClose: true,
+			});
+
+			console.error(e);
+		}
+
+		return setDropZoneOpened(false);
 	};
 
 	const onDrop = (files: FileWithPath[]) => {
@@ -87,7 +112,7 @@ function UploadFileModal(props: UploadFileModalProps) {
 					accept={['application/json', 'text/plain', 'text/csv']}
 					maxSize={30 * 1024 ** 2}
 					maxFiles={1}
-					loading={isLoading}>
+					loading={mutation.isLoading}>
 					<div style={{ pointerEvents: 'none' }}>
 						<Group position='center'>
 							<Dropzone.Accept>
