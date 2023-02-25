@@ -34,6 +34,8 @@ INSTALLED_APPS = [
     'corsheaders',
     'django_appwrite',
     'rest_framework',
+    'drf_spectacular',
+    'drf_spectacular_sidecar',
     'zubdarg',
     'lakharg',
 ]
@@ -116,5 +118,14 @@ DEFAULT_AUTO_FIELD = 'hashid_field.BigHashidAutoField'
 REST_FRAMEWORK = {
     'DEFAULT_PARSER_CLASSES': [
         'rest_framework.parsers.JSONParser',
-    ]
+    ],
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+}
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'Chechen Corpora API',
+    'DESCRIPTION': 'API for Chechen corpora',
+    'VERSION': '1.0.0',
+
+    'SCHEMA_PATH_PREFIX': r'/api/',
 }
