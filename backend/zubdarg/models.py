@@ -1,5 +1,5 @@
 from django.db import models
-from hashid_field import HashidField, HashidAutoField
+from hashid_field import HashidAutoField
 
 
 class Author(models.Model):
@@ -26,6 +26,14 @@ class Genre(models.Model):
         return self.name
 
 
+class Source(models.Model):
+    id = HashidAutoField(primary_key=True)
+    name = models.CharField(max_length=500)
+
+    def __str__(self):
+        return self.name
+
+
 class Book(models.Model):
     id = HashidAutoField(primary_key=True)
     title = models.CharField(max_length=500, null=True, blank=True)
@@ -34,6 +42,7 @@ class Book(models.Model):
     publication_date = models.DateField(null=True, blank=True)
     genres = models.ManyToManyField(Genre, blank=True)
     authors = models.ManyToManyField(Author, blank=True)
+    sources = models.ManyToManyField(Source, blank=True)
     publisher = models.ForeignKey(Publisher, on_delete=models.SET_NULL, null=True, blank=True)
 
     def __str__(self):

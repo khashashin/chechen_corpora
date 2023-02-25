@@ -1,4 +1,4 @@
-from rest_framework import viewsets
+from rest_framework import viewsets, status
 from rest_framework.parsers import FileUploadParser
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -9,13 +9,24 @@ from .models import *
 
 
 class BookViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that allows books to be viewed or edited.
+
+    list:           Return a list of all the existing books.
+    create:         Create a new book instance.
+    retrieve:       Return the given book.
+    update:         Update the given book.
+    partial_update: Update one or more fields on an existing book.
+    destroy:        Delete the given book.
+    """
     queryset = Book.objects.all()
-    serializer_class = BookPageSerializer
 
     def get_serializer_class(self):
+        if self.action == 'create':
+            return BookCreateSerializer
         if self.action == 'list':
-            return BookSerializer
-        return BookPageSerializer
+            return BooksListSerializer
+        return BookSerializer
 
 
 class PageViewSet(viewsets.ModelViewSet):

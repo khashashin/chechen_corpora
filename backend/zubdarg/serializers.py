@@ -1,14 +1,7 @@
 from rest_framework import serializers
+
 from .models import *
 from hashid_field.rest import HashidSerializerCharField
-
-
-class BookSerializer(serializers.ModelSerializer):
-    id = HashidSerializerCharField(source_field='zubdarg.Book.id', read_only=True)
-
-    class Meta:
-        model = Book
-        fields = ('id', 'title', 'summary', 'isbn', 'publication_date')
 
 
 class PageSerializer(serializers.ModelSerializer):
@@ -22,36 +15,67 @@ class PageSerializer(serializers.ModelSerializer):
         fields = ('id', 'number', 'text', 'book')
 
 
-class BookPageSerializer(serializers.ModelSerializer):
-    pages = PageSerializer(many=True, read_only=True, source='page_set')
+class SourceSerializer(serializers.ModelSerializer):
+    id = HashidSerializerCharField(source_field='zubdarg.Source.id', read_only=True)
+
+    class Meta:
+        model = Source
+        fields = ('id', 'name')
+
+
+class BooksListSerializer(serializers.ModelSerializer):
     id = HashidSerializerCharField(source_field='zubdarg.Book.id', read_only=True)
-
-    def create(self, validated_data):
-        book_data = validated_data.pop('book')
-        pages_data = validated_data.pop('pages')
-        book = Book.objects.create(**book_data)
-        for page_data in pages_data:
-            Page.objects.create(book=book, **page_data)
-        return book
-
-    def update(self, instance, validated_data):
-        book_data = validated_data.pop('book')
-        pages_data = validated_data.pop('pages')
-        instance.title = book_data.get('title', instance.title)
-        instance.author = book_data.get('author', instance.author)
-        instance.summary = book_data.get('summary', instance.summary)
-        instance.isbn = book_data.get('isbn', instance.isbn)
-        instance.publication_date = book_data.get('publication_date', instance.publication_date)
-        instance.save()
-        for page_data in pages_data:
-            page = Page.objects.get(id=page_data['id'])
-            page.number = page_data.get('number', page.number)
-            page.text = page_data.get('text', page.text)
-            page.save()
-        return instance
+    sources = SourceSerializer(many=True, read_only=True)
 
     class Meta:
         model = Book
-        fields = ('id', 'title', 'summary', 'isbn', 'publication_date', 'pages')
+        fields = ('id', 'title', 'summary', 'isbn', 'publication_date', 'sources')
+
+
+class BookSerializer(BooksListSerializer):
+    pages = PageSerializer(many=True, read_only=True, source='page_set')
+
+    class Meta:
+        model = Book
+        fields = ('id', 'title', 'summary', 'isbn', 'publication_date', 'sources', 'pages')
+
+
+class BookCreateSerializer(serializers.ModelSerializer):
+    pages = serializers.ListField(write_only=True)
+    sources = serializers.ListField(write_only=True)
+    id = HashidSerializerCharField(source_field='zubdarg.Book.id', read_only=True)
+
+    def create(self, validated_data):
+        pages_data = validated_data.pop('pages')
+        sources_data = validated_data.pop('sources')
+
+        book_data = {
+            'title': validated_data.pop('title'),
+            'summary': validated_data.pop('summary'),
+            'isbn': validated_data.pop('isbn'),
+            'publication_date': validated_data.pop('publication_date')
+        }
+        book = Book.objects.create(**book_data)
+
+        for page_data in pages_data:
+            page_data = {
+                'number': page_data['number'],
+                'text': page_data['text'],
+                'book': book
+            }
+            Page.objects.create(**page_data)
+
+        for source_data in sources_data:
+            source_data = {
+                'name': source_data,
+                'book': book
+            }
+            Source.objects.create(**source_data)
+
+        return book
+
+    class Meta:
+        model = Book
+        fields = '__all__'
 
 
