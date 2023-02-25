@@ -1,6 +1,6 @@
 import { Container } from '@mantine/core';
 import { useQuery } from '@tanstack/react-query';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Searchbar from './components/Searchbar';
 import { getSearchResult } from './services/api';
 import SearchResults from './components/SearchResults';

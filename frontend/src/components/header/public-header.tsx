@@ -13,7 +13,7 @@ function PublicHeader() {
 
 					<Group>
 						<ColorSchemeToggle />
-						{isAuth ? <Button>Регистрация</Button> : <Button variant='default'>Вход</Button>}
+						{/* {isAuth ? <Button>Регистрация</Button> : <Button variant='default'>Вход</Button>} */}
 					</Group>
 				</Group>
 			</Header>

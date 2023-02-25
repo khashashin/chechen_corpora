@@ -106,11 +106,11 @@ function UploadFileModal(props: UploadFileModalProps) {
 						</Group>
 
 						<Text align='center' weight={700} size='lg' mt='xl'>
-							<Dropzone.Accept>Перетащите файл сюда или нажмите на кнопку ниже</Dropzone.Accept>
+							<Dropzone.Accept>Отпустите файл, чтобы загрузить его</Dropzone.Accept>
 							<Dropzone.Reject>
 								Неверный формат файла. Попробуйте загрузить другой файл.
 							</Dropzone.Reject>
-							<Dropzone.Idle>Возобновление загрузки</Dropzone.Idle>
+							<Dropzone.Idle>Перетащите файл сюда или нажмите на кнопку ниже</Dropzone.Idle>
 						</Text>
 						<Text align='center' size='sm' mt='xs' color='dimmed'>
 							Drag&apos;n&apos;Drop Только файлы с расширением <i>.json, .txt, .csv</i> и размером
