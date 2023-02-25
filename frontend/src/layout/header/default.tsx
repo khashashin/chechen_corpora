@@ -1,6 +1,6 @@
 import { Burger, createStyles, Group, Header, MediaQuery, useMantineTheme } from '@mantine/core';
 import { Dispatch, SetStateAction } from 'react';
-import HeaderBrand from './brand';
+import HeaderBrand from '../../components/HeaderBrand';
 import ColorSchemeToggle from '../../components/ColorSchemeToggle';
 
 const useStyles = createStyles(({ colorScheme }) => ({

@@ -2,8 +2,8 @@ import { useNavigate } from '@tanstack/react-location';
 import { ActionIcon, Group, Header } from '@mantine/core';
 import { IconX } from '@tabler/icons';
 import { memo } from 'react';
-import BrandLogo from '../../../components/BrandLogo';
 import ColorSchemeToggle from '../../../components/ColorSchemeToggle';
+import HeaderBrand from '../../../components/HeaderBrand';
 
 function SearchHeader() {
 	const navigate = useNavigate();
@@ -15,7 +15,7 @@ function SearchHeader() {
 	return (
 		<Header height={60} px='md'>
 			<Group position='apart' sx={{ height: '100%' }}>
-				<BrandLogo />
+				<HeaderBrand />
 
 				<Group>
 					<ColorSchemeToggle />

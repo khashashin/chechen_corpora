@@ -1,6 +1,6 @@
 import { Header, Group, Button, Box } from '@mantine/core';
-import BrandLogo from '../BrandLogo';
 import ColorSchemeToggle from '../ColorSchemeToggle';
+import HeaderBrand from '../HeaderBrand';
 
 function PublicHeader() {
 	const isAuth = false;
@@ -9,7 +9,7 @@ function PublicHeader() {
 		<Box>
 			<Header height={60} px='md'>
 				<Group position='apart' sx={{ height: '100%' }}>
-					<BrandLogo />
+					<HeaderBrand />
 
 					<Group>
 						<ColorSchemeToggle />

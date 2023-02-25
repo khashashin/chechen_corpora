@@ -1,5 +1,5 @@
 import { createStyles, Header } from '@mantine/core';
-import HeaderBrand from './brand';
+import HeaderBrand from '../../components/HeaderBrand';
 
 const useStyles = createStyles(() => ({
 	header: {
