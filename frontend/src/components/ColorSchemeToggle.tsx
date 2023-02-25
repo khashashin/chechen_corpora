@@ -1,4 +1,4 @@
-import { Switch, Group, useMantineColorScheme, useMantineTheme } from '@mantine/core';
+import { Group, useMantineColorScheme, useMantineTheme, ActionIcon } from '@mantine/core';
 import { IconSun, IconMoonStars } from '@tabler/icons';
 import { useLocalStorage } from '@mantine/hooks';
 import { memo, useEffect } from 'react';
@@ -21,14 +21,16 @@ function ColorSchemeToggle() {
 	}, [toggleColorScheme, currentScheme]);
 
 	return (
-		<Group position='center'>
-			<Switch
-				checked={colorScheme === 'dark'}
-				onChange={() => saveColorScheme()}
-				size='md'
-				onLabel={<IconSun color={theme.white} size={20} stroke={1.5} />}
-				offLabel={<IconMoonStars color={theme.colors.gray[6]} size={20} stroke={1.5} />}
-			/>
+		<Group position='center' mx='md'>
+			<ActionIcon
+				onClick={() => saveColorScheme()}
+				size='lg'
+				sx={() => ({
+					backgroundColor: colorScheme === 'dark' ? theme.colors.dark[6] : theme.colors.gray[0],
+					color: colorScheme === 'dark' ? theme.colors.yellow[4] : theme.colors.blue[6],
+				})}>
+				{colorScheme === 'dark' ? <IconSun size={18} /> : <IconMoonStars size={18} />}
+			</ActionIcon>
 		</Group>
 	);
 }
