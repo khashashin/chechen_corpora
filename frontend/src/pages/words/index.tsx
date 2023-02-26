@@ -1,4 +1,14 @@
-import { ActionIcon, Box, Container, Divider, Paper, Tabs, TextInput } from '@mantine/core';
+import {
+	ActionIcon,
+	Box,
+	Container,
+	Divider,
+	Paper,
+	ScrollArea,
+	Tabs,
+	TextInput,
+} from '@mantine/core';
+import { useMediaQuery } from '@mantine/hooks';
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { IconFilter, IconX } from '@tabler/icons';
@@ -9,6 +19,7 @@ import FooterSection from '../../components/footer/footer-section';
 function WordsPage() {
 	const { data: words } = useQuery(['uniqueWords'], () => getUniqueWords());
 	const [filterText, setFilterText] = useState('');
+	const isMobile = useMediaQuery('(max-width: 920px)');
 
 	return (
 		<Container size='lg'>
@@ -30,15 +41,40 @@ function WordsPage() {
 			{words && (
 				<Tabs
 					defaultValue={Object.keys(words.data)[0]}
-					styles={(theme) => ({
+					styles={() => ({
 						tab: {
 							padding: '10px 0',
 						},
 					})}>
-					<Tabs.List grow>
-						<Tabs.Tab value='all'>Все</Tabs.Tab>
+					<Tabs.List
+						grow
+						sx={{
+							overflowX: 'scroll',
+							'&::-webkit-scrollbar': {
+								display: 'none',
+							},
+							flexWrap: 'nowrap',
+							padding: '0 10px',
+							...(isMobile && {
+								boxShadow:
+									'inset 7px 0 9px -7px rgb(0 0 0 / 40%), inset -7px 0 9px -7px rgb(0 0 0 / 40%);',
+							}),
+						}}>
+						<Tabs.Tab
+							key='all'
+							value='all'
+							sx={{
+								minWidth: '30px',
+							}}>
+							Все
+						</Tabs.Tab>
 						{Object.keys(words.data).map((key: string) => (
-							<Tabs.Tab key={key} value={key}>
+							<Tabs.Tab
+								key={key}
+								value={key}
+								sx={{
+									minWidth: '30px',
+								}}>
 								{key}
 							</Tabs.Tab>
 						))}
