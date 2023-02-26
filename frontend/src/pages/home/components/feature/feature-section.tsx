@@ -92,7 +92,12 @@ const PaperData = [
 	},
 ];
 
-function FeaturesSection() {
+type FeaturesSectionProps = {
+	stats: any;
+};
+
+function FeaturesSection(props: FeaturesSectionProps) {
+	const { stats } = props;
 	const { classes, theme } = useStyles();
 
 	return (
@@ -131,7 +136,8 @@ function FeaturesSection() {
 						</Group>
 
 						<Group align='flex-end' spacing='xs' mt={25}>
-							<Text>{item.count}</Text>
+							{item.title === 'Книги' && <Text>{stats?.data.books}</Text>}
+							{item.title !== 'Книги' && <Text>{item.count}</Text>}
 						</Group>
 
 						<Text size='xs' color='dimmed' mt={7}>
