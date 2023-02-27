@@ -12,6 +12,12 @@ import AuthOnly from '../components/auth-only.component';
 import HomePage from '../../pages/home';
 import AppShell from '../../layout/shell';
 import WordsPage from '../../pages/words';
+import AuthWrapper from '../../pages/auth/auth-wrapper';
+import Logout from '../../pages/auth/logout';
+import Login from '../../pages/auth/login';
+import Registration from '../../pages/auth/register';
+import ForgotPassword from '../../pages/auth/forgot-password';
+import Recovery from '../../pages/auth/recovery';
 
 const coreRoutes: Route[] = [
 	{
@@ -86,6 +92,42 @@ const coreRoutes: Route[] = [
 				id: 'upload',
 				path: '/upload',
 				element: <UploadPage />,
+			},
+		],
+	},
+	{
+		id: 'auth',
+		path: '/auth',
+		element: (
+			<AuthWrapper>
+				<Outlet />
+			</AuthWrapper>
+		),
+		children: [
+			{
+				id: 'login',
+				path: '/login',
+				element: <Login />,
+			},
+			{
+				id: 'logout',
+				path: '/logout',
+				element: <Logout />,
+			},
+			{
+				id: 'register',
+				path: '/register',
+				element: <Registration />,
+			},
+			{
+				id: 'forgot-password',
+				path: '/forgot-password',
+				element: <ForgotPassword />,
+			},
+			{
+				id: 'recovery',
+				path: '/recovery',
+				element: <Recovery />,
 			},
 		],
 	},
