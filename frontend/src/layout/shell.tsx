@@ -4,9 +4,9 @@ import AppFooter from './footer';
 import AppHeader from './header';
 import AppNavigation from './navigation';
 
-interface Props {
+type Props = {
 	children: ReactNode;
-}
+};
 
 function AppShell({ children }: Props) {
 	const authenticated = true;
