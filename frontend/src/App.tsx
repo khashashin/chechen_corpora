@@ -3,6 +3,7 @@ import { NotificationsProvider } from '@mantine/notifications';
 import { useState } from 'react';
 import { ReactLocation } from '@tanstack/react-location';
 import AppRoutes from './routes/main';
+import EnvProvider from './providers/env-provider';
 
 export const location = new ReactLocation();
 
@@ -18,7 +19,9 @@ function App() {
 				withGlobalStyles
 				withNormalizeCSS>
 				<NotificationsProvider>
-					<AppRoutes location={location} />
+					<EnvProvider>
+						<AppRoutes location={location} />
+					</EnvProvider>
 				</NotificationsProvider>
 			</MantineProvider>
 		</ColorSchemeProvider>
