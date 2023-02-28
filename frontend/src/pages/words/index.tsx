@@ -9,7 +9,7 @@ import {
 	TextInput,
 } from '@mantine/core';
 import { useMediaQuery } from '@mantine/hooks';
-import { useState } from 'react';
+import { Fragment, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { IconFilter, IconX } from '@tabler/icons';
 import { getUniqueWords } from './services/api';
@@ -61,21 +61,11 @@ function WordsPage() {
 									'inset 7px 0 9px -7px rgb(0 0 0 / 40%), inset -7px 0 9px -7px rgb(0 0 0 / 40%);',
 							}),
 						}}>
-						<Tabs.Tab
-							key='all'
-							value='all'
-							sx={{
-								minWidth: '30px',
-							}}>
+						<Tabs.Tab key='all' value='all'>
 							Все
 						</Tabs.Tab>
 						{Object.keys(words.data).map((key: string) => (
-							<Tabs.Tab
-								key={key}
-								value={key}
-								sx={{
-									minWidth: '30px',
-								}}>
+							<Tabs.Tab key={key} value={key}>
 								{key}
 							</Tabs.Tab>
 						))}
@@ -83,18 +73,16 @@ function WordsPage() {
 
 					<Tabs.Panel value='all'>
 						<Paper shadow='xs' p='md'>
-							{Object.keys(words.data).map((key: string) => (
-								<>
-									{words.data[key]
-										.filter((word: string) => word.includes(filterText))
-										.map((word: string) => (
-											<>
-												<p key={word}>{word}</p>
-												<Divider my='sm' variant='dashed' />
-											</>
-										))}
-								</>
-							))}
+							{Object.keys(words.data).map((key: string) =>
+								words.data[key]
+									.filter((word: string) => word.includes(filterText))
+									.map((word: string) => (
+										<Fragment key={word}>
+											<p>{word}</p>
+											<Divider my='sm' variant='dashed' />
+										</Fragment>
+									))
+							)}
 						</Paper>
 					</Tabs.Panel>
 					{Object.keys(words.data).map((key: string) => (
@@ -103,10 +91,10 @@ function WordsPage() {
 								{words.data[key]
 									.filter((word: string) => word.includes(filterText))
 									.map((word: string) => (
-										<>
-											<p key={word}>{word}</p>
+										<Fragment key={word}>
+											<p>{word}</p>
 											<Divider my='sm' variant='dashed' />
-										</>
+										</Fragment>
 									))}
 							</Paper>
 						</Tabs.Panel>
