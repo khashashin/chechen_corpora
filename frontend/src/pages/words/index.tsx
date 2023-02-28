@@ -1,13 +1,4 @@
-import {
-	ActionIcon,
-	Box,
-	Container,
-	Divider,
-	Paper,
-	ScrollArea,
-	Tabs,
-	TextInput,
-} from '@mantine/core';
+import { ActionIcon, Box, Container, Divider, Paper, Tabs, TextInput } from '@mantine/core';
 import { useMediaQuery } from '@mantine/hooks';
 import { Fragment, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
@@ -41,9 +32,12 @@ function WordsPage() {
 			{words && (
 				<Tabs
 					defaultValue={Object.keys(words.data)[0]}
+					keepMounted={false}
+					color='green'
 					styles={() => ({
 						tab: {
 							padding: '10px 0',
+							minWidth: '30px',
 							marginBottom: '0',
 						},
 					})}>
