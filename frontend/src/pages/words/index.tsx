@@ -44,6 +44,7 @@ function WordsPage() {
 					styles={() => ({
 						tab: {
 							padding: '10px 0',
+							marginBottom: '0',
 						},
 					})}>
 					<Tabs.List
