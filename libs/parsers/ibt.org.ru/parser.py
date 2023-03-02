@@ -42,12 +42,24 @@ def get_chapters(book_tag):
     print(chapters)
     return chapters
 
+def clean_verse_text(verse):
+    verse = verse.replace('\xa0', ' ').replace('\n', ' ').replace('\r', ' ').strip()
+    verse = verse.replace('  ', ' ')
+    verse = verse.replace('i', 'ӏ')
+    verse = verse.replace('I', 'Ӏ')
+    if verse.endswith(' '):
+        verse = verse[:-1]
+    if verse.startswith(' '):
+        verse = verse[1:]
+
+    return verse
+
 def get_verses(book_tag, chapter):
     soup = BeautifulSoup(
         requests.get(f'https://ibt.org.ru/ru/text?m=CHE&l={book_tag}.{chapter}&g=33f#sv').content,
         'html.parser'
     )
-    verses = [v.text for v in soup.find('div', {"id": "flowcolumn"}).find("div", {"class": "cs-CHE"}).find_all("span", {"class": "vs"})]
+    verses = [clean_verse_text(v.text) for v in soup.find('div', {"id": "flowcolumn"}).find("div", {"class": "cs-CHE"}).find_all("span", {"class": "vs"}) if v.text != ' ']
 
     print(verses)
     return verses
