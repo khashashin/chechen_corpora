@@ -25,21 +25,21 @@ class SearchView(APIView):
         response = {
             'query': query,
             'results': [],
-            'unique_words': []
+            'unique_words': [],
+            'in_pair_before': [],
+            'in_pair_after': [],
         }
         for page in pages:
             sentences = tokenize.sent_tokenize(page.text)
             for sentence in sentences:
                 if query in sentence:
-                    # matching words
-                    words = [word for word in sentence.split(' ') if query in word]
+                    # this is crazy, but all what it does is to get all the words that match the query
+                    # and remove all the non-alphabetic characters
+                    words = [''.join([char for char in word if char.isalpha() or char == '-']) for word in sentence.split(' ') if query in word.lower()]
                     # unique words
                     for word in words:
-                        word = word.lower()
-                        word = ''.join([char for char in word if char.isalpha() or char == '-'])
                         if word not in response['unique_words']:
                             response['unique_words'].append(word)
-
                     # try to get the previous and next sentence of matchin sentence
                     try:
                         previous_sentence = sentences[sentences.index(sentence) - 1]
@@ -49,12 +49,37 @@ class SearchView(APIView):
                         next_sentence = sentences[sentences.index(sentence) + 1]
                     except IndexError:
                         next_sentence = None
+
+                    # get each previous word that stays with each querymatched word
+                    clean_sentence_words = [''.join([char for char in word if char.isalpha()]) for word in sentence.split(' ')]
+                    for index, word in enumerate(clean_sentence_words):
+                        if word == query:
+                            try:
+                                combined_word = f'{clean_sentence_words[index - 1]} {word}' if len(clean_sentence_words[index - 1]) > 1 else None
+                            except IndexError:
+                                combined_word = None
+
+                            if combined_word:
+                                response['in_pair_before'].append(combined_word)
+
+                    for index, word in enumerate(clean_sentence_words):
+                        if word == query:
+                            try:
+                                combined_word = f'{word} {clean_sentence_words[index + 1]}' if len(clean_sentence_words[index + 1]) > 1 else None
+                            except IndexError:
+                                combined_word = None
+
+                            if combined_word:
+                                response['in_pair_after'].append(combined_word)
+
                     response['results'].append({
                         'uuid': f'{uuid4()}',
                         'id': f'{page.id.hashid}',
                         'previous_sentence': previous_sentence,
                         'sentence': sentence,
                         'next_sentence': next_sentence,
+                        'query': query,
+                        'matching_words': words,
                         'book': {
                             'title': page.book.title,
                             'id': f'{page.book.id.hashid}',

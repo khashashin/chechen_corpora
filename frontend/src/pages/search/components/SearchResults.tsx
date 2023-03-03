@@ -4,6 +4,8 @@ import { memo, useState } from 'react';
 import { BsChevronBarContract, BsChevronBarExpand } from 'react-icons/all';
 import SearchUniqueWords from './SearchUniqueWords';
 import SharedUtils from '../../../shared/utils';
+import SearchWordPopularityChart from './SearchWordPopularityChart';
+import SearchInPairWith from './SearchInPairWith';
 
 type SearchResultsProps = {
 	searchData: any;
@@ -43,10 +45,20 @@ function SearchResults(props: SearchResultsProps) {
 		<Box>
 			{isLoading && <p>Loading...</p>}
 			{searchData?.results.length === 0 && <p>Ничего не найдено</p>}
-			{searchData?.results.length > 0 && <p>Найдено {searchData?.results.length} результатов</p>}
-			{searchData?.unique_words.length > 0 && (
-				<SearchUniqueWords uniqueWords={searchData?.unique_words} />
+			{searchData?.results.length > 0 && (
+				<SearchWordPopularityChart chartData={SharedUtils.getChartData(searchData)} />
 			)}
+			<Group position='apart' spacing='md' noWrap={!isMobile} align='start'>
+				{searchData?.unique_words.length > 0 && (
+					<SearchUniqueWords uniqueWords={searchData?.unique_words} />
+				)}
+				{(searchData?.in_pair_before?.length > 0 || searchData?.in_pair_after?.length > 0) && (
+					<SearchInPairWith
+						inPairBefore={searchData?.in_pair_before}
+						inPairAfter={searchData?.in_pair_after}
+					/>
+				)}
+			</Group>
 			{searchQuery && (
 				<h1
 					style={{
