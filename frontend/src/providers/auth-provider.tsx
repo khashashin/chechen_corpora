@@ -12,6 +12,9 @@ import { Models } from 'appwrite/src/models';
 import { useEnv } from './env-provider';
 
 const client = new Client();
+client
+	.setEndpoint(import.meta.env.VITE_AUTH_ENDPOINT)
+	.setProject(import.meta.env.VITE_AUTH_PROJECT_ID);
 const account = new Account(client);
 
 type User = Models.Account<Models.Preferences>;
@@ -37,7 +40,7 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
 	const [user, setUser] = useState<User | null>(null);
 	const [session, setSession] = useState<Models.Session | null>(null);
 	const [jwt, setJWT] = useState<Models.Jwt | null>(null);
-	const { AUTH_ENDPOINT, AUTH_PROJECT_ID, VITE_PROJECT_DOMAIN } = useEnv();
+	const { VITE_PROJECT_DOMAIN, LS_SESSION_KEY } = useEnv();
 
 	const fetchUser = useCallback(async () => {
 		try {

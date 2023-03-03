@@ -122,10 +122,11 @@ REST_FRAMEWORK = {
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
 }
 
+# Django API Schema generator
 SPECTACULAR_SETTINGS = {
     'TITLE': 'Chechen Corpora API',
     'DESCRIPTION': 'API for Chechen corpora',
-    'VERSION': '1.0.0',
+    'VERSION': 'v1',
 
     'SCHEMA_PATH_PREFIX': r'/api/',
 }

@@ -49,8 +49,13 @@ class BookCreateSerializer(serializers.ModelSerializer):
         pages_data = validated_data.pop('pages')
         sources_data = validated_data.pop('sources')
 
+        title = validated_data.pop('title', None)
+
+        if title is None:
+            raise serializers.ValidationError('Title is required')
+
         book_data = {
-            'title': validated_data.pop('title'),
+            'title': title,
             'summary': validated_data.pop('summary'),
             'isbn': validated_data.pop('isbn'),
             'publication_date': validated_data.pop('publication_date')

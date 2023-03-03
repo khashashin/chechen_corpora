@@ -5,6 +5,7 @@ type Env = {
 	AUTH_ENDPOINT: string;
 	AUTH_PROJECT_ID: string;
 	VITE_PROJECT_DOMAIN: string;
+	LS_SESSION_KEY: string;
 };
 
 async function getEnv(): Promise<Env> {
@@ -13,6 +14,7 @@ async function getEnv(): Promise<Env> {
 		AUTH_ENDPOINT: import.meta.env.VITE_AUTH_ENDPOINT,
 		AUTH_PROJECT_ID: import.meta.env.VITE_AUTH_PROJECT_ID,
 		VITE_PROJECT_DOMAIN: import.meta.env.VITE_PROJECT_DOMAIN,
+		LS_SESSION_KEY: import.meta.env.VITE_LS_SESSION_KEY,
 	};
 }
 
