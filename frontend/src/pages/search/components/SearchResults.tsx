@@ -6,6 +6,7 @@ import SearchUniqueWords from './SearchUniqueWords';
 import SharedUtils from '../../../shared/utils';
 import SearchWordPopularityChart from './SearchWordPopularityChart';
 import SearchInPairWith from './SearchInPairWith';
+import SearchSimilarWords from './SearchSimilarWords';
 
 type SearchResultsProps = {
 	searchData: any;
@@ -48,7 +49,7 @@ function SearchResults(props: SearchResultsProps) {
 			{searchData?.results.length > 0 && (
 				<SearchWordPopularityChart chartData={SharedUtils.getChartData(searchData)} />
 			)}
-			<Group position='apart' spacing='md' noWrap={!isMobile} align='start'>
+			<Group position='apart' spacing='md' align='start'>
 				{searchData?.unique_words.length > 0 && (
 					<SearchUniqueWords uniqueWords={searchData?.unique_words} />
 				)}
@@ -57,6 +58,9 @@ function SearchResults(props: SearchResultsProps) {
 						inPairBefore={searchData?.in_pair_before}
 						inPairAfter={searchData?.in_pair_after}
 					/>
+				)}
+				{searchData?.similar_words?.length > 0 && (
+					<SearchSimilarWords similarWords={searchData?.similar_words} />
 				)}
 			</Group>
 			{searchQuery && (

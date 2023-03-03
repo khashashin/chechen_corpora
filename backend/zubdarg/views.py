@@ -1,4 +1,4 @@
-from rest_framework import viewsets, status
+from rest_framework import viewsets, status, permissions
 from rest_framework.parsers import FileUploadParser
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -35,6 +35,8 @@ class PageViewSet(viewsets.ModelViewSet):
 
 
 class PDFParserView(APIView):
+    # Read only permission
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
     parser_class = (FileUploadParser,)
 
     def post(self, request, *args, **kwargs):
@@ -47,6 +49,8 @@ class PDFParserView(APIView):
 
 
 class UploadJSONView(APIView):
+    # Read only permission
+    #permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
     parser_class = (FileUploadParser,)
 
     def post(self, request, *args, **kwargs):
@@ -58,6 +62,8 @@ class UploadJSONView(APIView):
 
 
 class UploadCSVView(APIView):
+    # Read only permission
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
     parser_class = (FileUploadParser,)
 
     def post(self, request, *args, **kwargs):
@@ -70,6 +76,8 @@ class UploadCSVView(APIView):
 
 
 class UploadTXTView(APIView):
+    # Read only permission
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
     parser_class = (FileUploadParser,)
 
     def post(self, request, *args, **kwargs):

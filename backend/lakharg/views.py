@@ -1,5 +1,7 @@
 from uuid import uuid4
 from nltk import tokenize
+from django.contrib.postgres.search import TrigramSimilarity
+from rest_framework import permissions
 from rest_framework.views import APIView
 from rest_framework.response import Response
 
@@ -8,6 +10,8 @@ from zubdarg.models import Page, Book
 
 
 class SearchView(APIView):
+    # Read only permission
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
 
     def get(self, request, format=None):
         query = request.GET.get('q')
@@ -21,6 +25,9 @@ class SearchView(APIView):
 
         pages = Page.objects.filter(text__icontains=query)
 
+        similar_words = Words.objects.annotate(similarity=TrigramSimilarity('word', query)).filter(similarity__gt=0.3).order_by('-similarity')
+        similar_words = [word.word for word in similar_words]
+
         # cut out the sentences that match the query
         response = {
             'query': query,
@@ -28,6 +35,7 @@ class SearchView(APIView):
             'unique_words': [],
             'in_pair_before': [],
             'in_pair_after': [],
+            'similar_words': similar_words,
         }
         for page in pages:
             sentences = tokenize.sent_tokenize(page.text)
@@ -93,6 +101,8 @@ class SearchView(APIView):
 
 
 class WordsView(APIView):
+    # Read only permission
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
 
     def get(self, request, format=None):
         query = request.GET.get('q')
@@ -117,6 +127,8 @@ class WordsView(APIView):
 
 
 class StatsView(APIView):
+    # Read only permission
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
 
     def get(self, request, format=None):
         stats = {
