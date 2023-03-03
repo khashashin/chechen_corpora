@@ -18,13 +18,12 @@ client
 const account = new Account(client);
 
 type User = Models.Account<Models.Preferences>;
-
-const AuthContext = createContext<{
+type AuthContextTypes = {
 	user: User | null;
 	session: Models.Session | null;
 	jwt: Models.Jwt | null;
 	isAuthenticated: () => boolean;
-	login: (email: string, password: string) => Promise<void>;
+	login: (email: string, password: string, remember: boolean) => Promise<void>;
 	register: (email: string, password: string, name?: string) => Promise<void>;
 	logout: () => Promise<void>;
 	createRecovery: (email: string) => Promise<void>;
@@ -34,7 +33,9 @@ const AuthContext = createContext<{
 		password: string,
 		passwordRepeat: string
 	) => Promise<void>;
-} | null>(null);
+};
+
+const AuthContext = createContext<AuthContextTypes | null>(null);
 
 export default function AuthProvider({ children }: { children: ReactNode }) {
 	const [user, setUser] = useState<User | null>(null);
@@ -73,16 +74,31 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
 		return !(!email || !status || !emailVerification);
 	}, [user]);
 
-	const login = useCallback(async (email: string, password: string) => {
-		const emailSession = await account.createEmailSession(email, password);
-		setSession(emailSession);
+	const isSessionValid = useCallback(() => {
+		const localSession = localStorage.getItem(LS_SESSION_KEY);
+		if (!localSession) return false;
 
-		const currentUser = await account.get();
-		setUser(currentUser);
+		const { expire } = JSON.parse(localSession);
+		return new Date(expire).getTime() > Date.now();
+	}, [LS_SESSION_KEY]);
 
-		const currentJWT = await account.createJWT();
-		setJWT(currentJWT);
-	}, []);
+	const login = useCallback(
+		async (email: string, password: string, remember: boolean) => {
+			const emailSession = await account.createEmailSession(email, password);
+			setSession(emailSession);
+
+			const currentUser = await account.get();
+			setUser(currentUser);
+
+			const currentJWT = await account.createJWT();
+			setJWT(currentJWT);
+
+			if (remember) {
+				localStorage.setItem(LS_SESSION_KEY, JSON.stringify(emailSession));
+			}
+		},
+		[LS_SESSION_KEY]
+	);
 
 	const register = useCallback(async (email: string, password: string, name = '') => {
 		const currentUser = await account.create(ID.unique(), email, password, name);
@@ -90,14 +106,14 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
 	}, []);
 
 	const logout = useCallback(async () => {
-		if (!session) return;
-		await account.deleteSession(session.$id);
-		setSession(null);
-		setUser(null);
-		if (localStorage.getItem('remember')) {
-			localStorage.removeItem('remember');
-		}
-	}, [session]);
+		fetchSession().then(async (currentSession: Models.Session | null) => {
+			if (currentSession) await account.deleteSession(currentSession.$id);
+			setSession(null);
+			setUser(null);
+			setJWT(null);
+			localStorage.removeItem(LS_SESSION_KEY);
+		});
+	}, [LS_SESSION_KEY, fetchSession]);
 
 	const createRecovery = useCallback(
 		async (email: string) => {
@@ -116,7 +132,10 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
 	);
 
 	useEffect(() => {
-		client.setEndpoint(AUTH_ENDPOINT).setProject(AUTH_PROJECT_ID);
+		if (!isSessionValid()) {
+			logout().catch((err) => console.log(err));
+			return;
+		}
 
 		fetchUser().then((currentUser) => {
 			setUser(currentUser);
@@ -127,19 +146,7 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
 		fetchJWT().then((currentJWT) => {
 			setJWT(currentJWT);
 		});
-	}, [AUTH_ENDPOINT, AUTH_PROJECT_ID, fetchUser, fetchSession, fetchJWT]);
-
-	useEffect(() => {
-		if (!localStorage.getItem('remember')) {
-			account.getSession('current').then(async (currentSession) => {
-				if (currentSession) {
-					await account.deleteSession(currentSession.$id);
-					setSession(null);
-					setUser(null);
-				}
-			});
-		}
-	}, []);
+	}, [fetchUser, fetchSession, fetchJWT, LS_SESSION_KEY, isSessionValid, logout]);
 
 	const api = useMemo(() => {
 		return {

@@ -32,11 +32,7 @@ function Login() {
 	});
 
 	const handleLogin = async () => {
-		login(form.values.email, form.values.password).then(() => {
-			if (form.values.remember) {
-				localStorage.setItem('remember', 'true');
-			} else localStorage.removeItem('remember');
-		});
+		await login(form.values.email, form.values.password, form.values.remember);
 		navigate({ to: '/' });
 	};
 
