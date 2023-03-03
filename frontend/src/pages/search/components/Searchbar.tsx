@@ -52,7 +52,9 @@ function Searchbar(props: SearchbarProps) {
 
 	return (
 		<Group className={classes.controls} spacing={3}>
-			<Text fz='sm'>Введите слово или словосочетание для поиска</Text>
+			<Text fz='sm'>
+				Введите слово или словосочетание для поиска (вместо буквы Ӏ вы можете использовать цифру 1)
+			</Text>
 			<TextInput
 				ref={focusTrapRef}
 				value={searchQuery}

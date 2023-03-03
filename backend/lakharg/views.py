@@ -11,6 +11,8 @@ class SearchView(APIView):
 
     def get(self, request, format=None):
         query = request.GET.get('q')
+        query = query.replace('1', 'Ӏ')
+        query = query.lower()
         if not query:
             return Response({"error": "No query provided"}, status=400)
 

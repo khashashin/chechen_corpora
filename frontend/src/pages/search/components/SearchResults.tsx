@@ -19,6 +19,10 @@ function SearchResults(props: SearchResultsProps) {
 	const isMobile = useMediaQuery('(max-width: 600px)');
 
 	const handleQueryHighlight = (sentence: string) => {
+		if (searchQuery.includes('1')) {
+			const query = searchQuery.replaceAll('1', 'ӏ');
+			return sentence.replace(query, `<mark>${query}</mark>`);
+		}
 		return sentence.replace(searchQuery, `<mark>${searchQuery}</mark>`);
 	};
 
