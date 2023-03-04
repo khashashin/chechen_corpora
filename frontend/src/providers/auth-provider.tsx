@@ -7,6 +7,7 @@ import {
 	useMemo,
 	useState,
 } from 'react';
+import Tracker from '@openreplay/tracker';
 import { Account, Client, ID } from 'appwrite';
 import { Models } from 'appwrite/src/models';
 import { useEnv } from './env-provider';
@@ -16,6 +17,13 @@ client
 	.setEndpoint(import.meta.env.VITE_AUTH_ENDPOINT)
 	.setProject(import.meta.env.VITE_AUTH_PROJECT_ID);
 const account = new Account(client);
+
+const tracker = new Tracker({
+	projectKey: import.meta.env.VITE_OPEN_R_KEY,
+	ingestPoint: import.meta.env.VITE_OPEN_R_ENDPOINT,
+	capturePerformance: true,
+	__DISABLE_SECURE_MODE: true,
+});
 
 type User = Models.Account<Models.Preferences>;
 type AuthContextTypes = {
@@ -147,6 +155,13 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
 			setJWT(currentJWT);
 		});
 	}, [fetchUser, fetchSession, fetchJWT, LS_SESSION_KEY, isSessionValid, logout]);
+
+	useEffect(() => {
+		tracker.start().catch((err) => console.log(err));
+		if (isAuthenticated() && isSessionValid() && user) {
+			tracker.setUserID(user?.email);
+		}
+	}, [user, isAuthenticated, isSessionValid]);
 
 	const api = useMemo(() => {
 		return {
