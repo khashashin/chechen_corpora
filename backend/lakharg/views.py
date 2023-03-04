@@ -20,8 +20,8 @@ class SearchView(APIView):
         if not query:
             return Response({"error": "No query provided"}, status=400)
 
-        if len(query) < 3:
-            return Response({"error": "Query must be at least 3 characters long"}, status=400)
+        if len(query) < 2:
+            return Response({"error": "Query must be at least 2 characters long"}, status=400)
 
         pages = Page.objects.filter(text__icontains=query)
 
