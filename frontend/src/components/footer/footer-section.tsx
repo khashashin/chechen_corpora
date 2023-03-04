@@ -31,24 +31,8 @@ const useStyles = createStyles((theme) => ({
 
 const links = [
 	{
-		link: 'https://mantine.dev',
-		label: 'Contact',
-	},
-	{
-		link: 'https://mantine.dev',
-		label: 'Privacy',
-	},
-	{
-		link: 'https://mantine.dev',
-		label: 'Terms',
-	},
-	{
-		link: 'https://mantine.dev',
-		label: 'About',
-	},
-	{
-		link: 'https://mantine.dev',
-		label: 'Help',
+		link: 'mailto:info@dosham.info',
+		label: 'Написать нам',
 	},
 ];
 
