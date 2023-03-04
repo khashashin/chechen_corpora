@@ -22,7 +22,7 @@ const tracker = new Tracker({
 	projectKey: import.meta.env.VITE_OPEN_R_KEY,
 	ingestPoint: import.meta.env.VITE_OPEN_R_ENDPOINT,
 	capturePerformance: true,
-	__DISABLE_SECURE_MODE: true,
+	__DISABLE_SECURE_MODE: import.meta.env.VITE_OPEN_R_SECURE_MODE === 'false',
 });
 
 type User = Models.Account<Models.Preferences>;
