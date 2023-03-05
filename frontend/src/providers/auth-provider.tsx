@@ -11,19 +11,26 @@ import Tracker from '@openreplay/tracker';
 import * as Sentry from '@sentry/react';
 import { Account, Client, ID } from 'appwrite';
 import { Models } from 'appwrite/src/models';
-import { useEnv } from './env-provider';
+
+const {
+	VITE_AUTH_ENDPOINT,
+	VITE_AUTH_PROJECT_ID,
+	VITE_OPEN_R_KEY,
+	VITE_OPEN_R_ENDPOINT,
+	VITE_OPEN_R_SECURE_MODE,
+	VITE_PROJECT_DOMAIN,
+	VITE_LS_SESSION_KEY,
+} = import.meta.env;
 
 const client = new Client();
-client
-	.setEndpoint(import.meta.env.VITE_AUTH_ENDPOINT)
-	.setProject(import.meta.env.VITE_AUTH_PROJECT_ID);
+client.setEndpoint(VITE_AUTH_ENDPOINT).setProject(VITE_AUTH_PROJECT_ID);
 const account = new Account(client);
 
 const tracker = new Tracker({
-	projectKey: import.meta.env.VITE_OPEN_R_KEY,
-	ingestPoint: import.meta.env.VITE_OPEN_R_ENDPOINT,
+	projectKey: VITE_OPEN_R_KEY,
+	ingestPoint: VITE_OPEN_R_ENDPOINT,
 	capturePerformance: true,
-	__DISABLE_SECURE_MODE: import.meta.env.VITE_OPEN_R_SECURE_MODE === 'false',
+	__DISABLE_SECURE_MODE: VITE_OPEN_R_SECURE_MODE === 'false',
 });
 
 type User = Models.Account<Models.Preferences>;
@@ -31,7 +38,7 @@ type AuthContextTypes = {
 	user: User | null;
 	session: Models.Session | null;
 	jwt: Models.Jwt | null;
-	isAuthenticated: () => boolean;
+	isAuthenticated: Promise<boolean>;
 	login: (email: string, password: string, remember: boolean) => Promise<void>;
 	register: (email: string, password: string, name?: string) => Promise<void>;
 	logout: () => Promise<void>;
@@ -51,7 +58,6 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
 	const [user, setUser] = useState<User | null>(null);
 	const [session, setSession] = useState<Models.Session | null>(null);
 	const [jwt, setJWT] = useState<Models.Jwt | null>(null);
-	const { VITE_PROJECT_DOMAIN, LS_SESSION_KEY } = useEnv();
 
 	const fetchUser = useCallback(async () => {
 		try {
@@ -80,17 +86,20 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
 		}
 	}, []);
 
-	const isAuthenticated = useCallback(() => {
+	const isAuthenticated = useMemo(async () => {
+		console.log('Method called: isAuthenticated');
+		console.log('Check the User:', user);
 		if (!user) return false;
 
 		const { email, status, emailVerification } = user;
+		console.log('Check the properties:', email, status, emailVerification);
 		return !(!email || !status || !emailVerification);
 	}, [user]);
 
 	// Checks if there is a valid session in local storage.
-	const isSessionValid = useCallback(() => {
+	const isSessionValid = useMemo(() => {
 		// Check if a session exists in local storage
-		const localSession = localStorage.getItem(LS_SESSION_KEY);
+		const localSession = localStorage.getItem(VITE_LS_SESSION_KEY);
 		if (!localSession) return false;
 
 		// Get the expiration date from the session
@@ -98,60 +107,57 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
 
 		// Check if the expiration date is after the current date/time
 		return new Date(expire).getTime() > Date.now();
-	}, [LS_SESSION_KEY]);
+	}, []);
 
 	// Logs the user in with the provided email and password,
 	// and optionally remembers the session in local storage.
-	const login = useCallback(
-		async (email: string, password: string, remember: boolean) => {
-			// Attempt to create an email session with the provided credentials
-			account
-				.createEmailSession(email, password)
-				.then(async (emailSession) => {
-					// If successful, set the session state in the component
-					setSession(emailSession);
+	const login = useCallback(async (email: string, password: string, remember: boolean) => {
+		// Attempt to create an email session with the provided credentials
+		account
+			.createEmailSession(email, password)
+			.then(async (emailSession) => {
+				// If successful, set the session state in the component
+				setSession(emailSession);
 
-					// Get the current user and JWT token in parallel, and update the component state
-					const [currentUser, currentJWT] = await Promise.all([
-						account.get(),
-						account.createJWT(),
-					]).catch((err) => Promise.reject(new Error('Unable to login user. [ERROR]: ', err)));
+				// Get the current user and JWT token in parallel, and update the component state
+				const [currentUser, currentJWT] = await Promise.all([
+					account.get(),
+					account.createJWT(),
+				]).catch((err) => Promise.reject(new Error('Unable to login user. [ERROR]: ', err)));
 
-					setUser(currentUser);
-					setJWT(currentJWT);
+				setUser(currentUser);
+				setJWT(currentJWT);
 
-					// If the user requested to remember the session, store the session details in local storage
-					if (remember) {
-						localStorage.setItem(LS_SESSION_KEY, JSON.stringify({ expire: emailSession.expire }));
-						localStorage.setItem(`${LS_SESSION_KEY}-jwt`, currentJWT.jwt);
-						localStorage.setItem(`${LS_SESSION_KEY}-user-id`, currentUser.$id);
-					}
-				})
-				// If there was an error during login, reject the Promise with an Error
-				.catch((err) => Promise.reject(new Error('Unable to login user. [ERROR]: ', err)));
-		},
-		[LS_SESSION_KEY]
-	);
+				// If the user requested to remember the session, store the session details in local storage
+				if (remember) {
+					localStorage.setItem(
+						`${VITE_LS_SESSION_KEY}`,
+						JSON.stringify({ expire: emailSession.expire })
+					);
+					localStorage.setItem(`${VITE_LS_SESSION_KEY}-jwt`, currentJWT.jwt);
+					localStorage.setItem(`${VITE_LS_SESSION_KEY}-user-id`, currentUser.$id);
+				}
+			})
+			// If there was an error during login, reject the Promise with an Error
+			.catch((err) => Promise.reject(new Error('Unable to login user. [ERROR]: ', err)));
+	}, []);
 
 	// Registers a new user with the given email, password, and optional name.
-	const register = useCallback(
-		async (email: string, password: string, name = '') => {
-			account
-				.create(ID.unique(), email, password, name)
-				.then(async (currentUser) => {
-					// Create an email session and send verification email in parallel
-					await Promise.all([
-						account.createEmailSession(email, password),
-						account.createVerification(`${VITE_PROJECT_DOMAIN}/auth/verify`),
-					]).catch((err) => Promise.reject(new Error('Unable to register user. [ERROR]: ', err)));
+	const register = useCallback(async (email: string, password: string, name = '') => {
+		account
+			.create(ID.unique(), email, password, name)
+			.then(async (currentUser) => {
+				// Create an email session and send verification email in parallel
+				await Promise.all([
+					account.createEmailSession(email, password),
+					account.createVerification(`${VITE_PROJECT_DOMAIN}/auth/verify`),
+				]).catch((err) => Promise.reject(new Error('Unable to register user. [ERROR]: ', err)));
 
-					// Set the current user as the registered user
-					setUser(currentUser);
-				})
-				.catch((err) => Promise.reject(new Error('Unable to register user. [ERROR]: ', err)));
-		},
-		[VITE_PROJECT_DOMAIN]
-	);
+				// Set the current user as the registered user
+				setUser(currentUser);
+			})
+			.catch((err) => Promise.reject(new Error('Unable to register user. [ERROR]: ', err)));
+	}, []);
 
 	const logout = useCallback(async () => {
 		fetchSession()
@@ -160,19 +166,16 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
 				setSession(null);
 				setUser(null);
 				setJWT(null);
-				localStorage.removeItem(LS_SESSION_KEY);
+				localStorage.removeItem(VITE_LS_SESSION_KEY);
 			})
 			.catch((err) => Promise.reject(new Error('Unable to logout user. [ERROR]: ', err)));
-	}, [LS_SESSION_KEY, fetchSession]);
+	}, [fetchSession]);
 
-	const createRecovery = useCallback(
-		async (email: string) => {
-			account.createRecovery(email, `${VITE_PROJECT_DOMAIN}/auth/recovery`).catch((err) => {
-				Promise.reject(new Error('Unable to create recovery. [ERROR]: ', err));
-			});
-		},
-		[VITE_PROJECT_DOMAIN]
-	);
+	const createRecovery = useCallback(async (email: string) => {
+		account.createRecovery(email, `${VITE_PROJECT_DOMAIN}/auth/recovery`).catch((err) => {
+			Promise.reject(new Error('Unable to create recovery. [ERROR]: ', err));
+		});
+	}, []);
 
 	const updateRecovery = useCallback(
 		async (userId: unknown, secret: unknown, password: string, passwordRepeat: string) => {
@@ -206,19 +209,24 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
 	}, [fetchUser, fetchSession, fetchJWT]);
 
 	useEffect(() => {
-		if (!isSessionValid()) {
+		if (!isSessionValid) {
 			logout();
 		}
 	}, [isSessionValid, logout]);
 
 	useEffect(() => {
 		tracker.start();
-		if (isAuthenticated() && isSessionValid() && user) {
-			tracker.setUserID(user?.email);
-			Sentry.setUser({ email: user?.email });
-		} else {
-			Sentry.setUser(null);
-		}
+		const configureTracker = async () => {
+			const isLoggedIn = await isAuthenticated;
+			if (isLoggedIn && isSessionValid && user) {
+				tracker.setUserID(user?.email);
+				Sentry.setUser({ email: user?.email });
+			} else {
+				Sentry.setUser(null);
+			}
+		};
+
+		configureTracker();
 	}, [user, isAuthenticated, isSessionValid]);
 
 	const api = useMemo(() => {

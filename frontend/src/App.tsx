@@ -3,6 +3,7 @@ import { NotificationsProvider } from '@mantine/notifications';
 import { useState } from 'react';
 import { ReactLocation } from '@tanstack/react-location';
 import AppRoutes from './routes/main';
+import AuthProvider from './providers/auth-provider';
 import EnvProvider from './providers/env-provider';
 
 export const location = new ReactLocation();
@@ -20,7 +21,9 @@ function App() {
 				withNormalizeCSS>
 				<NotificationsProvider>
 					<EnvProvider>
-						<AppRoutes location={location} />
+						<AuthProvider>
+							<AppRoutes location={location} />
+						</AuthProvider>
 					</EnvProvider>
 				</NotificationsProvider>
 			</MantineProvider>
