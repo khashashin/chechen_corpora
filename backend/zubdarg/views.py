@@ -3,7 +3,7 @@ from rest_framework.parsers import FileUploadParser
 from rest_framework.views import APIView
 from rest_framework.response import Response
 
-from .helpers import extract_text_from_pdf
+# from .helpers import extract_text_from_pdf
 from .serializers import *
 from .models import *
 
@@ -34,18 +34,18 @@ class PageViewSet(viewsets.ModelViewSet):
     serializer_class = PageSerializer
 
 
-class PDFParserView(APIView):
-    # Read only permission
-    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
-    parser_class = (FileUploadParser,)
-
-    def post(self, request, *args, **kwargs):
-        pdf_file = request.data['file']
-        pdf_text = extract_text_from_pdf(pdf_file)
-        if not pdf_text:
-            return Response({"error": "Could not parse the file"}, status=400)
-
-        return Response(pdf_text, status=200)
+# class PDFParserView(APIView):
+#     # Read only permission
+#     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+#     parser_class = (FileUploadParser,)
+#
+#     def post(self, request, *args, **kwargs):
+#         pdf_file = request.data['file']
+#         pdf_text = extract_text_from_pdf(pdf_file)
+#         if not pdf_text:
+#             return Response({"error": "Could not parse the file"}, status=400)
+#
+#         return Response(pdf_text, status=200)
 
 
 class UploadJSONView(APIView):
