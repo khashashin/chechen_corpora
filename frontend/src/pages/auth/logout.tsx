@@ -1,4 +1,5 @@
 import { Stack, Text, Button } from '@mantine/core';
+import { showNotification } from '@mantine/notifications';
 import { useNavigate } from '@tanstack/react-location';
 import { useAuth } from '../../providers/auth-provider';
 
@@ -7,8 +8,22 @@ function Logout() {
 	const navigate = useNavigate();
 
 	const handleLogout = async () => {
-		await logout();
-		navigate({ to: '/auth/login' });
+		logout()
+			.then(() => {
+				navigate({ to: '/auth/login' });
+				showNotification({
+					id: 'logoutSuccess',
+					title: 'Успешный выход',
+					message: 'Вы успешно вышли из аккаунта',
+				});
+			})
+			.catch(() => {
+				showNotification({
+					id: 'logoutError',
+					title: 'Ошибка выхода',
+					message: 'Произошла ошибка при выходе',
+				});
+			});
 	};
 
 	return (
