@@ -45,9 +45,7 @@ function Searchbar(props: SearchbarProps) {
 	const { classes } = useStyles();
 
 	useEffect(() => {
-		if (debouncedResult.length > 0) {
-			onSearchResult(debouncedResult);
-		}
+		onSearchResult(debouncedResult);
 	}, [debouncedResult, onSearchResult]);
 
 	return (
