@@ -7,10 +7,12 @@ HASHID_FIELD_SALT = os.environ.get('HASHID_FIELD_SALT')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DEBUG', 'False') == 'True'
+print('Debugging status is: ', DEBUG)
+
+if DEBUG:
+    CORS_ALLOW_ALL_ORIGINS = True
 
 ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'localhost').split(',')
-
-CORS_ORIGIN_ALLOW_ALL = os.environ.get('CORS_ORIGIN_ALLOW_ALL', 'False') == 'True'
 
 CORS_ALLOWED_ORIGINS = os.environ.get('CORS_ALLOWED_ORIGINS', '').split(',')
 
@@ -36,3 +38,7 @@ DATABASES = {
         'OPTIONS': {}
     }
 }
+
+DB_SSL_MODE = os.environ.get('DB_SSL_MODE', 'True') == 'True'
+if DB_SSL_MODE:
+    DATABASES['default']['OPTIONS']['sslmode'] = 'prefer'
