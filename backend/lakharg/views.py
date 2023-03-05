@@ -9,6 +9,38 @@ from lakharg.models import Words
 from zubdarg.models import Page, Book
 
 
+def remove_non_alphabetic_characters(sentence):
+    """
+    This function is used to remove all the non-alphabetic characters
+    from the sentence
+    """
+    return ''.join([char for char in sentence if char.isalpha() or char == ' '])
+
+
+def append_dots(sentence, query):
+    """
+    This function is used to append dots to the end of the query
+    if the next after the query is not one of the following:
+    """
+    next_char = sentence[sentence.index(query) + len(query)]
+    query_word = query if \
+        next_char == ' ' or \
+        next_char == '.' or \
+        next_char == ',' or \
+        next_char == '?' or \
+        next_char == '!' or \
+        next_char == ':' or \
+        next_char == ';' or \
+        next_char == '"' or \
+        next_char == "'" or \
+        next_char == '(' or \
+        next_char == ')' or \
+        next_char == '[' or \
+        next_char == ']' else query + '...'
+
+    return query_word
+
+
 class SearchView(APIView):
     # Read only permission
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
@@ -43,11 +75,12 @@ class SearchView(APIView):
                 if query in sentence:
                     # this is crazy, but all what it does is to get all the words that match the query
                     # and remove all the non-alphabetic characters
-                    words = [''.join([char for char in word if char.isalpha() or char == '-']) for word in sentence.split(' ') if query in word.lower()]
-                    # unique words
-                    for word in words:
-                        if word not in response['unique_words']:
-                            response['unique_words'].append(word)
+                    for q in query.split(' '):
+                        words = [''.join([char for char in word if char.isalpha() or char == '-']) for word in sentence.split(' ') if q in word.lower()]
+                        # unique words
+                        for word in words:
+                            if word not in response['unique_words']:
+                                response['unique_words'].append(word)
                     # try to get the previous and next sentence of matchin sentence
                     try:
                         previous_sentence = sentences[sentences.index(sentence) - 1]
@@ -58,27 +91,32 @@ class SearchView(APIView):
                     except IndexError:
                         next_sentence = None
 
-                    # get each previous word that stays with each querymatched word
-                    clean_sentence_words = [''.join([char for char in word if char.isalpha()]) for word in sentence.split(' ')]
-                    for index, word in enumerate(clean_sentence_words):
-                        if word == query:
-                            try:
-                                combined_word = f'{clean_sentence_words[index - 1]} {word}' if len(clean_sentence_words[index - 1]) > 1 else None
-                            except IndexError:
-                                combined_word = None
+                    try:
+                        if sentence[sentence.index(query) - 1] == ' ':
+                            previous_word = sentence[:sentence.index(query) - 1].split(' ')[-1]
+                        else:
+                            previous_word = sentence[:sentence.index(query) - 1].split(' ')[-2]
+                    except IndexError:
+                        previous_word = None
 
-                            if combined_word:
-                                response['in_pair_before'].append(combined_word)
+                    if previous_word and len(previous_word) > 1:
+                        response['in_pair_before'].append(
+                            remove_non_alphabetic_characters(f'{previous_word} {append_dots(sentence, query)}')
+                        )
 
-                    for index, word in enumerate(clean_sentence_words):
-                        if word == query:
-                            try:
-                                combined_word = f'{word} {clean_sentence_words[index + 1]}' if len(clean_sentence_words[index + 1]) > 1 else None
-                            except IndexError:
-                                combined_word = None
+                    try:
+                        if sentence[sentence.index(query) + len(query)] == ' ':
+                            next_word = sentence[sentence.index(query) + len(query) + 1:].split(' ')[0]
+                        else:
+                            next_word = sentence[sentence.index(query) + len(query) + 1:].split(' ')[1]
+                    except IndexError:
+                        next_word = None
 
-                            if combined_word:
-                                response['in_pair_after'].append(combined_word)
+                    if next_word and len(next_word) > 1:
+                        response['in_pair_after'].append(
+                            remove_non_alphabetic_characters(f'{append_dots(sentence, query)} {next_word}')
+                        )
+
 
                     response['results'].append({
                         'uuid': f'{uuid4()}',
