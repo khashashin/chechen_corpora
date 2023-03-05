@@ -1,8 +1,10 @@
 import axios from 'axios';
 
+const { VITE_API_ENDPOINT } = import.meta.env;
+
 // eslint-disable-next-line import/prefer-default-export
 export const getSearchResult = async (query: string) => {
-	const response = await axios.get(`http://127.0.0.1:8000/api/search?q=${query}`);
+	const response = await axios.get(`${VITE_API_ENDPOINT}/search?q=${query}`);
 	console.log('getSearchResult response', response);
 	return response;
 };
