@@ -9,15 +9,11 @@ import { uploadPdf } from './api';
 export default function DropAndUpload() {
 	const theme = useMantineTheme();
 
-	const { mutate, isLoading } = useMutation(uploadPdf, {
-		onSuccess: (data) => console.log('success', data),
-		onError: (e) => console.log('error', e),
-	});
+	const { mutate, isLoading } = useMutation(uploadPdf);
 
 	return (
 		<Dropzone
 			onDrop={(file) => mutate(file[0])}
-			onReject={(files) => console.log('rejected files', files)}
 			maxSize={3 * 1024 ** 2}
 			maxFiles={1}
 			loading={isLoading}

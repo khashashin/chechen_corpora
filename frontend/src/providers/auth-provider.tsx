@@ -192,11 +192,6 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
 	}, []);
 
 	useEffect(() => {
-		if (!isSessionValid()) {
-			logout().catch((err) => console.log(err));
-			return;
-		}
-
 		fetchUser().then((currentUser) => {
 			setUser(currentUser);
 		});
@@ -206,10 +201,16 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
 		fetchJWT().then((currentJWT) => {
 			setJWT(currentJWT);
 		});
-	}, [fetchUser, fetchSession, fetchJWT, LS_SESSION_KEY, isSessionValid, logout]);
+	}, [fetchUser, fetchSession, fetchJWT]);
 
 	useEffect(() => {
-		tracker.start().catch((err) => console.log(err));
+		if (!isSessionValid()) {
+			logout();
+		}
+	}, [isSessionValid, logout]);
+
+	useEffect(() => {
+		tracker.start();
 		if (isAuthenticated() && isSessionValid() && user) {
 			tracker.setUserID(user?.email);
 			Sentry.setUser({ email: user?.email });
