@@ -55,6 +55,7 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
 		try {
 			return await account.get();
 		} catch (err) {
+			console.error('Unable to fetch user.', err);
 			return null;
 		}
 	}, []);
@@ -63,6 +64,7 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
 		try {
 			return await account.getSession('current');
 		} catch (err) {
+			console.error('Unable to fetch session.', err);
 			return null;
 		}
 	}, []);
@@ -71,6 +73,7 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
 		try {
 			return await account.createJWT();
 		} catch (err) {
+			console.error('Unable to fetch JWT.', err);
 			return null;
 		}
 	}, []);

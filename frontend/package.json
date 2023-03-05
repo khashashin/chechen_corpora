@@ -64,6 +64,7 @@
 		"typescript": "^4.9.3",
 		"vite": "^4.0.0",
 		"vite-plugin-pwa": "^0.14.4",
-		"vite-plugin-radar": "^0.7.0"
+		"vite-plugin-radar": "^0.7.0",
+		"vite-plugin-remove-console": "^2.1.0"
 	}
 }

@@ -21,5 +21,7 @@ module.exports = {
 	rules: {
 		'react/react-in-jsx-scope': 'off',
 		'react/require-default-props': 'warn',
+		'no-console': 0,
+		'no-debugger': 0,
 	},
 };

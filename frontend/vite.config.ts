@@ -3,9 +3,13 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import { VitePWA } from 'vite-plugin-pwa';
 import { VitePluginRadar } from 'vite-plugin-radar';
+import removeConsole from 'vite-plugin-remove-console';
 
 // https://vitejs.dev/config/
 export default defineConfig({
+	build: {
+		sourcemap: true,
+	},
 	plugins: [
 		react(),
 		VitePWA({
@@ -36,6 +40,7 @@ export default defineConfig({
 				id: 'G-2WLKFJKMTP',
 			},
 		}),
+		removeConsole(),
 	],
 	server: {
 		port: 3000,
