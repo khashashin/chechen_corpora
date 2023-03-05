@@ -87,50 +87,87 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
 		return !(!email || !status || !emailVerification);
 	}, [user]);
 
+	// Checks if there is a valid session in local storage.
 	const isSessionValid = useCallback(() => {
+		// Check if a session exists in local storage
 		const localSession = localStorage.getItem(LS_SESSION_KEY);
 		if (!localSession) return false;
 
+		// Get the expiration date from the session
 		const { expire } = JSON.parse(localSession);
+
+		// Check if the expiration date is after the current date/time
 		return new Date(expire).getTime() > Date.now();
 	}, [LS_SESSION_KEY]);
 
+	// Logs the user in with the provided email and password,
+	// and optionally remembers the session in local storage.
 	const login = useCallback(
 		async (email: string, password: string, remember: boolean) => {
-			const emailSession = await account.createEmailSession(email, password);
-			setSession(emailSession);
+			// Attempt to create an email session with the provided credentials
+			account
+				.createEmailSession(email, password)
+				.then(async (emailSession) => {
+					// If successful, set the session state in the component
+					setSession(emailSession);
 
-			const currentUser = await account.get();
-			setUser(currentUser);
+					// Get the current user and JWT token in parallel, and update the component state
+					const [currentUser, currentJWT] = await Promise.all([
+						account.get(),
+						account.createJWT(),
+					]).catch((err) => Promise.reject(new Error('Unable to login user. [ERROR]: ', err)));
 
-			const currentJWT = await account.createJWT();
-			setJWT(currentJWT);
+					setUser(currentUser);
+					setJWT(currentJWT);
 
-			if (remember) {
-				localStorage.setItem(LS_SESSION_KEY, JSON.stringify(emailSession));
-			}
+					// If the user requested to remember the session, store the session details in local storage
+					if (remember) {
+						localStorage.setItem(LS_SESSION_KEY, JSON.stringify({ expire: emailSession.expire }));
+					}
+				})
+				// If there was an error during login, reject the Promise with an Error
+				.catch((err) => Promise.reject(new Error('Unable to login user. [ERROR]: ', err)));
 		},
 		[LS_SESSION_KEY]
 	);
 
-	const register = useCallback(async (email: string, password: string, name = '') => {
-		const currentUser = await account.create(ID.unique(), email, password, name);
-		setUser(currentUser);
-	}, []);
+	// Registers a new user with the given email, password, and optional name.
+	const register = useCallback(
+		async (email: string, password: string, name = '') => {
+			account
+				.create(ID.unique(), email, password, name)
+				.then(async (currentUser) => {
+					// Create an email session and send verification email in parallel
+					await Promise.all([
+						account.createEmailSession(email, password),
+						account.createVerification(`${VITE_PROJECT_DOMAIN}/auth/verify`),
+					]).catch((err) => Promise.reject(new Error('Unable to register user. [ERROR]: ', err)));
+
+					// Set the current user as the registered user
+					setUser(currentUser);
+				})
+				.catch((err) => Promise.reject(new Error('Unable to register user. [ERROR]: ', err)));
+		},
+		[VITE_PROJECT_DOMAIN]
+	);
 
 	const logout = useCallback(async () => {
-		fetchSession().then(async (currentSession: Models.Session | null) => {
-			if (currentSession) await account.deleteSession(currentSession.$id);
-			setSession(null);
-			setUser(null);
-			setJWT(null);
-			localStorage.removeItem(LS_SESSION_KEY);
-		});
+		fetchSession()
+			.then(async (currentSession: Models.Session | null) => {
+				if (currentSession) await account.deleteSession(currentSession.$id);
+				setSession(null);
+				setUser(null);
+				setJWT(null);
+				localStorage.removeItem(LS_SESSION_KEY);
+			})
+			.catch((err) => Promise.reject(new Error('Unable to logout user. [ERROR]: ', err)));
 	}, [LS_SESSION_KEY, fetchSession]);
 
 	const createRecovery = useCallback(
 		async (email: string) => {
-			await account.createRecovery(email, `${VITE_PROJECT_DOMAIN}/auth/recovery`);
+			account.createRecovery(email, `${VITE_PROJECT_DOMAIN}/auth/recovery`).catch((err) => {
+				Promise.reject(new Error('Unable to create recovery. [ERROR]: ', err));
+			});
 		},
 		[VITE_PROJECT_DOMAIN]
 	);
@@ -139,7 +176,9 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
 		async (userId: unknown, secret: unknown, password: string, passwordRepeat: string) => {
 			const idString = userId as string;
 			const secretString = secret as string;
-			await account.updateRecovery(idString, secretString, password, passwordRepeat);
+			account.updateRecovery(idString, secretString, password, passwordRepeat).catch((err) => {
+				Promise.reject(new Error('Unable to update recovery. [ERROR]: ', err));
+			});
 		},
 		[]
 	);
