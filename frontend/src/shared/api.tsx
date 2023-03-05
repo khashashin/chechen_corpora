@@ -1,6 +1,8 @@
 import axios from 'axios';
 
+const { VITE_API_ENDPOINT } = import.meta.env;
+
 // eslint-disable-next-line import/prefer-default-export
 export const getStats = async () => {
-	return axios.get(`http://127.0.0.1:8000/api/stats`);
+	return axios.get(`${VITE_API_ENDPOINT}/stats`);
 };
