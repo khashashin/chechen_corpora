@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios from '../../shared/ApiService';
 
 const { VITE_API_ENDPOINT } = import.meta.env;
 

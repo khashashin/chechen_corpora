@@ -123,6 +123,8 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
 					// If the user requested to remember the session, store the session details in local storage
 					if (remember) {
 						localStorage.setItem(LS_SESSION_KEY, JSON.stringify({ expire: emailSession.expire }));
+						localStorage.setItem(`${LS_SESSION_KEY}-jwt`, currentJWT.jwt);
+						localStorage.setItem(`${LS_SESSION_KEY}-user-id`, currentUser.$id);
 					}
 				})
 				// If there was an error during login, reject the Promise with an Error

@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios from '../../../shared/ApiService';
 import { Book, BookCreate, BookResponse } from '../../../models/books/BookDto';
 import { JSONFile } from '../models';
 
