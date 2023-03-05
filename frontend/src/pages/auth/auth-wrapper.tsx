@@ -24,8 +24,9 @@ function AuthWrapper({ children }: AuthWrapperProps) {
 
 	const { isAuthenticated } = useAuth();
 
-	const handleRedirect = useCallback(() => {
-		if (isAuthenticated) {
+	const handleRedirect = useCallback(async () => {
+		const isLoggedIn = await isAuthenticated;
+		if (isLoggedIn) {
 			navigate({ to: '/auth/logout' });
 		} else {
 			navigate({ to: '/auth/login' });
