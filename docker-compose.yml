@@ -1,0 +1,52 @@
+version: '3.7'
+
+services:
+  django:
+    container_name: ce-corpora-django
+    build:
+      context: ./backend
+    restart: unless-stopped
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.corpora-django.rule=(Host(`corpora.dosham.info`) && PathPrefix(`/api`))"
+      - "traefik.http.routers.corpora-django.entrypoints=web-secure"
+      - "traefik.http.routers.corpora-django.tls.certresolver=letsEncrypt"
+    volumes:
+      - staticfiles:/app/staticfiles
+      - mediafiles:/app/media
+    command: gunicorn core.wsgi:application --bind 0.0.0.0:8000
+    env_file: ./backend/.env
+    expose:
+      - 8000
+    networks:
+      - web
+      - corpora
+  nginx:
+    container_name: ce-corpora-nginx
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.corpora-nginx.rule=Host(`corpora.dosham.info`)"
+      - "traefik.http.routers.corpora-nginx.entrypoints=web-secure"
+      - "traefik.http.routers.corpora-nginx.tls.certresolver=letsEncrypt"
+    volumes:
+      - staticfiles:/app/staticfiles
+      - mediafiles:/app/media
+    expose:
+      - 80
+    networks:
+      - web
+    depends_on:
+      - django
+
+volumes:
+  staticfiles:
+  mediafiles:
+
+networks:
+  web:
+    external: true
+  corpora:
+    external: false
