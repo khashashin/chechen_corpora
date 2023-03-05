@@ -8,6 +8,7 @@ import {
 	useState,
 } from 'react';
 import Tracker from '@openreplay/tracker';
+import * as Sentry from '@sentry/react';
 import { Account, Client, ID } from 'appwrite';
 import { Models } from 'appwrite/src/models';
 import { useEnv } from './env-provider';
@@ -163,6 +164,9 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
 		tracker.start().catch((err) => console.log(err));
 		if (isAuthenticated() && isSessionValid() && user) {
 			tracker.setUserID(user?.email);
+			Sentry.setUser({ email: user?.email });
+		} else {
+			Sentry.setUser(null);
 		}
 	}, [user, isAuthenticated, isSessionValid]);
 
