@@ -1,4 +1,4 @@
-FROM python:3.10-slim-buster
+FROM python:3.9-slim-buster
 
 # Install build dependencies
 RUN apt-get update \
@@ -37,4 +37,4 @@ RUN chmod -R 755 /app
 USER appuser
 
 # Run entrypoint
-ENTRYPOINT ["/scripts/entrypoint.sh"]
+ENTRYPOINT ["sh", "/scripts/entrypoint.sh"]

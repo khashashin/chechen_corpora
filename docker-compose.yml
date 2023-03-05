@@ -20,7 +20,6 @@ services:
       - 8000
     networks:
       - web
-      - corpora
   nginx:
     container_name: ce-corpora-nginx
     build:
@@ -48,5 +47,3 @@ volumes:
 networks:
   web:
     external: true
-  corpora:
-    external: false
