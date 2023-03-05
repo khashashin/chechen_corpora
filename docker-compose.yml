@@ -8,9 +8,9 @@ services:
     restart: unless-stopped
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.corpora-django.rule=(Host(`corpora.dosham.info`) && PathPrefix(`/api`))"
-      - "traefik.http.routers.corpora-django.entrypoints=web-secure"
-      - "traefik.http.routers.corpora-django.tls.certresolver=letsEncrypt"
+      - "traefik.http.routers.${SERVICE}-api.rule=(Host(`${DOMAIN_NAME}`) && PathPrefix(`/api`))"
+      - "traefik.http.routers.${SERVICE}-api.entrypoints=web-secure"
+      - "traefik.http.routers.${SERVICE}-api.tls.certresolver=letsEncrypt"
     volumes:
       - staticfiles:/app/staticfiles
       - mediafiles:/app/media
@@ -28,9 +28,9 @@ services:
       dockerfile: Dockerfile
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.corpora-nginx.rule=Host(`corpora.dosham.info`)"
-      - "traefik.http.routers.corpora-nginx.entrypoints=web-secure"
-      - "traefik.http.routers.corpora-nginx.tls.certresolver=letsEncrypt"
+      - "traefik.http.routers.${SERVICE}-client.rule=Host(`${DOMAIN_NAME}`)"
+      - "traefik.http.routers.${SERVICE}-client.entrypoints=web-secure"
+      - "traefik.http.routers.${SERVICE}-client.tls.certresolver=letsEncrypt"
     volumes:
       - staticfiles:/app/staticfiles
       - mediafiles:/app/media
