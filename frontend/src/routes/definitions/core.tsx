@@ -18,6 +18,7 @@ import Login from '../../pages/auth/login';
 import Registration from '../../pages/auth/register';
 import ForgotPassword from '../../pages/auth/forgot-password';
 import Recovery from '../../pages/auth/recovery';
+import Verify from '../../pages/auth/verify';
 
 const coreRoutes: Route[] = [
 	{
@@ -128,6 +129,11 @@ const coreRoutes: Route[] = [
 				id: 'recovery',
 				path: '/recovery',
 				element: <Recovery />,
+			},
+			{
+				id: 'verify',
+				path: '/verify',
+				element: <Verify />,
 			},
 		],
 	},

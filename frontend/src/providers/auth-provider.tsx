@@ -42,6 +42,7 @@ type AuthContextTypes = {
 		password: string,
 		passwordRepeat: string
 	) => Promise<void>;
+	updateVerification: (userId: unknown, secret: unknown) => Promise<void>;
 };
 
 const AuthContext = createContext<AuthContextTypes | null>(null);
@@ -143,6 +144,14 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
 		[]
 	);
 
+	const updateVerification = useCallback(async (userId: unknown, secret: unknown) => {
+		const idString = userId as string;
+		const secretString = secret as string;
+		account.updateVerification(idString, secretString).catch((err) => {
+			Promise.reject(new Error('Unable to update verification. [ERROR]: ', err));
+		});
+	}, []);
+
 	useEffect(() => {
 		if (!isSessionValid()) {
 			logout().catch((err) => console.log(err));
@@ -181,6 +190,7 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
 			jwt,
 			createRecovery,
 			updateRecovery,
+			updateVerification,
 		};
 	}, [
 		user,
@@ -192,6 +202,7 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
 		jwt,
 		createRecovery,
 		updateRecovery,
+		updateVerification,
 	]);
 
 	return <AuthContext.Provider value={api}>{children}</AuthContext.Provider>;

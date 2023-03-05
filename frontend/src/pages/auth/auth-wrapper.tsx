@@ -65,9 +65,9 @@ function AuthWrapper({ children }: AuthWrapperProps) {
 				setLinkText('Войти в систему');
 				setLinkTo('/auth/login');
 				break;
-			case '/auth/confirm-email':
+			case '/auth/verify':
 				setTitle('Подтверждение электронной почты');
-				setSubtitle('Введите код подтверждения, который мы отправили на вашу электронную почту');
+				setSubtitle('');
 				setLinkText('На главную');
 				setLinkTo('/');
 				break;
