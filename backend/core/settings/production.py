@@ -1,6 +1,18 @@
 from .base import *
 import os
 
+import sentry_sdk
+from sentry_sdk.integrations.django import DjangoIntegration
+
+sentry_sdk.init(
+    dsn="https://7c5c5f7561194ce38306545c51058455@sentry.khas.dev/8",
+    integrations=[DjangoIntegration()],
+    auto_session_tracking=False,
+    traces_sample_rate=0.01,
+    release="1.0.0",
+    environment="production",
+)
+
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.environ.get('SECRET_KEY')
 HASHID_FIELD_SALT = os.environ.get('HASHID_FIELD_SALT')
