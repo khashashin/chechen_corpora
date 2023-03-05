@@ -20,6 +20,7 @@ class BookViewSet(viewsets.ModelViewSet):
     destroy:        Delete the given book.
     """
     queryset = Book.objects.all()
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
 
     def get_serializer_class(self):
         if self.action == 'create':
@@ -32,6 +33,7 @@ class BookViewSet(viewsets.ModelViewSet):
 class PageViewSet(viewsets.ModelViewSet):
     queryset = Page.objects.all()
     serializer_class = PageSerializer
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
 
 
 # class PDFParserView(APIView):
@@ -50,7 +52,7 @@ class PageViewSet(viewsets.ModelViewSet):
 
 class UploadJSONView(APIView):
     # Read only permission
-    #permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
     parser_class = (FileUploadParser,)
 
     def post(self, request, *args, **kwargs):
