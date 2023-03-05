@@ -12,10 +12,10 @@ function AuthOnly({ children }: Props) {
 	const navigate = useNavigate();
 
 	useEffect(() => {
-		if (!isAuthenticated) navigate({ to: '/auth/login' });
+		if (!isAuthenticated()) navigate({ to: '/auth/login' });
 	}, [isAuthenticated, navigate]);
 
-	if (!isAuthenticated) {
+	if (!isAuthenticated()) {
 		return <GenericFallback title='' icon={<span />} />;
 	}
 
