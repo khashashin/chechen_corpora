@@ -1,5 +1,5 @@
+import nltk
 from uuid import uuid4
-from nltk import tokenize
 from django.contrib.postgres.search import TrigramSimilarity
 from rest_framework import permissions
 from rest_framework.views import APIView
@@ -7,6 +7,8 @@ from rest_framework.response import Response
 
 from lakharg.models import Words
 from zubdarg.models import Page, Book
+
+nltk.download('punkt')
 
 
 def remove_non_alphabetic_characters(sentence):
@@ -70,7 +72,7 @@ class SearchView(APIView):
             'similar_words': similar_words,
         }
         for page in pages:
-            sentences = tokenize.sent_tokenize(page.text)
+            sentences = nltk.tokenize.sent_tokenize(page.text)
             for sentence in sentences:
                 if query in sentence:
                     # this is crazy, but all what it does is to get all the words that match the query
