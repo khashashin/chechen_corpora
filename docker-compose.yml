@@ -14,7 +14,9 @@ services:
     volumes:
       - staticfiles:/app/staticfiles
       - mediafiles:/app/media
-    command: gunicorn core.wsgi:application --bind 0.0.0.0:8000
+    command: >
+      bash -c "python manage.py migrate
+      && gunicorn core.wsgi:application --bind 0.0.0.0:8000"
     env_file: ./backend/.env
     expose:
       - 8000

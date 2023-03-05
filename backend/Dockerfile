@@ -39,4 +39,4 @@ RUN chmod 755 /app/lakharg/management/commands/*
 USER khas
 
 # Run entrypoint
-ENTRYPOINT ["sh", "/scripts/entrypoint.sh"]
+# ENTRYPOINT ["sh", "/scripts/entrypoint.sh"]
