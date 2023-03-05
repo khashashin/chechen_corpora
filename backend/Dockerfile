@@ -16,11 +16,11 @@ WORKDIR /app
 
 # Install Python dependencies
 RUN pip install --upgrade pip
-COPY ./requirements.txt ./requirements.txt
+COPY ./requirements.txt /app/
 RUN pip install -r requirements.txt
 
 # Copy project files
-COPY . .
+COPY . /app
 
 RUN mkdir /scripts
 COPY ./scripts /scripts
@@ -28,13 +28,15 @@ RUN sed -i 's/\r$//g' /scripts/entrypoint.sh
 RUN chmod +x /scripts/*
 
 # Prepare user and permissions
-RUN addgroup --system appgroup && adduser --system appuser --ingroup appgroup
-RUN chown -R appuser:appgroup /app
-RUN chown -R appuser:appgroup /scripts
-RUN chmod -R 755 /app
+RUN addgroup --system khas && adduser --system --ingroup khas khas
+RUN chown khas:khas /app/*
+RUN chown khas:khas /app/lakharg/management/commands/*
+RUN chown khas:khas /scripts/*
+RUN chmod 755 /app/*
+RUN chmod 755 /app/lakharg/management/commands/*
 
 # Switch to appuser
-USER appuser
+USER khas
 
 # Run entrypoint
 ENTRYPOINT ["sh", "/scripts/entrypoint.sh"]
