@@ -77,7 +77,20 @@ function SearchResults(props: SearchResultsProps) {
 			{searchData && (
 				<Stack spacing={isMobile ? 'md' : 'xl'}>
 					{searchData?.results.map((item: any) => (
-						<Paper key={item.uuid} shadow='sm' p={isMobile ? 'md' : 'xl'}>
+						<Paper
+							key={item.uuid}
+							shadow='sm'
+							p={isMobile ? 'md' : 'xl'}
+							sx={{
+								cursor: 'pointer',
+							}}
+							onClick={() => {
+								if (opened.includes(item.uuid)) {
+									setOpened((o) => o.filter((id) => id !== item.uuid));
+								} else {
+									setOpened((o) => [...o, item.uuid]);
+								}
+							}}>
 							<Group position='apart' spacing='md' noWrap>
 								{getSearchItemContent(item)}
 								{opened.includes(item.uuid) ? (
