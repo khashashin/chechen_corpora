@@ -4,7 +4,6 @@ import BrandLogo from '../BrandLogo';
 
 const useStyles = createStyles((theme) => ({
 	footer: {
-		marginTop: 120,
 		borderTop: `1px solid ${
 			theme.colorScheme === 'dark' ? theme.colors.dark[5] : theme.colors.gray[2]
 		}`,
@@ -32,7 +31,7 @@ const useStyles = createStyles((theme) => ({
 const links = [
 	{
 		link: 'mailto:info@dosham.info',
-		label: 'Написать нам',
+		label: 'Написать нам: info@dosham.info',
 	},
 ];
 

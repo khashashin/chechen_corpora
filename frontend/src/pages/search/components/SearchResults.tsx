@@ -43,7 +43,10 @@ function SearchResults(props: SearchResultsProps) {
 	};
 
 	return (
-		<Box>
+		<Box
+			sx={{
+				minHeight: 'calc(100vh - 280px)',
+			}}>
 			{isLoading && <p>Loading...</p>}
 			{searchData?.results.length === 0 && <p>Ничего не найдено</p>}
 			{searchData?.results.length > 0 && (
