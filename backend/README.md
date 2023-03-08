@@ -1,7 +1,7 @@
 # Backend set up
 
 ## Prerequisites
-Make shure you have installed the following:
+Make sure you have installed the following:
 
 - [Python 3.10](https://www.python.org/downloads/)
 - [PostgreSQL](https://www.postgresql.org/download/)
