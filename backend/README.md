@@ -91,6 +91,19 @@ Run the migrations.
 python manage.py migrate
 ```
 
+## Uploading prepared data
+In order to upload the prepared book which can be found under `../libs/parsers/ibt.org.ru/data/upload.json`, you need to run the following command.
+```bash
+python manage.py upload_book
+```
+
+## Initialize unique words
+In order to initialize the unique words, you need to run the following command.
+```bash
+python manage.py update_words
+```
+Now you can start the server and use the API.
+
 ## Running the server
 ```bash
 python manage.py runserver
