@@ -9,6 +9,14 @@ Make sure you have installed the following:
 You need the PostgreSQL setup to be able to run migrations since this project uses PostgreSQL trigram extension.
 
 ## Installation
+Prepare PostgreSQL database and user. You can use the following commands to create the database and user.
+```bash
+sudo -u postgres psql
+CREATE DATABASE your_db_name;
+CREATE USER your_db_user WITH PASSWORD 'your_db_password';
+GRANT ALL PRIVILEGES ON DATABASE your_db_name TO your_db_user;
+```
+
 Clone the repository and install the requirements.
 
 ```bash
@@ -29,7 +37,7 @@ Install the requirements.
 ```bash
 pip install -r requirements.txt
 ```
-Create a `local.py` file in the `backend/settings/local.py` and add the following lines.
+Create a `local.py` file in the `core/settings/local.py` and add the following lines.
 ```python
 from .base import *
 
@@ -70,7 +78,7 @@ Create a `.env` file in the `backend` directory and add the following lines.
 SECRET_KEY=your_secret_key
 HASHID_FIELD_SALT=your_hashid_field_salt
 DEBUG=True
-ALLOWED_HOSTS=localhost
+ALLOWED_HOSTS=localhost,127.0.0.1
 CORS_ALLOW_HEADERS=USER_ID,User-ID,Authorization,Content-Type
 
 DB_ENGINE=django.db.backends.postgresql
