@@ -12,7 +12,7 @@ class Command(BaseCommand):
     help = 'Upload book'
 
     def handle(self, *args, **options):
-        data_path = os.path.join(BASE_DIR, '../libs/parsers/ibt.org.ru/data')
+        data_path = os.path.join(BASE_DIR, 'lakharg', 'management', 'commands')
 
         book_title = 'Делан йозанаш'
         book_summary = 'Товратах а, Инжилах а лаьтташ долу Делан Йозанаш'

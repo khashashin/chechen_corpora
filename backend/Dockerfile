@@ -22,10 +22,6 @@ RUN pip install -r requirements.txt
 # Copy project files
 COPY . /app
 
-# Copy mock data
-RUN mkdir /libs
-COPY ../libs /libs
-
 RUN mkdir /scripts
 COPY ./scripts /scripts
 RUN sed -i 's/\r$//g' /scripts/entrypoint.sh
@@ -36,7 +32,6 @@ RUN addgroup --system khas && adduser --system --ingroup khas khas
 RUN chown khas:khas /app/*
 RUN chown khas:khas /app/lakharg/management/commands/*
 RUN chown khas:khas /scripts/*
-RUN chown khas:khas /libs/*
 RUN chmod 755 /app/*
 RUN chmod 755 /app/lakharg/management/commands/*
 
