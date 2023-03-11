@@ -4,15 +4,15 @@ from .models import *
 from hashid_field.rest import HashidSerializerCharField
 
 
+COMMON_FIELDS = ('title', 'summary', 'publication_date', 'genres', 'authors', 'sources', 'publisher')
+
+
 class PageSerializer(serializers.ModelSerializer):
     id = HashidSerializerCharField(source_field='zubdarg.Page.id', read_only=True)
-    book = serializers.PrimaryKeyRelatedField(
-        pk_field=HashidSerializerCharField(source_field='zubdarg.Book.id'),
-        queryset=Book.objects.all())
 
     class Meta:
         model = Page
-        fields = ('id', 'number', 'text', 'book')
+        fields = ('id', 'number', 'text')
 
 
 class SourceSerializer(serializers.ModelSerializer):
@@ -23,31 +23,91 @@ class SourceSerializer(serializers.ModelSerializer):
         fields = ('id', 'name')
 
 
+class GenreSerializer(serializers.ModelSerializer):
+    id = HashidSerializerCharField(source_field='zubdarg.Genre.id', read_only=True)
+
+    class Meta:
+        model = Genre
+        fields = ('id', 'name')
+
+
+class PublisherSerializer(serializers.ModelSerializer):
+    id = HashidSerializerCharField(source_field='zubdarg.Publisher.id', read_only=True)
+
+    class Meta:
+        model = Publisher
+        fields = ('id', 'name')
+
+
+class AuthorSerializer(serializers.ModelSerializer):
+    id = HashidSerializerCharField(source_field='zubdarg.Author.id', read_only=True)
+
+    class Meta:
+        model = Author
+        fields = ('id', 'name')
+
+
 class BooksListSerializer(serializers.ModelSerializer):
     id = HashidSerializerCharField(source_field='zubdarg.Book.id', read_only=True)
     sources = SourceSerializer(many=True, read_only=True)
+    genres = GenreSerializer(many=True, read_only=True)
+    publisher = PublisherSerializer(many=True, read_only=True)
+    authors = AuthorSerializer(many=True, read_only=True)
 
     class Meta:
         model = Book
-        fields = ('id', 'title', 'summary', 'isbn', 'publication_date', 'sources')
+        fields = ('id', 'isbn') + COMMON_FIELDS
 
 
 class BookSerializer(BooksListSerializer):
-    pages = PageSerializer(many=True, read_only=True, source='page_set')
-
+    pages = PageSerializer(many=True, read_only=True)
     class Meta:
         model = Book
-        fields = ('id', 'title', 'summary', 'isbn', 'publication_date', 'sources', 'pages')
+        fields = ('id', 'isbn') + COMMON_FIELDS + ('pages',)
 
 
-class BookCreateSerializer(serializers.ModelSerializer):
+def perform_nested_create(model, validated_data):
+    pages_data = validated_data.pop('pages')
+    genres_data = validated_data.pop('genres')
+    authors_data = validated_data.pop('authors')
+    publisher_data = validated_data.pop('publisher')
+    sources_data = validated_data.pop('sources')
+
+    for page in pages_data:
+        page['document'] = model
+        Page.objects.create(**page)
+
+    for source_name in sources_data:
+        source, created = Source.objects.get_or_create(name=source_name)
+        model.sources.add(source)
+
+    for genre_name in genres_data:
+        genre, created = Genre.objects.get_or_create(name=genre_name)
+        model.genres.add(genre)
+
+    for author_name in authors_data:
+        author, created = Author.objects.get_or_create(name=author_name)
+        model.authors.add(author)
+
+    for publisher_name in publisher_data:
+        publisher, created = Publisher.objects.get_or_create(name=publisher_name)
+        model.publisher.add(publisher)
+
+
+class BaseCreateSerializer(serializers.ModelSerializer):
     pages = serializers.ListField(write_only=True)
+    genres = serializers.ListField(write_only=True)
+    authors = serializers.ListField(write_only=True)
+    publisher = serializers.ListField(write_only=True)
     sources = serializers.ListField(write_only=True)
-    id = HashidSerializerCharField(source_field='zubdarg.Book.id', read_only=True)
+
+
+class BookCreateSerializer(BaseCreateSerializer):
+    class Meta:
+        model = Book
+        fields = COMMON_FIELDS + ('isbn', 'pages')
 
     def create(self, validated_data):
-        pages_data = validated_data.pop('pages')
-        sources_data = validated_data.pop('sources')
 
         title = validated_data.pop('title', None)
 
@@ -62,25 +122,10 @@ class BookCreateSerializer(serializers.ModelSerializer):
         }
         book = Book.objects.create(**book_data)
 
-        for page_data in pages_data:
-            page_data = {
-                'number': page_data['number'],
-                'text': page_data['text'],
-                'book': book
-            }
-            Page.objects.create(**page_data)
-
-        for source_data in sources_data:
-            source_data = {
-                'name': source_data,
-                'book': book
-            }
-            Source.objects.create(**source_data)
+        perform_nested_create(book, validated_data)
 
         return book
 
     class Meta:
-        model = Book
-        fields = '__all__'
 
 
