@@ -19,14 +19,7 @@ import Registration from '../../pages/auth/register';
 import ForgotPassword from '../../pages/auth/forgot-password';
 import Recovery from '../../pages/auth/recovery';
 import Verify from '../../pages/auth/verify';
-
-function waitForAuth() {
-	return new Promise<void>((resolve) => {
-		setTimeout(() => {
-			resolve();
-		}, 1000);
-	});
-}
+import ArticlesPage from '../../pages/articles';
 
 const coreRoutes: Route[] = [
 	{
@@ -47,11 +40,6 @@ const coreRoutes: Route[] = [
 	{
 		id: 'admin',
 		path: '/admin',
-		loader: async () => {
-			return {
-				auth: await waitForAuth(),
-			};
-		},
 		element: (
 			<AuthOnly>
 				<AppShell>
@@ -99,6 +87,16 @@ const coreRoutes: Route[] = [
 					{
 						path: '/upload',
 						element: <BookUpload />,
+					},
+				],
+			},
+			{
+				id: 'articles',
+				path: '/articles',
+				children: [
+					{
+						path: '/',
+						element: <ArticlesPage />,
 					},
 				],
 			},
