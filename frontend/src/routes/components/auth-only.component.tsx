@@ -1,26 +1,22 @@
 import { useNavigate } from '@tanstack/react-location';
 import { memo, useEffect } from 'react';
 import GenericFallback from '../../providers/generic-fallback.provider';
-import { useAuth } from '../../providers/auth-provider';
 
 interface Props {
 	children: JSX.Element;
 }
 
+const { VITE_LS_SESSION_KEY } = import.meta.env;
+
 function AuthOnly({ children }: Props) {
-	const { isAuthenticated } = useAuth();
+	const user = localStorage.getItem(`${VITE_LS_SESSION_KEY}-jwt`);
 	const navigate = useNavigate();
 
 	useEffect(() => {
-		const handleChildrenRender = async () => {
-			const isLoggedIn = await isAuthenticated;
-			if (!isLoggedIn) navigate({ to: '/auth/login' });
-		};
+		if (!user) navigate({ to: '/auth/login' });
+	}, [user, navigate]);
 
-		handleChildrenRender();
-	}, [isAuthenticated, navigate]);
-
-	if (!isAuthenticated) {
+	if (!user) {
 		return <GenericFallback title='' icon={<span />} />;
 	}
 
