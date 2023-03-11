@@ -167,6 +167,8 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
 				setUser(null);
 				setJWT(null);
 				localStorage.removeItem(VITE_LS_SESSION_KEY);
+				localStorage.removeItem(`${VITE_LS_SESSION_KEY}-user-id`);
+				localStorage.removeItem(`${VITE_LS_SESSION_KEY}-jwt`);
 			})
 			.catch((err) => Promise.reject(new Error('Unable to logout user. [ERROR]: ', err)));
 	}, [fetchSession]);
