@@ -34,7 +34,7 @@ function BooksPage() {
 	const [query, setQuery] = useState('');
 	const [debouncedQuery] = useDebouncedValue(query, 200);
 	const [pageSize, setPageSize] = useState(PAGE_SIZES[1]);
-	const [records, setRecords] = useState(sortBy(books.slice(0, pageSize), 'name'));
+	const [records, setRecords] = useState(sortBy(books.slice(0, pageSize), 'title'));
 	const [page, setPage] = useState(1);
 	const [sortStatus, setSortStatus] = useState<DataTableSortStatus>({
 		columnAccessor: 'title',

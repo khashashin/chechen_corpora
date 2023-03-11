@@ -102,7 +102,7 @@ function BookMetaDrawer(props: BookMetaDrawerProps) {
 											: 'none',
 								},
 							}}>
-							{form.values.sources.map((source: any, index: number) => (
+							{form.values.sources.map((source: string, index: number) => (
 								<TextInput
 									key={source}
 									placeholder='Введите ссылку на источник'
