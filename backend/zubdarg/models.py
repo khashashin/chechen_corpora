@@ -72,3 +72,7 @@ class Page(models.Model):
 class Book(Document):
     isbn = models.CharField(max_length=255, null=True, blank=True)
     pages = GenericRelation(Page, related_query_name='book')
+
+class Article(Document):
+    volume = models.CharField(max_length=255, null=True, blank=True)
+    pages = GenericRelation(Page, related_query_name='article')

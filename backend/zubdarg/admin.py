@@ -9,9 +9,9 @@ class BookAdmin(admin.ModelAdmin):
 
 
 class PageAdmin(admin.ModelAdmin):
-    list_display = ("number", "book")
-    list_filter = ("book",)
-    search_fields = ("book__title",)
+    list_display = ("number", "document")
+    list_filter = ("document",)
+    search_fields = ("document__title",)
 
 
 class AuthorAdmin(admin.ModelAdmin):

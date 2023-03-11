@@ -30,6 +30,18 @@ class BookViewSet(viewsets.ModelViewSet):
         return BookSerializer
 
 
+class ArticleViewSet(viewsets.ModelViewSet):
+    queryset = Article.objects.all()
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+
+    def get_serializer_class(self):
+        if self.action == 'create':
+            return ArticleCreateSerializer
+        if self.action == 'list':
+            return ArticlesListSerializer
+        return ArticleSerializer
+
+
 class PageViewSet(viewsets.ModelViewSet):
     queryset = Page.objects.all()
     serializer_class = PageSerializer

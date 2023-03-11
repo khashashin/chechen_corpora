@@ -126,6 +126,49 @@ class BookCreateSerializer(BaseCreateSerializer):
 
         return book
 
+
+class ArticlesListSerializer(serializers.ModelSerializer):
+    id = HashidSerializerCharField(source_field='zubdarg.Article.id', read_only=True)
+    sources = SourceSerializer(many=True, read_only=True)
+    genres = GenreSerializer(many=True, read_only=True)
+    publisher = PublisherSerializer(many=True, read_only=True)
+    authors = AuthorSerializer(many=True, read_only=True)
+
     class Meta:
+        model = Article
+        fields = ('id', 'volume') + COMMON_FIELDS
+
+
+class ArticleSerializer(ArticlesListSerializer):
+    pages = PageSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Article
+        fields = ('id', 'volume') + COMMON_FIELDS + ('pages',)
+
+
+class ArticleCreateSerializer(BaseCreateSerializer):
+    class Meta:
+        model = Article
+        fields = COMMON_FIELDS + ('volume', 'pages')
+
+    def create(self, validated_data):
+
+        title = validated_data.pop('title', None)
+
+        if title is None:
+            raise serializers.ValidationError('Title is required')
+
+        article_data = {
+            'title': title,
+            'summary': validated_data.pop('summary'),
+            'volume': validated_data.pop('volume'),
+            'publication_date': validated_data.pop('publication_date')
+        }
+        article = Article.objects.create(**article_data)
+
+        perform_nested_create(article, validated_data)
+
+        return article
 
 

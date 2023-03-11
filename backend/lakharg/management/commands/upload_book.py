@@ -35,9 +35,9 @@ class Command(BaseCommand):
 
             for page, text in book_data.items():
                 Page.objects.create(
-                    book=book,
                     number=page,
-                    text=text
+                    text=text,
+                    document=book
                 )
 
                 self.stdout.write(self.style.SUCCESS(f'Successfully created page {page}'))
