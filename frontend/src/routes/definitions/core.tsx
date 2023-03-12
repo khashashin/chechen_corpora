@@ -20,6 +20,7 @@ import ForgotPassword from '../../pages/auth/forgot-password';
 import Recovery from '../../pages/auth/recovery';
 import Verify from '../../pages/auth/verify';
 import ArticlesPage from '../../pages/articles';
+import ArticleAdd from '../../pages/articles/article-add';
 
 const coreRoutes: Route[] = [
 	{
@@ -97,6 +98,10 @@ const coreRoutes: Route[] = [
 					{
 						path: '/',
 						element: <ArticlesPage />,
+					},
+					{
+						path: '/add',
+						element: <ArticleAdd />,
 					},
 				],
 			},
