@@ -15,12 +15,13 @@ import 'dayjs/locale/ru';
 import { DatePicker } from '@mantine/dates';
 import { IconAlertCircle } from '@tabler/icons';
 import { RiDeleteBin4Line } from 'react-icons/all';
-import { BookMeta } from '../../../models/books/BookMeta';
+import { Book } from '../../../models/book';
+import { Source } from '../../../models/base';
 
 type BookMetaDrawerProps = {
 	opened: boolean;
-	onClose: (values: BookMeta) => void;
-	bookMeta: BookMeta;
+	onClose: (values: Book) => void;
+	bookMeta: Book;
 };
 
 function BookMetaDrawer(props: BookMetaDrawerProps) {
@@ -35,6 +36,20 @@ function BookMetaDrawer(props: BookMetaDrawerProps) {
 			sources: bookMeta.sources,
 		},
 	});
+
+	const handleDeleteSource = (index: number) => {
+		if (form.values.sources === undefined) return;
+		const { sources } = form.values;
+		sources.splice(index, 1);
+		form.setFieldValue('sources', sources);
+	};
+
+	const handleAddSource = () => {
+		if (form.values.sources === undefined) return;
+		const { sources } = form.values;
+		sources.push({ name: '' });
+		form.setFieldValue('sources', sources);
+	};
 
 	return (
 		<Drawer
@@ -90,42 +105,46 @@ function BookMetaDrawer(props: BookMetaDrawerProps) {
 						<ScrollArea
 							mt='md'
 							style={{
-								height: form.values.sources.length > 4 ? 250 : 'auto',
+								height: 'auto',
+								...(form.values.sources &&
+									form.values.sources.length > 4 && {
+										height: 250,
+									}),
 							}}
 							type='auto'
 							offsetScrollbars
 							viewportProps={{
 								style: {
-									boxShadow:
-										form.values.sources.length > 4
-											? 'inset 0px -10px 10px -10px #000000, inset 0px 10px 10px -10px #000000'
-											: 'none',
+									boxShadow: 'none',
+									...(form.values.sources &&
+										form.values.sources.length > 4 && {
+											boxShadow:
+												'inset 0px -10px 10px -10px #000000, inset 0px 10px 10px -10px #000000',
+										}),
 								},
 							}}>
-							{form.values.sources.map((source: string, index: number) => (
-								<TextInput
-									key={source}
-									placeholder='Введите ссылку на источник'
-									label={`Источник ${index + 1}`}
-									size='xs'
-									{...form.getInputProps(`sources.${index}`)} // eslint-disable-line react/jsx-props-no-spreading
-									rightSection={
-										<ActionIcon
-											variant='transparent'
-											size='sm'
-											onClick={() => {
-												const sources = form.values.sources.filter(
-													(_: any, i: number) => i !== index
-												);
-												form.setFieldValue('sources', sources);
-											}}>
-											<RiDeleteBin4Line size={18} />
-										</ActionIcon>
-									}
-								/>
-							))}
+							{form.values.sources &&
+								form.values.sources.map((source: Source, index: number) => (
+									<TextInput
+										key={source.name}
+										placeholder='Введите ссылку на источник'
+										label={`Источник ${index + 1}`}
+										size='xs'
+										{...form.getInputProps(`sources.${index}`)} // eslint-disable-line react/jsx-props-no-spreading
+										rightSection={
+											<ActionIcon
+												variant='transparent'
+												size='sm'
+												onClick={() => {
+													handleDeleteSource(index);
+												}}>
+												<RiDeleteBin4Line size={18} />
+											</ActionIcon>
+										}
+									/>
+								))}
 						</ScrollArea>
-						{form.values.sources.length === 0 && (
+						{form.values.sources && form.values.sources.length === 0 && (
 							<Alert
 								icon={<IconAlertCircle size={16} />}
 								title='Вы не добавили ни одного источника!'
@@ -138,7 +157,7 @@ function BookMetaDrawer(props: BookMetaDrawerProps) {
 						<Button
 							mt='md'
 							onClick={() => {
-								form.setFieldValue('sources', [...form.values.sources, '']);
+								handleAddSource();
 							}}>
 							Добавить ресурс
 						</Button>

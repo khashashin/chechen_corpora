@@ -22,26 +22,24 @@ import {
 } from '@tabler/icons';
 import { useMutation } from '@tanstack/react-query';
 import BookMetaDrawer from './components/BookMetaInfo';
-import { BookMeta } from '../../models/books/BookMeta';
 import { BookUtils } from './services/utils';
-import { BookResponse, PageCreate } from '../../models/books/BookDto';
 import UploadFileModal from './components/UploadFileModal';
 import { createBook } from './services/api';
 import SharedUtils from '../../shared/utils';
+import { Book, BookCreateResponse } from '../../models/book';
+import Page from '../../models/page';
 
 const PAGE_SIZE = 1;
 
 function BooksAdd() {
 	const [drawerOpen, setDrawerOpen] = useState(false);
-	const [pages, setPages] = useState<PageCreate[]>([
-		{ text: '', number: 1, id: SharedUtils.uuidv4 },
-	]);
+	const [pages, setPages] = useState<Page[]>([{ text: '', number: 1, id: SharedUtils.uuidv4 }]);
 	const [page, setPage] = useState(1);
 	const [records, setRecords] = useState(pages.slice(0, PAGE_SIZE));
 	const [isSaved, setIsSaved] = useState(false);
 	const [popoverOpened, setPopoverOpened] = useState(false);
 	const isMobile = useMediaQuery('(max-width: 600px)');
-	const [bookMeta, setBookMeta] = useState<BookMeta>({
+	const [bookMeta, setBookMeta] = useState<Book>({
 		title: '',
 		summary: '',
 		isbn: '',
@@ -91,7 +89,7 @@ function BooksAdd() {
 		setRecords(pages.slice(from, to));
 	}, [page, pages]);
 
-	const handleBookMetaChange = (values: BookMeta) => {
+	const handleBookMetaChange = (values: Book) => {
 		setBookMeta(values);
 		setDrawerOpen(false);
 	};
@@ -110,16 +108,18 @@ function BooksAdd() {
 			return rest;
 		});
 
-		const date = new Date(bookMeta.publication_date);
+		const date = bookMeta.publication_date ? new Date(bookMeta.publication_date) : null;
 
 		const book = {
 			title: bookMeta.title,
 			summary: bookMeta.summary,
 			isbn: bookMeta.isbn,
-			publication_date: `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`,
+			publication_date: date
+				? `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`
+				: date,
 			sources: bookMeta.sources,
 			pages: pagesWithoutId,
-		} as any;
+		} as Book;
 
 		mutation.mutate(book);
 	};
@@ -149,12 +149,12 @@ function BooksAdd() {
 		setDropZoneOpened(true);
 	};
 
-	const onBookUpload = async (book: BookResponse) => {
+	const onBookUpload = async (book: BookCreateResponse) => {
 		setIsLoading(true);
 		setDropZoneOpened(false);
-		setBookMeta({} as BookMeta);
-		const newPages: PageCreate[] = [];
-		Object.keys(book).forEach((key) => {
+		setBookMeta({} as Book);
+		const newPages: Page[] = [];
+		Object.keys(book).forEach((key: string) => {
 			const pageText = book[key];
 			newPages.push({ text: pageText, number: parseInt(key, 10), id: SharedUtils.uuidv4 });
 		});

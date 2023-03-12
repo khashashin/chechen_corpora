@@ -5,8 +5,7 @@ import { memo, useRef } from 'react';
 import { useMutation } from '@tanstack/react-query';
 import { showNotification, updateNotification } from '@mantine/notifications';
 import { uploadJson } from '../services/api';
-import { JSONFile } from '../models';
-import { BookResponse } from '../../../models/books/BookDto';
+import { BookCreateResponse, JSONFile } from '../../../models/book';
 
 const useStyles = createStyles((theme) => ({
 	wrapper: {
@@ -35,7 +34,7 @@ type UploadFileModalProps = {
 	dropZoneOpened: boolean;
 	setDropZoneOpened: (value: boolean) => void;
 	setIsLoading: (value: boolean) => void;
-	onBookUpload: (book: BookResponse) => void;
+	onBookUpload: (book: BookCreateResponse) => void;
 };
 
 function UploadFileModal(props: UploadFileModalProps) {
@@ -62,7 +61,7 @@ function UploadFileModal(props: UploadFileModalProps) {
 			reader.onload = async () => {
 				const json = JSON.parse(reader.result as string) as JSONFile;
 				const response = await mutation.mutateAsync(json);
-				onBookUpload(response as BookResponse);
+				onBookUpload(response as BookCreateResponse);
 				updateNotification({
 					id: 'uploadingJSON',
 					loading: false,

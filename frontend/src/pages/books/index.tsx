@@ -19,7 +19,7 @@ import { DataTable, DataTableSortStatus } from 'mantine-datatable';
 import { useNavigate } from '@tanstack/react-location';
 import { useEffect, useState } from 'react';
 import { getBooks } from './services/api';
-import { Book } from '../../models/books/BookDto';
+import { Book } from '../../models/book';
 
 const PAGE_SIZES = [5, 20, 50];
 
@@ -68,11 +68,12 @@ function BooksPage() {
 		);
 	}, [debouncedQuery, books]);
 
-	const handleReadClick = (id: number) => {
-		navigate({
+	const handleReadClick = (book: Book) => {
+		const { id } = book;
+		if (!id) return undefined;
+		return navigate({
 			to: `/admin/books/${id}`,
 		});
-		return undefined;
 	};
 
 	return (
@@ -147,7 +148,7 @@ function BooksPage() {
 													compact
 													component='a'
 													variant='outline'
-													onClick={() => handleReadClick(book.id)}>
+													onClick={() => handleReadClick(book)}>
 													Читать
 												</Button>
 											),

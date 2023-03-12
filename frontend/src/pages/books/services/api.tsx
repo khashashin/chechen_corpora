@@ -1,6 +1,5 @@
 import axios from '../../../shared/ApiService';
-import { Book, BookCreate, BookResponse } from '../../../models/books/BookDto';
-import { JSONFile } from '../models';
+import { Book, BookCreateResponse, JSONFile } from '../../../models/book';
 
 const { VITE_API_ENDPOINT } = import.meta.env;
 
@@ -14,7 +13,7 @@ export const getBook = async (id: string): Promise<Book> => {
 	return response.data;
 };
 
-export const uploadJson = async (data: JSONFile): Promise<BookResponse> => {
+export const uploadJson = async (data: JSONFile): Promise<BookCreateResponse> => {
 	const response = await axios(`${VITE_API_ENDPOINT}/upload/json/`, {
 		method: 'POST',
 		data: { file: data },
@@ -23,7 +22,7 @@ export const uploadJson = async (data: JSONFile): Promise<BookResponse> => {
 	return response.data;
 };
 
-export const createBook = async (data: BookCreate): Promise<any> => {
+export const createBook = async (data: Book): Promise<Book> => {
 	const response = await axios(`${VITE_API_ENDPOINT}/books/`, {
 		method: 'POST',
 		data,
