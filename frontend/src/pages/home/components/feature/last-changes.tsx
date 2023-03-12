@@ -1,5 +1,13 @@
-import React from 'react';
 import { Text, Title, Container, SimpleGrid, Paper, Group, createStyles } from '@mantine/core';
+import { Client, Databases } from 'appwrite';
+import { useEffect, useState } from 'react';
+
+const { VITE_AUTH_ENDPOINT, VITE_AUTH_PROJECT_ID } = import.meta.env;
+
+const client = new Client();
+client.setEndpoint(VITE_AUTH_ENDPOINT).setProject(VITE_AUTH_PROJECT_ID);
+
+const databases = new Databases(client);
 
 const useStyles = createStyles((theme) => ({
 	wrapper: {
@@ -28,31 +36,30 @@ const useStyles = createStyles((theme) => ({
 	},
 }));
 
-const PaperData = [
-	{
-		title: 'Добавлена новая книга',
-		description:
-			'Добавлена новая книга "Как стать программистом", которая включает в себя 1000 страниц и 987123 уникальных слов.',
-	},
-	{
-		title: 'Добавлена новая статья',
-		description:
-			'Добавлена новая статья о том, как горы меняют свою форму. Статья включает в себя 1000 страниц и 987123 уникальных слов.',
-	},
-	{
-		title: 'Отредактирована книга "Как стать программистом"',
-		description:
-			'Отредактирована книга "Как стать программистом", которая включает в себя 1000 страниц и 987123 уникальных слов.',
-	},
-	{
-		title: 'Добавлен новый журнал',
-		description:
-			'Добавлен новый журнал "Как стать программистом", который включает в себя 1000 страниц и 987123 уникальных слов.',
-	},
-];
+type Notifications = {
+	title: string;
+	message: string;
+};
 
 function LastChanges() {
 	const { classes, theme } = useStyles();
+	const [notifications, setNotifications] = useState<Notifications[]>([]);
+
+	const getNotifications = async () => {
+		return databases.listDocuments('640dec564dd6addc5f2f', '640dec68e9ae407e09f5');
+	};
+
+	useEffect(() => {
+		(async () => {
+			const messages = await getNotifications();
+			const data = messages.documents.map((item) => ({
+				title: item.title,
+				message: item.message,
+			}));
+
+			setNotifications(data);
+		})();
+	}, []);
 
 	return (
 		<Container className={classes.wrapper}>
@@ -72,7 +79,7 @@ function LastChanges() {
 					{ maxWidth: 980, cols: 2, spacing: 'xl' },
 					{ maxWidth: 755, cols: 1, spacing: 'xl' },
 				]}>
-				{PaperData.map((item) => (
+				{notifications.map((item) => (
 					<Paper key={`${item.title}-${Date.now()}`} withBorder p='lg' radius='md' shadow='md'>
 						<Group position='apart' mb='xs'>
 							<Text size='md' weight={500}>
@@ -80,7 +87,7 @@ function LastChanges() {
 							</Text>
 						</Group>
 						<Text color='dimmed' size='xs'>
-							{item.description}
+							{item.message}
 						</Text>
 					</Paper>
 				))}
