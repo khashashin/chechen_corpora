@@ -6,7 +6,7 @@ const SharedUtils = {
 	}),
 	getChartData: (data: any) => {
 		return data.results.reduce((acc: any, item: any) => {
-			const year = SharedUtils.getWordUsageYear(item);
+			const { year } = item.origin;
 			const words = item.matching_words;
 			if (year) {
 				if (acc[year]) {
@@ -17,15 +17,6 @@ const SharedUtils = {
 			}
 			return acc;
 		}, {});
-	},
-	getWordUsageYear: (data: any) => {
-		const sources = ['book', 'article', 'newspaper', 'other'];
-		return sources.reduce((acc: any, source: string) => {
-			if (data[source] && data[source].year) {
-				return data[source].year;
-			}
-			return acc;
-		}, null);
 	},
 };
 

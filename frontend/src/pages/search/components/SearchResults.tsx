@@ -107,11 +107,11 @@ function SearchResults(props: SearchResultsProps) {
 									</ActionIcon>
 								)}
 							</Group>
-							{opened.includes(item.uuid) && item.book.sources.length > 0 && (
+							{opened.includes(item.uuid) && item.origin.sources.length > 0 && (
 								<>
-									<h5>Ресурс{item.book.sources.length > 1 ? 'ы' : ''}:</h5>
+									<h5>Ресурс{item.origin.sources.length > 1 ? 'ы' : ''}:</h5>
 									<ul>
-										{item.book.sources.map((source: string) => (
+										{item.origin.sources.map((source: string) => (
 											<li key={SharedUtils.uuidv4}>{source}</li>
 										))}
 									</ul>

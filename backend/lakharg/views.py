@@ -1,12 +1,15 @@
 import nltk
 from uuid import uuid4
+
+from django.contrib.contenttypes.models import ContentType
 from django.contrib.postgres.search import TrigramSimilarity
 from rest_framework import permissions
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from hashid_field import Hashid
 
 from lakharg.models import Words
-from zubdarg.models import Page, Book
+from zubdarg.models import Page, Book, Article
 
 nltk.download('punkt')
 
@@ -77,6 +80,7 @@ class SearchView(APIView):
                 if query in sentence:
                     # this is crazy, but all what it does is to get all the words that match the query
                     # and remove all the non-alphabetic characters
+                    words = []
                     for q in query.split(' '):
                         words = [''.join([char for char in word if char.isalpha() or char == '-']) for word in sentence.split(' ') if q in word.lower()]
                         # unique words
@@ -119,6 +123,13 @@ class SearchView(APIView):
                             remove_non_alphabetic_characters(f'{append_dots(sentence, query)} {next_word}')
                         )
 
+                    # get the content type of the origin
+                    origin = page.content_type.name
+                    origin_object = None
+                    if origin == 'book':
+                        origin_object = Book.objects.get(id=Hashid(page.object_id))
+                    elif origin == 'article':
+                        origin_object = Article.objects.get(id=Hashid(page.object_id))
 
                     response['results'].append({
                         'uuid': f'{uuid4()}',
@@ -128,12 +139,16 @@ class SearchView(APIView):
                         'next_sentence': next_sentence,
                         'query': query,
                         'matching_words': words,
-                        'book': {
-                            'title': page.book.title,
-                            'id': f'{page.book.id.hashid}',
-                            'year': page.book.publication_date.year,
+                        'origin': {
+                            'title': origin_object.title,
+                            'id': f'{origin_object.id.hashid}',
+                            'year': origin_object.publication_date.year,
                             'page': page.number,
-                            'sources': [source.name for source in page.book.sources.all()],
+                            'sources': [source.name for source in origin_object.sources.all()],
+                            'authors': [author.name for author in origin_object.authors.all()],
+                            'genres': [genre.name for genre in origin_object.genres.all()],
+                            'publishers': [publisher.name for publisher in origin_object.publisher.all()],
+                            'type': origin,
                         }
                     })
 
