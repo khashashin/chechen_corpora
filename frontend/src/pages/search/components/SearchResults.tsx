@@ -2,6 +2,7 @@ import { ActionIcon, Box, Group, Paper, Stack } from '@mantine/core';
 import { useMediaQuery } from '@mantine/hooks';
 import { memo, useState } from 'react';
 import { BsChevronBarContract, BsChevronBarExpand } from 'react-icons/all';
+import { escapeRegExp } from 'lodash';
 import SearchUniqueWords from './SearchUniqueWords';
 import SharedUtils from '../../../shared/utils';
 import SearchWordPopularityChart from './SearchWordPopularityChart';
@@ -22,11 +23,14 @@ function SearchResults(props: SearchResultsProps) {
 	const isMobile = useMediaQuery('(max-width: 600px)');
 
 	const handleQueryHighlight = (sentence: string) => {
-		if (searchQuery.includes('1')) {
-			const query = searchQuery.replaceAll('1', 'ӏ');
-			return sentence.replace(query, `<mark>${query}</mark>`);
+		const escapedQuery = escapeRegExp(searchQuery);
+
+		if (escapedQuery.includes('1')) {
+			const query = escapedQuery.replaceAll('1', 'ӏ');
+			// mark all occurrences of the query
+			return sentence.replace(new RegExp(`(${query})`, 'gi'), '<mark>$1</mark>');
 		}
-		return sentence.replace(searchQuery, `<mark>${searchQuery}</mark>`);
+		return sentence.replace(new RegExp(`(${escapedQuery})`, 'gi'), `<mark>$1</mark>`);
 	};
 
 	const getSearchItemContent = (item: any) => {
