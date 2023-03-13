@@ -8,6 +8,9 @@ WORKDIR /app
 # Copy package.json
 COPY frontend/package*.json ./
 
+# Update npm
+RUN npm install -g npm@latest
+
 # Install dependencies
 RUN npm install -D --silent
 
