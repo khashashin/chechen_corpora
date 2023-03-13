@@ -21,6 +21,8 @@ import Recovery from '../../pages/auth/recovery';
 import Verify from '../../pages/auth/verify';
 import ArticlesPage from '../../pages/articles';
 import ArticleAdd from '../../pages/articles/article-add';
+import ArticleDetailsPage from '../../pages/articles/article-details';
+import { getArticle } from '../../pages/articles/services/api';
 
 const coreRoutes: Route[] = [
 	{
@@ -102,6 +104,20 @@ const coreRoutes: Route[] = [
 					{
 						path: '/add',
 						element: <ArticleAdd />,
+					},
+					{
+						id: 'article-details',
+						path: '/:articleId',
+						children: [
+							{
+								id: 'article-details',
+								path: '/',
+								loader: async ({ params }) => ({
+									article: await getArticle(params.articleId),
+								}),
+								element: <ArticleDetailsPage />,
+							},
+						],
 					},
 				],
 			},

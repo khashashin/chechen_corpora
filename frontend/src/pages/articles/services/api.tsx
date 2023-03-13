@@ -1,5 +1,5 @@
+import Article from '../../../models/article';
 import axios from '../../../shared/ApiService';
-import { Article } from '../models';
 
 const { VITE_API_ENDPOINT } = import.meta.env;
 

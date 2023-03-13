@@ -1,9 +1,9 @@
-import { Button, Group, Space, Stack, Title, Text, Box, createStyles } from '@mantine/core';
-import { useMatch, MakeGenerics, useNavigate } from '@tanstack/react-location';
-import { BiEdit } from 'react-icons/bi';
-import { useEffect, useState } from 'react';
+import { Box, Button, createStyles, Group, Space, Stack, Text, Title } from '@mantine/core';
+import { MakeGenerics, useMatch, useNavigate } from '@tanstack/react-location';
 import { DataTable } from 'mantine-datatable';
-import { Book } from '../../models/book';
+import { useEffect, useState } from 'react';
+import { BiEdit } from 'react-icons/bi';
+import Article from '../../models/article';
 import { Author, Genre, Publisher, Source } from '../../models/base';
 import { PAGE_SIZE } from '../../shared/constants';
 
@@ -18,77 +18,77 @@ const useStyles = createStyles((theme) => ({
 
 export type LocationGenerics = MakeGenerics<{
 	LoaderData: {
-		book: Book;
+		article: Article;
 	};
 }>;
 
-function BookDetailsPage() {
+function ArticleDetailsPage() {
 	const {
-		data: { book },
+		data: { article },
 	} = useMatch<LocationGenerics>();
 	const { classes } = useStyles();
 
 	const [page, setPage] = useState(1);
-	const [records, setRecords] = useState(book?.pages?.slice(0, PAGE_SIZE));
+	const [records, setRecords] = useState(article?.pages?.slice(0, PAGE_SIZE));
 	const navigate = useNavigate();
 
 	useEffect(() => {
-		if (!book) navigate({ to: '/books' });
+		if (!article) navigate({ to: '/articles' });
 		const from = (page - 1) * PAGE_SIZE;
 		const to = from + PAGE_SIZE;
-		setRecords(book?.pages?.slice(from, to));
-	}, [book, navigate, page]);
+		setRecords(article?.pages?.slice(from, to));
+	}, [article, navigate, page]);
 
 	return (
 		<>
-			{!book && <Text>Загрузка...</Text>}
-			{book && (
+			{!article && <Text>Загрузка...</Text>}
+			{article && (
 				<>
 					<Group position='apart'>
 						<Stack spacing='xs'>
-							<Title>{book.title}</Title>
+							<Title>{article.title}</Title>
 							<Box
 								sx={{
 									display: 'flex',
 									flexWrap: 'wrap',
 								}}>
-								{book.authors && book.authors.length > 0 && (
+								{article.authors && article.authors.length > 0 && (
 									<Box className={classes.meta}>
-										{book.authors.length > 1 ? 'Авторы:' : 'Автор:'}
+										{article.authors.length > 1 ? 'Авторы:' : 'Автор:'}
 										&nbsp;
-										{book.authors.map((author: Author) => (
+										{article.authors.map((author: Author) => (
 											<Text key={author.name}>{author.name};</Text>
 										))}
 									</Box>
 								)}
-								{book.genres && book.genres.length > 0 && (
+								{article.genres && article.genres.length > 0 && (
 									<Box className={classes.meta}>
-										{book.genres.length > 1 ? 'Жанры:' : 'Жанр:'}
+										{article.genres.length > 1 ? 'Жанры:' : 'Жанр:'}
 										&nbsp;
-										{book.genres.map((genre: Genre) => (
+										{article.genres.map((genre: Genre) => (
 											<Text key={genre.name}>{genre.name};</Text>
 										))}
 									</Box>
 								)}
-								{book.publishers && book.publishers.length > 0 && (
+								{article.publishers && article.publishers.length > 0 && (
 									<Box className={classes.meta}>
-										{book.publishers.length > 1 ? 'Издательства:' : 'Издательство:'}
+										{article.publishers.length > 1 ? 'Издательства:' : 'Издательство:'}
 										&nbsp;
-										{book.publishers.map((publisher: Publisher) => (
+										{article.publishers.map((publisher: Publisher) => (
 											<Text key={publisher.name}>{publisher.name};</Text>
 										))}
 									</Box>
 								)}
-								{book.sources && book.sources.length > 0 && (
+								{article.sources && article.sources.length > 0 && (
 									<Box className={classes.meta}>
-										{book.sources.length > 1 ? 'Источники:' : 'Источник:'}
+										{article.sources.length > 1 ? 'Источники:' : 'Источник:'}
 										&nbsp;
-										{book.sources.map((source: Source) => (
+										{article.sources.map((source: Source) => (
 											<Text key={source.name}>{source.name};</Text>
 										))}
 									</Box>
 								)}
-								<Box className={classes.meta}>Время публикации: {book.publication_date}</Box>
+								<Box className={classes.meta}>Время публикации: {article.publication_date}</Box>
 							</Box>
 						</Stack>
 						<Button
@@ -116,7 +116,7 @@ function BookDetailsPage() {
 							withBorder
 							borderRadius='sm'
 							withColumnBorders
-							totalRecords={book.pages?.length}
+							totalRecords={article.pages?.length}
 							recordsPerPage={PAGE_SIZE}
 							page={page}
 							onPageChange={(p) => setPage(p)}
@@ -130,4 +130,4 @@ function BookDetailsPage() {
 	);
 }
 
-export default BookDetailsPage;
+export default ArticleDetailsPage;

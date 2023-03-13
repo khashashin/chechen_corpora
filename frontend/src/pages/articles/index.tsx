@@ -18,7 +18,7 @@ import { DataTable, DataTableSortStatus } from 'mantine-datatable';
 import { useEffect, useState } from 'react';
 import { BiSearchAlt } from 'react-icons/bi';
 import { FaPlus } from 'react-icons/fa';
-import { Article } from './models';
+import Article from '../../models/article';
 import { getArticles } from './services/api';
 
 const PAGE_SIZES = [5, 20, 50];
@@ -68,11 +68,12 @@ function ArticlesPage() {
 		);
 	}, [debouncedQuery, articles]);
 
-	const handleReadClick = (id: number) => {
-		navigate({
+	const handleReadClick = (article: Article) => {
+		const { id } = article;
+		if (!id) return undefined;
+		return navigate({
 			to: `/admin/articles/${id}`,
 		});
-		return undefined;
 	};
 
 	return (
@@ -147,7 +148,7 @@ function ArticlesPage() {
 													compact
 													component='a'
 													variant='outline'
-													onClick={() => handleReadClick(article.id)}>
+													onClick={() => handleReadClick(article)}>
 													Читать
 												</Button>
 											),
