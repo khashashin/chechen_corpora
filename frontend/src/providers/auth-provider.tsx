@@ -31,6 +31,12 @@ const tracker = new Tracker({
 	ingestPoint: VITE_OPEN_R_ENDPOINT,
 	capturePerformance: true,
 	__DISABLE_SECURE_MODE: VITE_OPEN_R_SECURE_MODE === 'false',
+	network: {
+		failuresOnly: true,
+		sessionTokenHeader: false,
+		ignoreHeaders: ['Authorization'],
+		capturePayload: false,
+	},
 });
 
 type User = Models.Account<Models.Preferences>;
