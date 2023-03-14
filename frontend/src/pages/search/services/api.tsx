@@ -8,3 +8,9 @@ export const getSearchResult = async (query: string) => {
 	console.log('getSearchResult response', response);
 	return response;
 };
+
+export const getRandomWords = async () => {
+	const response = await axios.get(`${VITE_API_ENDPOINT}/random-words`);
+	console.log('getRandomWords response', response);
+	return response;
+};

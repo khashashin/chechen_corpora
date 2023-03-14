@@ -6,6 +6,7 @@ import { getSearchResult } from './services/api';
 import SearchResults from './components/SearchResults';
 import SearchHeader from './components/SearchHeader';
 import FooterSection from '../../components/footer/footer-section';
+import SearchHintWords from './components/SearchHintWords';
 
 function SearchPage() {
 	const [query, setQuery] = useState('');
@@ -29,6 +30,7 @@ function SearchPage() {
 		<Container size='lg'>
 			<SearchHeader />
 			<Searchbar onSearchResult={onSearchResult} isLoading={isInitialLoading} />
+			{query.length <= 0 && <SearchHintWords />}
 			<SearchResults
 				searchData={searchResults?.data}
 				isLoading={isInitialLoading}
