@@ -1,5 +1,5 @@
 import { useNavigate, useRouter } from '@tanstack/react-location';
-import { showNotification } from '@mantine/notifications';
+import { notifications } from '@mantine/notifications';
 import { memo, useEffect, useState } from 'react';
 import { Paper, Stack, Text, Button } from '@mantine/core';
 import { useAuth } from '../../providers/auth-provider';
@@ -21,8 +21,7 @@ function Verify() {
 		};
 		verify().catch(() => {
 			setIsLoading(false);
-			showNotification({
-				id: 'verifyError',
+			notifications.show({
 				title: 'Ошибка верификации',
 				message: 'Произошла ошибка при верификации',
 			});

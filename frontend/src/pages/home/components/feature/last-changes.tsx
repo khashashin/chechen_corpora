@@ -11,8 +11,8 @@ const databases = new Databases(client);
 
 const useStyles = createStyles((theme) => ({
 	wrapper: {
-		paddingTop: theme.spacing.xl * 4,
-		paddingBottom: theme.spacing.xl * 4,
+		paddingTop: `calc(${theme.spacing.xl} * 4)`,
+		paddingBottom: `calc(${theme.spacing.xl} * 4)`,
 	},
 
 	title: {
@@ -74,7 +74,7 @@ function LastChanges() {
 
 			<SimpleGrid
 				mt={60}
-				spacing={theme.spacing.sm * 2}
+				spacing={`calc(${theme.spacing.sm} * 2)`}
 				breakpoints={[
 					{ maxWidth: 980, cols: 2, spacing: 'xl' },
 					{ maxWidth: 755, cols: 1, spacing: 'xl' },

@@ -180,7 +180,9 @@ function BooksAdd() {
 						position='bottom'
 						withArrow
 						shadow='md'
-						transitionDuration={200}
+						transitionProps={{
+							duration: 200,
+						}}
 						opened={popoverOpened}>
 						<Popover.Target>
 							<ActionIcon variant='light' title='Дополнительная информация'>

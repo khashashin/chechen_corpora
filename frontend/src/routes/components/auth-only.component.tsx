@@ -18,9 +18,6 @@ function AuthOnly({ children }: Props) {
 	}, [navigate, user]);
 
 	if (!user) {
-		setTimeout(() => {
-			navigate({ to: '/auth/login' });
-		}, 5000);
 		return <GenericFallback title='' icon={<span />} />;
 	}
 

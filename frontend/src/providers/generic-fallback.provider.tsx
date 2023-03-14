@@ -1,5 +1,5 @@
-import { Center, createStyles, Group, Loader, Stack, Text } from '@mantine/core';
-import { ReactNode } from 'react';
+import { Center, createStyles, Group, Loader, Stack, Text, Anchor } from '@mantine/core';
+import { ReactNode, useState } from 'react';
 
 const useStyles = createStyles((theme) => ({
 	container: {
@@ -25,6 +25,13 @@ interface GenericFallbackProps {
 }
 
 function GenericFallback({ title, icon }: GenericFallbackProps) {
+	const [showGoHome, setShowGoHome] = useState(false);
+
+	// Перейти на главную
+	setTimeout(() => {
+		setShowGoHome(true);
+	}, 4000);
+
 	const { classes } = useStyles();
 	return (
 		<Center className={classes.container}>
@@ -38,6 +45,11 @@ function GenericFallback({ title, icon }: GenericFallbackProps) {
 						{icon}
 						<Text size='xl'>{title}</Text>
 					</Group>
+					{showGoHome && (
+						<Anchor href='/' target='_self'>
+							Перейти на главную
+						</Anchor>
+					)}
 				</div>
 			</Stack>
 		</Center>

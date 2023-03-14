@@ -20,7 +20,7 @@ const queryClient = new QueryClient();
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
 	<React.StrictMode>
 		<Global
-			styles={(theme) => ({
+			styles={() => ({
 				':root': {
 					'--remove-scroll-width': '0px',
 				},

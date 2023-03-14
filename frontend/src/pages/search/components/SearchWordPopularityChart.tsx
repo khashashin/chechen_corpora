@@ -7,7 +7,6 @@ import {
 	ResponsiveContainer,
 	CartesianGrid,
 	Tooltip,
-	Brush,
 } from 'recharts';
 
 type ChartDataTypes = {

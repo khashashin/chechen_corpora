@@ -16,8 +16,8 @@ import various from '../../../../assets/various_icon.png';
 
 const useStyles = createStyles((theme) => ({
 	wrapper: {
-		paddingTop: theme.spacing.xl * 4,
-		paddingBottom: theme.spacing.xl * 4,
+		paddingTop: `calc(${theme.spacing.xl} * 4)`,
+		paddingBottom: `calc(${theme.spacing.xl} * 4)`,
 	},
 
 	title: {
@@ -119,7 +119,7 @@ function FeaturesSection(props: FeaturesSectionProps) {
 					{ maxWidth: 'md', cols: 2 },
 					{ maxWidth: 'xs', cols: 1 },
 				]}
-				spacing={theme.spacing.xl * 2}>
+				spacing={`calc(${theme.spacing.xl} * 2)`}>
 				{PaperData.map((item) => (
 					<Paper
 						key={item.title}

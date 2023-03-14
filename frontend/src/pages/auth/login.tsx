@@ -1,6 +1,6 @@
 /* eslint-disable no-nested-ternary,react/jsx-props-no-spreading */
 import { Anchor, Button, Checkbox, Group, PasswordInput, Stack, TextInput } from '@mantine/core';
-import { showNotification } from '@mantine/notifications';
+import { notifications } from '@mantine/notifications';
 import { useNavigate } from '@tanstack/react-location';
 import { useForm } from '@mantine/form';
 import { useAuth } from '../../providers/auth-provider';
@@ -36,15 +36,13 @@ function Login() {
 		login(form.values.email, form.values.password, form.values.remember)
 			.then(() => {
 				navigate({ to: '/' });
-				showNotification({
-					id: 'loginSuccess',
+				notifications.show({
 					title: 'Успешный вход',
 					message: 'Вы успешно вошли в систему',
 				});
 			})
 			.catch(() => {
-				showNotification({
-					id: 'loginError',
+				notifications.show({
 					title: 'Ошибка входа',
 					message: 'Неверный логин или пароль',
 				});

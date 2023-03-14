@@ -17,7 +17,7 @@ const BREAKPOINT = '@media (max-width: 755px)';
 
 const useStyles = createStyles((theme) => ({
 	controls: {
-		marginTop: theme.spacing.xl * 2,
+		marginTop: `calc(${theme.spacing.xl} * 2)`,
 
 		[BREAKPOINT]: {
 			marginTop: theme.spacing.xl,

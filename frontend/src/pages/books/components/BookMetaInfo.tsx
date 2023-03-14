@@ -12,7 +12,7 @@ import {
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import 'dayjs/locale/ru';
-import { DatePicker } from '@mantine/dates';
+import { DatePickerInput } from '@mantine/dates';
 import { IconAlertCircle } from '@tabler/icons';
 import { RiDeleteBin4Line } from 'react-icons/all';
 import { Book } from '../../../models/book';
@@ -86,7 +86,7 @@ function BookMetaDrawer(props: BookMetaDrawerProps) {
 						label='ISBN книги'
 						{...form.getInputProps('isbn')} // eslint-disable-line react/jsx-props-no-spreading
 					/>
-					<DatePicker
+					<DatePickerInput
 						mt='md'
 						value={
 							form.values.publication_date ? new Date(form.values.publication_date) : new Date()

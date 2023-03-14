@@ -3,7 +3,7 @@ import { Button, createStyles, Group, Modal, Text } from '@mantine/core';
 import { IconCloudUpload, IconDownload, IconX } from '@tabler/icons';
 import { memo, useRef } from 'react';
 import { useMutation } from '@tanstack/react-query';
-import { showNotification, updateNotification } from '@mantine/notifications';
+import { notifications } from '@mantine/notifications';
 import { uploadJson } from '../services/api';
 import { BookCreateResponse, JSONFile } from '../../../models/book';
 
@@ -47,13 +47,12 @@ function UploadFileModal(props: UploadFileModalProps) {
 
 	const handleJsonFile = (file: File) => {
 		setIsLoading(mutation.isLoading);
-		showNotification({
+		notifications.show({
 			id: 'uploadingJSON',
 			loading: true,
 			title: 'Загрузка книги',
 			message: 'Загрузка книги в процессе',
 			autoClose: false,
-			disallowClose: true,
 		});
 		try {
 			const reader = new FileReader();
@@ -62,7 +61,7 @@ function UploadFileModal(props: UploadFileModalProps) {
 				const json = JSON.parse(reader.result as string) as JSONFile;
 				const response = await mutation.mutateAsync(json);
 				onBookUpload(response as BookCreateResponse);
-				updateNotification({
+				notifications.update({
 					id: 'uploadingJSON',
 					loading: false,
 					title: 'Успешно',
@@ -73,7 +72,7 @@ function UploadFileModal(props: UploadFileModalProps) {
 				return setDropZoneOpened(false);
 			};
 		} catch (e) {
-			updateNotification({
+			notifications.update({
 				id: 'uploadingJSON',
 				loading: false,
 				title: 'Ошибка',

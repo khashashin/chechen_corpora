@@ -1,6 +1,6 @@
 /* eslint-disable react/jsx-props-no-spreading,no-nested-ternary */
 import { Anchor, Button, PasswordInput, Stack, TextInput } from '@mantine/core';
-import { showNotification } from '@mantine/notifications';
+import { notifications } from '@mantine/notifications';
 import { useNavigate } from '@tanstack/react-location';
 import { useForm } from '@mantine/form';
 import { useAuth } from '../../providers/auth-provider';
@@ -43,16 +43,14 @@ function Registration() {
 		register(form.values.email, form.values.password, form.values.name)
 			.then(() => {
 				navigate({ to: '/' });
-				showNotification({
-					id: 'registerSuccess',
+				notifications.show({
 					title: 'Успешная регистрация',
 					message: 'Вы успешно зарегистрировались. Подтвердите свой аккаунт по ссылке в письме.',
 					autoClose: 10000,
 				});
 			})
 			.catch(() => {
-				showNotification({
-					id: 'registerError',
+				notifications.show({
 					title: 'Ошибка регистрации',
 					message: 'Произошла ошибка при регистрации или пользователь с таким email уже существует',
 					autoClose: 10000,
