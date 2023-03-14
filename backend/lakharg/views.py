@@ -192,3 +192,14 @@ class StatsView(APIView):
         }
 
         return Response(stats, status=200)
+
+
+class RandomWordsView(APIView):
+    # Read only permission
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+
+    def get(self, request, format=None):
+        words = Words.objects.order_by('?')[:5]
+        response = [word.word for word in words]
+
+        return Response(response, status=200)

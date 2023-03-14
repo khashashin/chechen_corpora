@@ -6,4 +6,5 @@ urlpatterns = [
     path('search/', views.SearchView.as_view(), name='search'),
     path('unique-words/', views.WordsView.as_view(), name='words'),
     path('stats/', views.StatsView.as_view(), name='stats'),
+    path('random-words/', views.RandomWordsView.as_view(), name='random-words'),
 ]
