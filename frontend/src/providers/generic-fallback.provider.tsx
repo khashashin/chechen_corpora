@@ -32,7 +32,7 @@ function GenericFallback({ title, icon }: GenericFallbackProps) {
 				<Loader variant='bars' color='indigo' />
 				<div className={classes.textContainer}>
 					<Text className={classes.textMuted} size='xs' transform='uppercase' weight='bold'>
-						Loading
+						Загрузка...
 					</Text>
 					<Group spacing='xs'>
 						{icon}
