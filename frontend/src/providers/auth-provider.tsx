@@ -44,7 +44,7 @@ type AuthContextTypes = {
 	user: User | null;
 	session: Models.Session | null;
 	jwt: Models.Jwt | null;
-	isAuthenticated: Promise<boolean>;
+	isAuthenticated: boolean;
 	login: (email: string, password: string, remember: boolean) => Promise<void>;
 	register: (email: string, password: string, name?: string) => Promise<void>;
 	logout: () => Promise<void>;
@@ -92,14 +92,24 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
 		}
 	}, []);
 
-	const isAuthenticated = useMemo(async () => {
-		console.log('Method called: isAuthenticated');
-		console.log('Check the User:', user);
-		if (!user) return false;
+	const isAuthenticated = useMemo(() => {
+		const status = {
+			isLoggedIn: true,
+		};
 
-		const { email, status, emailVerification } = user;
-		console.log('Check the properties:', email, status, emailVerification);
-		return !(!email || !status || !emailVerification);
+		if (!user?.status) {
+			status.isLoggedIn = false;
+		}
+
+		if (!user?.emailVerification) {
+			status.isLoggedIn = false;
+		}
+
+		if (!user?.email) {
+			status.isLoggedIn = false;
+		}
+
+		return status.isLoggedIn;
 	}, [user]);
 
 	// Checks if there is a valid session in local storage.
