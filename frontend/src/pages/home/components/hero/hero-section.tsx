@@ -15,6 +15,7 @@ import { AiOutlineSearch } from 'react-icons/ai';
 import { BsArrowRightShort } from 'react-icons/bs';
 import { Link, useNavigate } from '@tanstack/react-location';
 import image from '../../../../assets/language-corpora_hero2.png';
+import SearchHintWords from '../../../../components/SearchHintWords';
 
 const BREAKPOINT = '@media (max-width: 755px)';
 
@@ -120,6 +121,7 @@ function HeroSection(props: HeroSectionProps) {
 					onClick={handleSearchActive}
 				/>
 				<Text fz='xs'>Введите слово или словосочетание для поиска</Text>
+				<SearchHintWords />
 			</Group>
 		</Container>
 	);
