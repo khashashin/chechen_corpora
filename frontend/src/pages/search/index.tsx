@@ -6,7 +6,7 @@ import { getSearchResult } from './services/api';
 import SearchResults from './components/SearchResults';
 import SearchHeader from './components/SearchHeader';
 import FooterSection from '../../components/footer/footer-section';
-import SearchHintWords from './components/SearchHintWords';
+import SearchHintWords from '../../components/SearchHintWords';
 
 function SearchPage() {
 	const [query, setQuery] = useState('');

@@ -1,9 +1,9 @@
 import { Badge, Box, Group } from '@mantine/core';
 import { useQuery } from '@tanstack/react-query';
-import { getRandomWords } from '../services/api';
+import { getRandomWords } from '../pages/search/services/api';
 
 function SearchHintWords() {
-	const { data: hintWords, isInitialLoading } = useQuery(['hintWords'], () => getRandomWords());
+	const { data: hintWords } = useQuery(['hintWords'], () => getRandomWords());
 
 	return (
 		<Box mt='lg'>
