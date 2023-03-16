@@ -1,4 +1,14 @@
-import { ActionIcon, Box, Container, Divider, Paper, Tabs, TextInput } from '@mantine/core';
+import {
+	ActionIcon,
+	Box,
+	Container,
+	Divider,
+	Paper,
+	Skeleton,
+	Stack,
+	Tabs,
+	TextInput,
+} from '@mantine/core';
 import { useMediaQuery } from '@mantine/hooks';
 import { Fragment, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
@@ -6,9 +16,10 @@ import { IconFilter, IconX } from '@tabler/icons';
 import { getUniqueWords } from './services/api';
 import PublicHeader from '../../components/header/public-header';
 import FooterSection from '../../components/footer/footer-section';
+import WordsLoadingSkeleton from './components/WordsLoadingSkeleton';
 
 function WordsPage() {
-	const { data: words } = useQuery(['uniqueWords'], () => getUniqueWords());
+	const { data: words, isLoading } = useQuery(['uniqueWords'], () => getUniqueWords());
 	const [filterText, setFilterText] = useState('');
 	const isMobile = useMediaQuery('(max-width: 920px)');
 
@@ -28,7 +39,7 @@ function WordsPage() {
 					onChange={(e) => setFilterText(e.currentTarget.value)}
 				/>
 			</Box>
-			{!words && <p>Загрузка...</p>}
+			{isLoading && <WordsLoadingSkeleton />}
 			{words && (
 				<Tabs
 					defaultValue={Object.keys(words.data)[0]}
