@@ -8,6 +8,7 @@ import {
 	Stack,
 	Textarea,
 	TextInput,
+	Text,
 	useMantineTheme,
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
@@ -102,53 +103,48 @@ function BookMetaDrawer(props: BookMetaDrawerProps) {
 						defaultValue={new Date()}
 					/>
 					<Stack mt='md'>
-						<ScrollArea
-							mt='md'
-							style={{
-								height: 'auto',
-								...(form.values.sources &&
-									form.values.sources.length > 4 && {
-										height: 250,
-									}),
-							}}
-							type='auto'
-							offsetScrollbars
-							viewportProps={{
-								style: {
-									boxShadow: 'none',
+						<Text component='label' fw={500} fz='sm'>
+							Источники (ссылки на сайты, где можно найти книгу, например, на сайте библиотеки)
+						</Text>
+						{form.values.sources && form.values.sources.length > 0 && (
+							<ScrollArea
+								mt='md'
+								style={{
+									height: 'auto',
 									...(form.values.sources &&
-										form.values.sources.length > 4 && {
-											boxShadow:
-												'inset 0px -10px 10px -10px #000000, inset 0px 10px 10px -10px #000000',
+										form.values.sources.length > 3 && {
+											height: 200,
 										}),
-								},
-							}}>
-							{form.values.sources &&
-								form.values.sources.map((source: Source, index: number) => (
-									<TextInput
-										key={source.name}
-										placeholder='Введите ссылку на источник'
-										label={`Источник ${index + 1}`}
-										size='xs'
-										{...form.getInputProps(`sources.${index}`)} // eslint-disable-line react/jsx-props-no-spreading
-										rightSection={
-											<ActionIcon
-												variant='transparent'
-												size='sm'
-												onClick={() => {
-													handleDeleteSource(index);
-												}}>
-												<RiDeleteBin4Line size={18} />
-											</ActionIcon>
-										}
-									/>
-								))}
-						</ScrollArea>
+								}}
+								type='auto'
+								offsetScrollbars>
+								{form.values.sources &&
+									form.values.sources.map((source: Source, index: number) => (
+										<TextInput
+											key={source.name}
+											placeholder='Введите ссылку на источник'
+											label={`Источник ${index + 1}`}
+											size='xs'
+											{...form.getInputProps(`sources.${index}`)} // eslint-disable-line react/jsx-props-no-spreading
+											rightSection={
+												<ActionIcon
+													variant='transparent'
+													size='sm'
+													onClick={() => {
+														handleDeleteSource(index);
+													}}>
+													<RiDeleteBin4Line size={18} />
+												</ActionIcon>
+											}
+										/>
+									))}
+							</ScrollArea>
+						)}
 						{form.values.sources && form.values.sources.length === 0 && (
 							<Alert
 								icon={<IconAlertCircle size={16} />}
-								title='Вы не добавили ни одного источника!'
-								color='red'
+								title='Вы не добавили ни одного источника! (необязательно)'
+								color='yellow'
 								variant='outline'>
 								Добавьте хотя бы один источник, чтобы другие пользователи могли проверить
 								информацию.
