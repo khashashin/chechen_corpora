@@ -70,11 +70,11 @@ function ArticleDetailsPage() {
 										))}
 									</Box>
 								)}
-								{article.publishers && article.publishers.length > 0 && (
+								{article.publisher && article.publisher.length > 0 && (
 									<Box className={classes.meta}>
-										{article.publishers.length > 1 ? 'Издательства:' : 'Издательство:'}
+										{article.publisher.length > 1 ? 'Издательства:' : 'Издательство:'}
 										&nbsp;
-										{article.publishers.map((publisher: Publisher) => (
+										{article.publisher.map((publisher: Publisher) => (
 											<Text key={publisher.name}>{publisher.name};</Text>
 										))}
 									</Box>

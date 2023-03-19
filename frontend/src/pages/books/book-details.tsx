@@ -70,11 +70,11 @@ function BookDetailsPage() {
 										))}
 									</Box>
 								)}
-								{book.publishers && book.publishers.length > 0 && (
+								{book.publisher && book.publisher.length > 0 && (
 									<Box className={classes.meta}>
-										{book.publishers.length > 1 ? 'Издательства:' : 'Издательство:'}
+										{book.publisher.length > 1 ? 'Издательства:' : 'Издательство:'}
 										&nbsp;
-										{book.publishers.map((publisher: Publisher) => (
+										{book.publisher.map((publisher: Publisher) => (
 											<Text key={publisher.name}>{publisher.name};</Text>
 										))}
 									</Box>
