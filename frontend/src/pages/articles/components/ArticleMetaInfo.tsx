@@ -36,7 +36,7 @@ function ArticleMetaInfo(props: ArticleMetaInfoProps) {
 			genres: articleMeta.genres,
 			authors: articleMeta.authors,
 			sources: articleMeta.sources,
-			publishers: articleMeta.publishers,
+			publisher: articleMeta.publisher,
 		},
 	});
 
@@ -61,7 +61,7 @@ function ArticleMetaInfo(props: ArticleMetaInfoProps) {
 			title='Дополнительная информация'
 			padding='xl'
 			size='xl'
-			onClose={() => onClose(form.values)}>
+			onClose={() => onClose({ ...form.values, authors: [], genres: [], publisher: [] })}>
 			<Paper
 				style={{
 					position: 'relative',

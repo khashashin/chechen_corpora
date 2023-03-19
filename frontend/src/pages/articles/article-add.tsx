@@ -94,6 +94,9 @@ function ArticleAdd() {
 				? `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`
 				: date,
 			sources: articleMeta.sources,
+			authors: articleMeta.authors,
+			publisher: articleMeta.publisher,
+			genres: articleMeta.genres,
 			pages: pagesWithoutId,
 		} as Article;
 

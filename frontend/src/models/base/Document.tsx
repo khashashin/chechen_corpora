@@ -11,7 +11,7 @@ interface Document {
 	genres?: Genre[];
 	authors?: Author[];
 	sources?: Source[];
-	publishers?: Publisher[];
+	publisher?: Publisher[];
 }
 
 export default Document;

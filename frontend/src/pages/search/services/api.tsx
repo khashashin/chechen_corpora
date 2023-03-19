@@ -10,7 +10,7 @@ export const getSearchResult = async (query: string) => {
 };
 
 export const getRandomWords = async () => {
-	const response = await axios.get(`${VITE_API_ENDPOINT}/random-words`);
+	const response = await axios.get(`${VITE_API_ENDPOINT}/random-words/`);
 	console.log('getRandomWords response', response);
 	return response;
 };
