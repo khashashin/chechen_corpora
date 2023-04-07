@@ -23,6 +23,8 @@ import ArticlesPage from '../../pages/articles';
 import ArticleAdd from '../../pages/articles/article-add';
 import ArticleDetailsPage from '../../pages/articles/article-details';
 import { getArticle } from '../../pages/articles/services/api';
+import DiverseMaterials from '../../pages/diverse-materials';
+import AddMaterial from '../../pages/diverse-materials/add';
 
 const coreRoutes: Route[] = [
 	{
@@ -118,6 +120,20 @@ const coreRoutes: Route[] = [
 								element: <ArticleDetailsPage />,
 							},
 						],
+					},
+				],
+			},
+			{
+				id: 'diverseMaterials',
+				path: '/diverse-materials',
+				children: [
+					{
+						path: '/',
+						element: <DiverseMaterials />,
+					},
+					{
+						path: '/add',
+						element: <AddMaterial />,
 					},
 				],
 			},

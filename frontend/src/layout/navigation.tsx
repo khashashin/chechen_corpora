@@ -84,8 +84,8 @@ const data = [
 		icon: <BiCategoryAlt size={16} />,
 		color: 'warning',
 		label: 'Другое',
-		to: '/admin/other',
-		id: 'other',
+		to: '/admin/diverse-materials',
+		id: 'diverseMaterials',
 	},
 ];
 
