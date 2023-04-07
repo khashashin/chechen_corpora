@@ -1,14 +1,4 @@
-import {
-	ActionIcon,
-	Box,
-	Container,
-	Divider,
-	Paper,
-	Skeleton,
-	Stack,
-	Tabs,
-	TextInput,
-} from '@mantine/core';
+import { ActionIcon, Box, Container, Divider, Paper, Tabs, TextInput } from '@mantine/core';
 import { useMediaQuery } from '@mantine/hooks';
 import { Fragment, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';

@@ -21,6 +21,8 @@ import {
 import { useMutation } from '@tanstack/react-query';
 import { DataTable } from 'mantine-datatable';
 import { useEffect, useState } from 'react';
+import { notifications } from '@mantine/notifications';
+import { useNavigate } from '@tanstack/react-location';
 import Article from '../../models/article';
 import Page from '../../models/page';
 import { PAGE_SIZE } from '../../shared/constants';
@@ -42,8 +44,27 @@ function ArticleAdd() {
 	const [page, setPage] = useState(1);
 	const [records, setRecords] = useState(pages.slice(0, PAGE_SIZE));
 	const isMobile = useMediaQuery('(max-width: 600px)');
+	const navigate = useNavigate();
+
+	const onSaveSuccess = () => {
+		navigate({ to: '/admin/articles' });
+		notifications.show({
+			title: 'Успешное сохранение',
+			message: 'Материал успешно сохранен',
+		});
+	};
+
+	const onSaveError = () => {
+		notifications.show({
+			title: 'Ошибка сохранения',
+			message: 'Не удалось сохранить материал',
+		});
+	};
+
 	const mutation = useMutation({
 		mutationFn: createArticle,
+		onSuccess: onSaveSuccess,
+		onError: onSaveError,
 	});
 
 	const handleArticleMetaChange = (values: Article) => {

@@ -21,6 +21,8 @@ import {
 	IconBookUpload,
 } from '@tabler/icons';
 import { useMutation } from '@tanstack/react-query';
+import { useNavigate } from '@tanstack/react-location';
+import { notifications } from '@mantine/notifications';
 import BookMetaDrawer from './components/BookMetaInfo';
 import { BookUtils } from './services/utils';
 import UploadFileModal from './components/UploadFileModal';
@@ -48,8 +50,27 @@ function BooksAdd() {
 	});
 	const [dropZoneOpened, setDropZoneOpened] = useState(false);
 	const [isLoading, setIsLoading] = useState(false);
+	const navigate = useNavigate();
+
+	const onSaveSuccess = () => {
+		navigate({ to: '/admin/books' });
+		notifications.show({
+			title: 'Успешное сохранение',
+			message: 'Материал успешно сохранен',
+		});
+	};
+
+	const onSaveError = () => {
+		notifications.show({
+			title: 'Ошибка сохранения',
+			message: 'Не удалось сохранить материал',
+		});
+	};
+
 	const mutation = useMutation({
 		mutationFn: createBook,
+		onSuccess: onSaveSuccess,
+		onError: onSaveError,
 	});
 
 	// useEffect(() => {
