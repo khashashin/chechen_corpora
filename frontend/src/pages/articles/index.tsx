@@ -95,71 +95,73 @@ function ArticlesPage() {
 			</Group>
 			<Space h='md' />
 			<Paper shadow='xs' p='md'>
-				{isLoading && <Text>Загрузка...</Text>}
-				{error && <Text>Ошибка загрузки</Text>}
-				{articles && (
-					<>
-						<Grid align='center' mb='md'>
-							<Grid.Col xs={8} sm={9}>
-								<TextInput
-									sx={{ flexBasis: '50%' }}
-									placeholder='Поиск...'
-									icon={<BiSearchAlt size={16} />}
-									value={query}
-									onChange={(e) => setQuery(e.currentTarget.value)}
+				<>
+					{isLoading && <Text>Загрузка...</Text>}
+					{error && <Text>Ошибка загрузки</Text>}
+					{articles && (
+						<>
+							<Grid align='center' mb='md'>
+								<Grid.Col xs={8} sm={9}>
+									<TextInput
+										sx={{ flexBasis: '50%' }}
+										placeholder='Поиск...'
+										icon={<BiSearchAlt size={16} />}
+										value={query}
+										onChange={(e) => setQuery(e.currentTarget.value)}
+									/>
+								</Grid.Col>
+							</Grid>
+							<Box>
+								<DataTable
+									fetching={isLoading}
+									loaderVariant='oval'
+									shadow='md'
+									borderRadius='sm'
+									withBorder
+									highlightOnHover
+									minHeight={400}
+									recordsPerPage={pageSize}
+									recordsPerPageOptions={PAGE_SIZES}
+									recordsPerPageLabel='Количество записей на странице'
+									onRecordsPerPageChange={setPageSize}
+									records={records}
+									page={page}
+									onPageChange={(p) => setPage(p)}
+									columns={[
+										{
+											accessor: 'title',
+											title: 'Заголовок',
+											render: (article: Article) => <Text>{article.title}</Text>,
+											sortable: true,
+										},
+										{
+											accessor: 'publication.date',
+											title: 'Дата публикации',
+											render: (article: Article) => <Text>{article.publication_date}</Text>,
+											sortable: true,
+										},
+										{
+											accessor: 'details.link',
+											title: 'Читать',
+											render: (article: Article) => (
+												<Button
+													compact
+													component='a'
+													variant='outline'
+													onClick={() => handleReadClick(article)}>
+													Читать
+												</Button>
+											),
+										},
+									]}
+									totalRecords={articles.length}
+									sortStatus={sortStatus}
+									onSortStatusChange={setSortStatus}
 								/>
-							</Grid.Col>
-						</Grid>
-						<Box>
-							<DataTable
-								fetching={isLoading}
-								loaderVariant='oval'
-								shadow='md'
-								borderRadius='sm'
-								withBorder
-								highlightOnHover
-								minHeight={400}
-								recordsPerPage={pageSize}
-								recordsPerPageOptions={PAGE_SIZES}
-								recordsPerPageLabel='Количество записей на странице'
-								onRecordsPerPageChange={setPageSize}
-								records={records}
-								page={page}
-								onPageChange={(p) => setPage(p)}
-								columns={[
-									{
-										accessor: 'title',
-										title: 'Заголовок',
-										render: (article: Article) => <Text>{article.title}</Text>,
-										sortable: true,
-									},
-									{
-										accessor: 'publication.date',
-										title: 'Дата публикации',
-										render: (article: Article) => <Text>{article.publication_date}</Text>,
-										sortable: true,
-									},
-									{
-										accessor: 'details.link',
-										title: 'Читать',
-										render: (article: Article) => (
-											<Button
-												compact
-												component='a'
-												variant='outline'
-												onClick={() => handleReadClick(article)}>
-												Читать
-											</Button>
-										),
-									},
-								]}
-								totalRecords={articles.length}
-								sortStatus={sortStatus}
-								onSortStatusChange={setSortStatus}
-							/>
-						</Box>
-					</>
-				)}
+							</Box>
+						</>
+					)}
+				</>
 			</Paper>
 		</>
 	);
