@@ -76,3 +76,6 @@ class Book(Document):
 class Article(Document):
     volume = models.CharField(max_length=255, null=True, blank=True)
     pages = GenericRelation(Page, related_query_name='article')
+
+class Diverse(Document):
+    pages = GenericRelation(Page, related_query_name='diverse')

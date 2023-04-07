@@ -171,4 +171,47 @@ class ArticleCreateSerializer(BaseCreateSerializer):
 
         return article
 
+class DiversesListSerializer(serializers.ModelSerializer):
+    id = HashidSerializerCharField(source_field='zubdarg.Diverse.id', read_only=True)
+    sources = SourceSerializer(many=True, read_only=True)
+    genres = GenreSerializer(many=True, read_only=True)
+    publisher = PublisherSerializer(many=True, read_only=True)
+    authors = AuthorSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Diverse
+        fields = ('id',) + COMMON_FIELDS
+
+
+class DiverseSerializer(DiversesListSerializer):
+    pages = PageSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Diverse
+        fields = ('id',) + COMMON_FIELDS + ('pages',)
+
+
+class DiverseCreateSerializer(BaseCreateSerializer):
+    class Meta:
+        model = Diverse
+        fields = COMMON_FIELDS + ('pages',)
+
+    def create(self, validated_data):
+
+        title = validated_data.pop('title', None)
+
+        if title is None:
+            raise serializers.ValidationError('Title is required')
+
+        diverse_data = {
+            'title': title,
+            'summary': validated_data.pop('summary'),
+            'publication_date': validated_data.pop('publication_date')
+        }
+        diverse = Diverse.objects.create(**diverse_data)
+
+        perform_nested_create(diverse, validated_data)
+
+        return diverse
+
 

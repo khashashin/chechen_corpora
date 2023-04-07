@@ -1,7 +1,6 @@
 import nltk
 from uuid import uuid4
 
-from django.contrib.contenttypes.models import ContentType
 from django.contrib.postgres.search import TrigramSimilarity
 from rest_framework import permissions
 from rest_framework.views import APIView
@@ -9,7 +8,7 @@ from rest_framework.response import Response
 from hashid_field import Hashid
 
 from lakharg.models import Words
-from zubdarg.models import Page, Book, Article
+from zubdarg.models import Page, Book, Article, Diverse
 
 nltk.download('punkt')
 
@@ -130,6 +129,8 @@ class SearchView(APIView):
                         origin_object = Book.objects.get(id=Hashid(page.object_id))
                     elif origin == 'article':
                         origin_object = Article.objects.get(id=Hashid(page.object_id))
+                    elif origin == 'diverse':
+                        origin_object = Diverse.objects.get(id=Hashid(page.object_id))
 
                     response['results'].append({
                         'uuid': f'{uuid4()}',

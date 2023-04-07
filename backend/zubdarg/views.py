@@ -42,6 +42,18 @@ class ArticleViewSet(viewsets.ModelViewSet):
         return ArticleSerializer
 
 
+class DiverseViewSet(viewsets.ModelViewSet):
+    queryset = Diverse.objects.all()
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+
+    def get_serializer_class(self):
+        if self.action == 'create':
+            return DiverseCreateSerializer
+        if self.action == 'list':
+            return DiversesListSerializer
+        return DiverseSerializer
+
+
 class PageViewSet(viewsets.ModelViewSet):
     queryset = Page.objects.all()
     serializer_class = PageSerializer
