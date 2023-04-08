@@ -1,6 +1,6 @@
 import { Text, Title, Container, SimpleGrid, Paper, Group, createStyles } from '@mantine/core';
-import { Client, Databases } from 'appwrite';
-import { useEffect, useState } from 'react';
+import { Client, Databases, Query } from 'appwrite';
+import { memo, useEffect, useMemo, useState } from 'react';
 
 const { VITE_AUTH_ENDPOINT, VITE_AUTH_PROJECT_ID } = import.meta.env;
 
@@ -45,21 +45,27 @@ function LastChanges() {
 	const { classes, theme } = useStyles();
 	const [notifications, setNotifications] = useState<Notifications[]>([]);
 
-	const getNotifications = async () => {
-		return databases.listDocuments('640dec564dd6addc5f2f', '640dec68e9ae407e09f5');
-	};
+	const getNotifications = useMemo(async () => {
+		return databases.listDocuments('640dec564dd6addc5f2f', '640dec68e9ae407e09f5', [
+			Query.orderDesc('$updatedAt'),
+			Query.limit(4),
+		]);
+	}, []);
 
 	useEffect(() => {
 		(async () => {
-			const messages = await getNotifications();
-			const data = messages.documents.map((item) => ({
-				title: item.title,
-				message: item.message,
-			}));
+			const messages = await getNotifications;
+			const data = messages.documents.map((item) => {
+				console.log(item);
+				return {
+					title: item.title,
+					message: item.message,
+				};
+			});
 
 			setNotifications(data);
 		})();
-	}, []);
+	}, [getNotifications]);
 
 	return (
 		<Container className={classes.wrapper}>
@@ -96,4 +102,4 @@ function LastChanges() {
 	);
 }
 
-export default LastChanges;
+export default memo(LastChanges);
