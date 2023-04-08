@@ -137,7 +137,8 @@ function FeaturesSection(props: FeaturesSectionProps) {
 
 						<Group align='flex-end' spacing='xs' mt={25}>
 							{item.title === 'Книги' && <Text>{stats?.data.books}</Text>}
-							{item.title !== 'Книги' && <Text>{item.count}</Text>}
+							{item.title === 'Остальное' && <Text>{stats?.data.diverse}</Text>}
+							{item.title !== 'Книги' && item.title !== 'Остальное' && <Text>{item.count}</Text>}
 						</Group>
 
 						<Text size='xs' color='dimmed' mt={7}>

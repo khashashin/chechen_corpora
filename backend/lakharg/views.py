@@ -190,6 +190,8 @@ class StatsView(APIView):
         stats = {
             'unique_words': Words.objects.count(),
             'books': Book.objects.count(),
+            'articles': Article.objects.count(),
+            'diverse': Diverse.objects.count(),
         }
 
         return Response(stats, status=200)
