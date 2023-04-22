@@ -6,6 +6,7 @@ import LastChanges from './components/feature/last-changes';
 import FooterSection from '../../components/footer/footer-section';
 import PublicHeader from '../../components/header/public-header';
 import { getStats } from '../../shared/api';
+import ImportantNote from './components/feature/important-note';
 
 function HomePage() {
 	const { data: stats } = useQuery(['appStats'], () => getStats());
@@ -14,6 +15,7 @@ function HomePage() {
 		<Container size='lg'>
 			<PublicHeader />
 			<HeroSection stats={stats} />
+			<ImportantNote />
 			<FeaturesSection stats={stats} />
 			<LastChanges />
 			<FooterSection />
