@@ -104,7 +104,16 @@ class SearchView(APIView):
                     except IndexError:
                         previous_word = None
 
-                    if previous_word and len(previous_word) > 1:
+                    # We need to che if the query is a whole word in the sentence
+                    # if it is not, we don't want to prepare the in_pair_before and in_pair_after
+
+                    isWholeWord = False
+                    for word in words:
+                        if word == query:
+                            isWholeWord = True
+                            break
+
+                    if isWholeWord and previous_word and len(previous_word) > 1:
                         response['in_pair_before'].append(
                             remove_non_alphabetic_characters(f'{previous_word} {append_dots(sentence, query)}')
                         )
@@ -117,7 +126,7 @@ class SearchView(APIView):
                     except IndexError:
                         next_word = None
 
-                    if next_word and len(next_word) > 1:
+                    if isWholeWord and next_word and len(next_word) > 1:
                         response['in_pair_after'].append(
                             remove_non_alphabetic_characters(f'{append_dots(sentence, query)} {next_word}')
                         )
