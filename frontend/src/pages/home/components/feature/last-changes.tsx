@@ -1,4 +1,13 @@
-import { Text, Title, Container, SimpleGrid, Paper, Group, createStyles } from '@mantine/core';
+import {
+	Text,
+	Title,
+	Container,
+	SimpleGrid,
+	Paper,
+	Group,
+	createStyles,
+	Space,
+} from '@mantine/core';
 import { Client, Databases, Query } from 'appwrite';
 import { memo, useEffect, useMemo, useState } from 'react';
 
@@ -39,6 +48,7 @@ const useStyles = createStyles((theme) => ({
 type Notifications = {
 	title: string;
 	message: string;
+	updateAt: string;
 };
 
 function LastChanges() {
@@ -60,6 +70,7 @@ function LastChanges() {
 				return {
 					title: item.title,
 					message: item.message,
+					updateAt: item.$updatedAt,
 				};
 			});
 
@@ -94,6 +105,10 @@ function LastChanges() {
 						</Group>
 						<Text color='dimmed' size='xs'>
 							{item.message}
+						</Text>
+						<Space h='xs' />
+						<Text fs='italic' color='dimmed' size='xs'>
+							Дата обновления: {new Date(item.updateAt).toLocaleDateString('ru-RU')}
 						</Text>
 					</Paper>
 				))}
