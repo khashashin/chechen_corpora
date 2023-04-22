@@ -143,7 +143,7 @@ class SearchView(APIView):
                         'origin': {
                             'title': origin_object.title,
                             'id': f'{origin_object.id.hashid}',
-                            'year': origin_object.publication_date.year,
+                            'year': origin_object.publication_date.year if origin_object.publication_date else None,
                             'page': page.number,
                             'sources': [source.name for source in origin_object.sources.all()],
                             'authors': [author.name for author in origin_object.authors.all()],
