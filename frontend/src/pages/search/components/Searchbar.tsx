@@ -12,6 +12,7 @@ import { AiOutlineSearch } from 'react-icons/ai';
 import { BsArrowRightShort } from 'react-icons/bs';
 import { memo, useEffect, useState } from 'react';
 import { useDebouncedValue, useFocusTrap } from '@mantine/hooks';
+import { useSearch } from '@tanstack/react-location';
 
 const BREAKPOINT = '@media (max-width: 755px)';
 
@@ -38,6 +39,8 @@ function Searchbar(props: SearchbarProps) {
 	const { onSearchResult, isLoading } = props;
 
 	const [searchQuery, setSearchQuery] = useState<string>('');
+
+	const search = useSearch();
 	const [debouncedResult] = useDebouncedValue(searchQuery, 500);
 	const focusTrapRef = useFocusTrap();
 
@@ -47,6 +50,14 @@ function Searchbar(props: SearchbarProps) {
 	useEffect(() => {
 		onSearchResult(debouncedResult);
 	}, [debouncedResult, onSearchResult]);
+
+	useEffect(() => {
+		const { q } = search as any;
+
+		if (q) {
+			setSearchQuery(q);
+		}
+	}, [search]);
 
 	return (
 		<Group className={classes.controls} spacing={3}>
