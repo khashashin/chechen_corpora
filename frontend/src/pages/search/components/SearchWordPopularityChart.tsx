@@ -8,6 +8,7 @@ import {
 	CartesianGrid,
 	Tooltip,
 } from 'recharts';
+import PopularityChartTooltip from './SearchWordPopularityChartTooltip';
 
 type ChartDataTypes = {
 	chartData: {
@@ -57,7 +58,7 @@ function SearchWordPopularityChart(props: ChartDataTypes) {
 					<CartesianGrid strokeDasharray='3 3' />
 					<XAxis dataKey='year' />
 					<YAxis />
-					<Tooltip />
+					<Tooltip content={<PopularityChartTooltip />} />
 					<Line type='monotone' dataKey='words' stroke='#2f9e44' strokeWidth={2} />
 				</LineChart>
 			</ResponsiveContainer>
