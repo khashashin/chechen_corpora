@@ -1,9 +1,11 @@
-import { Badge, Box, Group } from '@mantine/core';
+import { Anchor, Badge, Box, Group } from '@mantine/core';
 import { useQuery } from '@tanstack/react-query';
+import { useNavigate } from '@tanstack/react-location';
 import { getRandomWords } from '../pages/search/services/api';
 
 function SearchHintWords() {
 	const { data: hintWords } = useQuery(['hintWords'], () => getRandomWords());
+	const navigate = useNavigate();
 
 	return (
 		<Box mt='lg'>
@@ -11,7 +13,13 @@ function SearchHintWords() {
 			<Group>
 				{hintWords?.data.map((word: string) => (
 					<Badge key={word} variant='outline'>
-						{word}
+						<Anchor
+							onClick={(event) => {
+								event.preventDefault();
+								navigate({ to: `/search?q=${word}` });
+							}}>
+							{word}
+						</Anchor>
 					</Badge>
 				))}
 			</Group>

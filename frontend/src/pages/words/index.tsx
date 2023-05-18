@@ -1,8 +1,9 @@
-import { ActionIcon, Box, Container, Divider, Paper, Tabs, TextInput } from '@mantine/core';
+import { ActionIcon, Anchor, Box, Container, Divider, Paper, Tabs, TextInput } from '@mantine/core';
 import { useMediaQuery } from '@mantine/hooks';
 import { Fragment, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { IconFilter, IconX } from '@tabler/icons';
+import { useNavigate } from '@tanstack/react-location';
 import { getUniqueWords } from './services/api';
 import PublicHeader from '../../components/header/public-header';
 import FooterSection from '../../components/footer/footer-section';
@@ -12,6 +13,7 @@ function WordsPage() {
 	const { data: words, isLoading } = useQuery(['uniqueWords'], () => getUniqueWords());
 	const [filterText, setFilterText] = useState('');
 	const isMobile = useMediaQuery('(max-width: 920px)');
+	const navigate = useNavigate();
 
 	return (
 		<Container size='lg'>
@@ -73,7 +75,13 @@ function WordsPage() {
 									.filter((word: string) => word.includes(filterText))
 									.map((word: string) => (
 										<Fragment key={word}>
-											<p>{word}</p>
+											<Anchor
+												onClick={(event) => {
+													event.preventDefault();
+													navigate({ to: `/search?q=${word}` });
+												}}>
+												{word}
+											</Anchor>
 											<Divider my='sm' variant='dashed' />
 										</Fragment>
 									))
@@ -87,7 +95,13 @@ function WordsPage() {
 									.filter((word: string) => word.includes(filterText))
 									.map((word: string) => (
 										<Fragment key={word}>
-											<p>{word}</p>
+											<Anchor
+												onClick={(event) => {
+													event.preventDefault();
+													navigate({ to: `/search?q=${word}` });
+												}}>
+												{word}
+											</Anchor>
 											<Divider my='sm' variant='dashed' />
 										</Fragment>
 									))}
