@@ -12,7 +12,7 @@ class Command(BaseCommand):
         # get all pages which ids are not in versions
         pages = Page.objects.exclude(id__in=versions.values_list('reference_id', flat=True))
 
-        page_words = []
+        page_words = set()
         for page in pages:
             words = page.text.split(' ')
             self.stdout.write(self.style.SUCCESS(f'[INFO] Processing page {page.id}'))
@@ -21,7 +21,7 @@ class Command(BaseCommand):
                 word = word.lower()
                 word = ''.join([char for char in word if char.isalpha() or char == '-'])
                 if word not in page_words:
-                    page_words.append(word)
+                    page_words.add(word)
                 else:
                     self.stdout.write(self.style.SUCCESS(f'[WARNING] Word {word} already exists'))
 
