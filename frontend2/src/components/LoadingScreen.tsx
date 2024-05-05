@@ -20,13 +20,13 @@ function LoadingScreen({ title, icon = undefined }: LoadingScreenProps) {
   const [showGoHome, setShowGoHome] = useState(false);
 
   const icons = [
-    <IconDeviceGamepad size={48} />,
-    <IconFile3d size={48} />,
-    <IconReportSearch size={48} />,
-    <IconLivePhoto size={48} />,
-    <IconRun size={48} />,
-    <IconLanguage size={48} />,
-    <IconBooks size={48} />,
+    <IconDeviceGamepad />,
+    <IconFile3d />,
+    <IconReportSearch />,
+    <IconLivePhoto />,
+    <IconRun />,
+    <IconLanguage />,
+    <IconBooks />,
   ];
 
   // Перейти на главную

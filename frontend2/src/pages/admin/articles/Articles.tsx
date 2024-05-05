@@ -1,26 +1,26 @@
 import { useQuery } from '@tanstack/react-query';
 
-import { getBooks } from './API';
 import DocOverview from '../components/DocOverview';
 import { Document } from '../components/Document';
+import { getArticles } from './API';
 
 function BooksPage() {
   const {
-    data: books,
+    data: articles,
     isLoading,
     error,
   } = useQuery({
-    queryKey: ['books'],
-    queryFn: getBooks,
+    queryKey: ['articles'],
+    queryFn: getArticles,
     initialData: [],
   });
 
   return (
     <DocOverview
-      data={books as Document[]}
+      data={articles as Document[]}
       isLoading={isLoading}
       error={error}
-      addLink="/admin/books/add"
+      addLink="/admin/articles/add"
     />
   );
 }

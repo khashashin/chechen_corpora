@@ -17,28 +17,28 @@ import 'dayjs/locale/ru';
 import { DatePickerInput } from '@mantine/dates';
 import { IconAlertCircle } from '@tabler/icons-react';
 import { RiDeleteBin4Line } from 'react-icons/ri';
-import { Book } from '../Book';
-import { Source } from '../../components/Document';
+import { Document, Source } from './Document';
 
-type BookMetaDrawerProps = {
+type MetaDrawerProps = {
   opened: boolean;
-  onClose: (values: Book) => void;
-  bookMeta: Book;
+  onClose: (values: Document) => void;
+  meta: Document;
 };
 
-function BookMetaDrawer(props: BookMetaDrawerProps) {
+function MetaDrawer(props: MetaDrawerProps) {
   const { colorScheme } = useMantineColorScheme();
-  const { bookMeta, opened, onClose } = props;
+  const { meta, opened, onClose } = props;
   const theme = useMantineTheme();
   const form = useForm({
     initialValues: {
-      title: bookMeta.title,
-      summary: bookMeta.summary,
-      isbn: bookMeta.isbn,
-      publication_date: bookMeta.publication_date,
-      sources: bookMeta.sources,
+      title: meta.title,
+      summary: meta.summary,
+      publication_date: meta.publication_date,
+      sources: meta.sources,
     },
   });
+
+  const MetaFields = meta.getMeta();
 
   const handleDeleteSource = (index: number) => {
     if (form.values.sources === undefined) return;
@@ -61,7 +61,7 @@ function BookMetaDrawer(props: BookMetaDrawerProps) {
       title="Дополнительная информация"
       padding="xl"
       size="xl"
-      onClose={() => onClose(form.values)}
+      onClose={() => onClose(form.values as Document)}
     >
       <Paper
         style={{
@@ -74,24 +74,20 @@ function BookMetaDrawer(props: BookMetaDrawerProps) {
           <TextInput
             mt="md"
             required
-            placeholder="Введите название книги"
-            label="Название книги"
+            placeholder="Введите название"
+            label="Название"
             {...form.getInputProps('title')} // eslint-disable-line react/jsx-props-no-spreading
           />
           <Textarea
             mt="md"
             autosize
-            placeholder="Введите краткое описание книги"
+            placeholder="Введите краткое описание"
             minRows={4}
-            label="Описание книги"
+            label="Описание"
             {...form.getInputProps('summary')} // eslint-disable-line react/jsx-props-no-spreading
           />
-          <TextInput
-            mt="md"
-            placeholder="Введите ISBN книги"
-            label="ISBN книги"
-            {...form.getInputProps('isbn')} // eslint-disable-line react/jsx-props-no-spreading
-          />
+          {/* Meta attributes. Each interface which extends Document implements the getMeta which returns JSX.Element */}
+          {MetaFields}
           <DatePickerInput
             mt="md"
             value={
@@ -111,8 +107,8 @@ function BookMetaDrawer(props: BookMetaDrawerProps) {
           />
           <Stack mt="md">
             <Text component="label" fw={500} fz="sm">
-              Источники (ссылки на сайты, где можно найти книгу, например, на
-              сайте библиотеки)
+              Источники (ссылки на сайты, где можно найти данный ресурс,
+              например, на сайте библиотеки)
             </Text>
             {form.values.sources && form.values.sources.length > 0 && (
               <ScrollArea
@@ -176,4 +172,4 @@ function BookMetaDrawer(props: BookMetaDrawerProps) {
   );
 }
 
-export default BookMetaDrawer;
+export default MetaDrawer;

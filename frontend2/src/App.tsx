@@ -13,6 +13,8 @@ const AppShell = lazy(() => import('./pages/admin/AppShell'));
 const BooksPage = lazy(() => import('./pages/admin/books/Books'));
 const BooksAdd = lazy(() => import('./pages/admin/books/BookAdd'));
 const BookDetailsPage = lazy(() => import('./pages/admin/books/BookDetails'));
+const ArticlesPage = lazy(() => import('./pages/admin/articles/Articles'));
+const ArticleDtls = lazy(() => import('./pages/admin/articles/ArticleDetails'));
 
 // prettier-ignore
 function S({ children }: { children: React.ReactNode }) {
@@ -43,6 +45,9 @@ function App() {
             <Route path="/admin/books" element={<S><BooksPage /></S>} />
             <Route path='/admin/books/add' element={<S><BooksAdd /></S>} />
             <Route path="/admin/books/:bookId" element={<S><BookDetailsPage /></S>} />
+
+            <Route path='/admin/articles' element={<S><ArticlesPage /></S>} />
+            <Route path='/admin/articles/:articleId' element={<S><ArticleDtls /></S>} />
           </Route>
         </Route>
 
