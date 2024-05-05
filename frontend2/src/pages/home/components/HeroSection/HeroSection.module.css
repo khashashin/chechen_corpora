@@ -1,0 +1,22 @@
+.inner {
+  position: relative;
+  padding-top: 200px;
+  padding-bottom: 120px;
+
+  @media (max-width: var(--mantine-breakpoint-sm)) {
+    padding-bottom: 80px;
+    padding-top: 0;
+  }
+}
+
+.controls {
+  margin-top: calc(var(--mantine-spacing-xl) * 2);
+
+  @media (max-width: var(--mantine-breakpoint-sm)) {
+    margin-top: var(--mantine-spacing-xl);
+  }
+}
+
+.control {
+  width: 100%;
+}

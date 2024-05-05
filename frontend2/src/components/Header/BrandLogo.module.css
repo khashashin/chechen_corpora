@@ -1,0 +1,19 @@
+.logo {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: center;
+  justify-content: space-between;
+
+  & > *:first-of-type {
+    margin-right: var(--mantine-spacing-xs);
+    width: 40px !important;
+  }
+}
+
+.brand {
+  font-size: 1.5rem;
+  font-weight: 500;
+  margin: 0;
+  color: var(--mantine-color-green-6);
+}
