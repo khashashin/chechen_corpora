@@ -1,18 +1,49 @@
 import { Center, Group, Loader, Stack, Text, Anchor, Box } from '@mantine/core';
-import { ReactNode, useState } from 'react';
+import { ReactNode, useEffect, useState } from 'react';
+import {
+  IconDeviceGamepad,
+  IconFile3d,
+  IconReportSearch,
+  IconLivePhoto,
+  IconRun,
+  IconLanguage,
+  IconBooks,
+} from '@tabler/icons-react';
 
 interface LoadingScreenProps {
   title: string;
-  icon: ReactNode;
+  icon?: ReactNode | undefined;
 }
 
-function LoadingScreen({ title, icon }: LoadingScreenProps) {
+function LoadingScreen({ title, icon = undefined }: LoadingScreenProps) {
+  const [currentIconIndex, setCurrentIconIndex] = useState(0);
   const [showGoHome, setShowGoHome] = useState(false);
+
+  const icons = [
+    <IconDeviceGamepad size={48} />,
+    <IconFile3d size={48} />,
+    <IconReportSearch size={48} />,
+    <IconLivePhoto size={48} />,
+    <IconRun size={48} />,
+    <IconLanguage size={48} />,
+    <IconBooks size={48} />,
+  ];
 
   // Перейти на главную
   setTimeout(() => {
     setShowGoHome(true);
   }, 4000);
+
+  useEffect(() => {
+    if (icon !== undefined) return undefined;
+
+    const interval = setInterval(() => {
+      setCurrentIconIndex((currentIndex) => (currentIndex + 1) % icons.length);
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [icon, icons.length]);
+
+  const displayIcon = icon || icons[currentIconIndex];
 
   return (
     <Center h="100vh">
@@ -23,7 +54,7 @@ function LoadingScreen({ title, icon }: LoadingScreenProps) {
             Загрузка...
           </Text>
           <Group gap="xs">
-            {icon}
+            {displayIcon}
             <Text size="xl">{title}</Text>
           </Group>
           {showGoHome && (
@@ -36,5 +67,9 @@ function LoadingScreen({ title, icon }: LoadingScreenProps) {
     </Center>
   );
 }
+
+LoadingScreen.defaultProps = {
+  icon: undefined,
+};
 
 export default LoadingScreen;

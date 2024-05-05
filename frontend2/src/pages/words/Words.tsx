@@ -31,12 +31,12 @@ function WordsPage() {
 
   const listItems: string[] = useMemo(
     () =>
-      Object.values(words?.data)
+      (Object.values(words?.data || [])
         .flat()
         .filter(
           (word: unknown) =>
             typeof word === 'string' && word.includes(filterText),
-        ) as string[],
+        ) as string[]) || [],
     [words, filterText],
   );
 

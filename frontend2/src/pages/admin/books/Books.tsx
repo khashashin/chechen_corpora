@@ -17,7 +17,7 @@ import { BiSearchAlt } from 'react-icons/bi';
 import { useDebouncedValue } from '@mantine/hooks';
 import { DataTable, DataTableSortStatus } from 'mantine-datatable';
 import { useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { getBooks } from './API';
 
 const PAGE_SIZES = [5, 20, 50];
@@ -43,7 +43,6 @@ function BooksPage() {
     columnAccessor: 'title',
     direction: 'asc',
   });
-  const navigate = useNavigate();
 
   useEffect(() => {
     setPage(1);
@@ -81,9 +80,8 @@ function BooksPage() {
           <Text>Выберите книгу чтобы ознакомится с содержимом</Text>
         </Stack>
         <Button
-          onClick={() => {
-            navigate('/admin/books/add');
-          }}
+          component={Link}
+          to="/admin/books/add"
           rightSection={<FaPlus />}
         >
           Добавить книгу

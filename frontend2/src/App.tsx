@@ -1,15 +1,29 @@
 import { Navigate, Outlet, Route, Routes } from 'react-router-dom';
+import { Suspense, lazy } from 'react';
 import HomePage from './pages/home/Home';
-import Login from './pages/auth/Login';
-import AuthWrapper from './pages/auth/AuthWrapper';
 import RequireAuth from './pages/admin/RequireAuth';
-import PageNotFound from './pages/PageNotFound';
 import SearchPage from './pages/search/Search';
 import WordsPage from './pages/words/Words';
-import AppShell from './pages/admin/AppShell';
-import BooksPage from './pages/admin/books/Books';
-import BookDetailsPage from './pages/admin/books/BookDetails';
+import LoadingScreen from './components/LoadingScreen';
 
+const PageNotFound = lazy(() => import('./pages/PageNotFound'));
+const AuthWrapper = lazy(() => import('./pages/auth/AuthWrapper'));
+const Login = lazy(() => import('./pages/auth/Login'));
+const AppShell = lazy(() => import('./pages/admin/AppShell'));
+const BooksPage = lazy(() => import('./pages/admin/books/Books'));
+const BooksAdd = lazy(() => import('./pages/admin/books/BookAdd'));
+const BookDetailsPage = lazy(() => import('./pages/admin/books/BookDetails'));
+
+// prettier-ignore
+function S({ children }: { children: React.ReactNode }) {
+  return (
+    <Suspense fallback={<LoadingScreen title="Загрузка администраторского контента..." />}>
+      {children}
+    </Suspense>
+  );
+}
+
+// prettier-ignore
 function App() {
   return (
     <Routes>
@@ -18,24 +32,22 @@ function App() {
         <Route path="/" element={<HomePage />} />
         <Route path="/search" element={<SearchPage />} />
         <Route path="/words" element={<WordsPage />} />
-        <Route path="/auth" element={<AuthWrapper />}>
-          <Route path="/auth/login" element={<Login />} />
+        <Route path="/auth" element={<S><AuthWrapper /></S>}>
+          <Route path="/auth/login" element={<S><Login /></S>} />
         </Route>
 
         {/* private routes */}
         <Route element={<RequireAuth />}>
-          <Route path="/admin" element={<AppShell />}>
-            <Route
-              path="/admin"
-              element={<Navigate to="/admin/books" replace />}
-            />
-            <Route path="/admin/books" element={<BooksPage />} />
-            <Route path="/admin/books/:bookId" element={<BookDetailsPage />} />
+          <Route path="/admin" element={<S><AppShell /></S>}>
+            <Route path="/admin" element={<Navigate to="/admin/books" replace />} />
+            <Route path="/admin/books" element={<S><BooksPage /></S>} />
+            <Route path='/admin/books/add' element={<S><BooksAdd /></S>} />
+            <Route path="/admin/books/:bookId" element={<S><BookDetailsPage /></S>} />
           </Route>
         </Route>
 
         {/* catch all */}
-        <Route path="*" element={<PageNotFound />} />
+        <Route path="*" element={<S><PageNotFound /></S>} />
       </Route>
     </Routes>
   );
