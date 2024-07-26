@@ -15,10 +15,12 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from django.http import JsonResponse
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('api/v1/health', lambda request: JsonResponse({'status': 'ok'}), name='health_check'),
     path('api/v1/', include('zubdarg.urls')),
     path('api/v1/', include('lakharg.urls')),
     path('api/v1/schema/', SpectacularAPIView.as_view(), name='schema'),
