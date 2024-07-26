@@ -1,6 +1,9 @@
 # Build client Vite based React app
 FROM node:18-alpine AS build
 
+# Set the NODE_OPTIONS environment variable to increase memory limit
+ENV NODE_OPTIONS="--max-old-space-size=4096"
+
 # Set working directory
 RUN mkdir -p /app
 WORKDIR /app
@@ -19,7 +22,6 @@ COPY frontend/ ./
 
 # Build app
 RUN npm run build
-
 
 # Prepare nginx
 FROM nginx:1.21.3-alpine
