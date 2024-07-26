@@ -59,7 +59,7 @@ services:
       - staticfiles:/app/staticfiles
       - mediafiles:/app/media
     ports:
-      - '8090:80'
+      - '8090:8090'
     networks:
       - web
     depends_on:
