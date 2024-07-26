@@ -1,8 +1,8 @@
 /* eslint-disable no-nested-ternary,react/jsx-props-no-spreading */
 import { Button, Stack, TextInput } from '@mantine/core';
-import { useNavigate } from '@tanstack/react-location';
 import { useForm } from '@mantine/form';
-import { useAuth } from '../../providers/auth-provider';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../providers/AuthProvider';
 
 function ForgotPassword() {
 	const { createRecovery } = useAuth();
@@ -26,7 +26,7 @@ function ForgotPassword() {
 
 	const handleLogin = async () => {
 		await createRecovery(form.values.email);
-		navigate({ to: '/auth/confirm-email' });
+		navigate('/auth/confirm-email');
 	};
 
 	return (

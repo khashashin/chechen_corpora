@@ -14,7 +14,11 @@
 		"resolveJsonModule": true,
 		"isolatedModules": true,
 		"noEmit": true,
-		"jsx": "react-jsx"
+		"jsx": "react-jsx",
+		"paths": {
+			"src/*": ["./src/*"],
+			"assets": ["./src/assets/*"]
+		}
 	},
 	"include": ["vite.config.ts", ".eslintrc.cjs", "src"],
 	"references": [

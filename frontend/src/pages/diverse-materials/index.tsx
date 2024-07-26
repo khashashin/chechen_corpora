@@ -11,7 +11,7 @@ import {
 	TextInput,
 	Box,
 } from '@mantine/core';
-import { useNavigate } from '@tanstack/react-location';
+import { useNavigate } from 'react-router-dom';
 import { FaPlus } from 'react-icons/fa';
 import { DataTable, DataTableSortStatus } from 'mantine-datatable';
 import { BiSearchAlt } from 'react-icons/bi';
@@ -68,28 +68,22 @@ function DiverseMaterials() {
 		);
 	}, [debouncedQuery, diverseMaterials]);
 
-	const handleReadClick = (article: DiverseMaterial) => {
-		const { id } = article;
-		if (!id) return undefined;
-		return navigate({
-			to: `/admin/diverse-materials/${id}`,
-		});
+	const handleReadClick = (id: string) => {
+		return navigate(`/admin/diverse-materials/${id}`);
 	};
 
 	return (
 		<>
-			<Group position='apart'>
-				<Stack spacing='xs'>
+			<Group justify='apart'>
+				<Stack gap='xs'>
 					<Title>Список разнообразных материалов</Title>
 					<Text>Выберите материал для ознакомления</Text>
 				</Stack>
 				<Button
 					onClick={() => {
-						navigate({
-							to: '/admin/diverse-materials/add',
-						});
+						navigate('/admin/diverse-materials/add');
 					}}
-					rightIcon={<FaPlus />}>
+					rightSection={<FaPlus />}>
 					Добавить материал
 				</Button>
 			</Group>
@@ -101,11 +95,11 @@ function DiverseMaterials() {
 					{diverseMaterials && (
 						<>
 							<Grid align='center' mb='md'>
-								<Grid.Col xs={8} sm={9}>
+								<Grid.Col span={{ base: 12, xs: 8, sm: 9 }}>
 									<TextInput
-										sx={{ flexBasis: '50%' }}
+										style={{ flexBasis: '50%' }}
 										placeholder='Поиск...'
-										icon={<BiSearchAlt size={16} />}
+										leftSection={<BiSearchAlt size={16} />}
 										value={query}
 										onChange={(e) => setQuery(e.currentTarget.value)}
 									/>
@@ -114,10 +108,10 @@ function DiverseMaterials() {
 							<Box>
 								<DataTable
 									fetching={isLoading}
-									loaderVariant='oval'
+									loaderType='oval'
 									shadow='md'
 									borderRadius='sm'
-									withBorder
+									withTableBorder
 									highlightOnHover
 									minHeight={400}
 									recordsPerPage={pageSize}
@@ -131,24 +125,24 @@ function DiverseMaterials() {
 										{
 											accessor: 'title',
 											title: 'Заголовок',
-											render: (article: DiverseMaterial) => <Text>{article.title}</Text>,
+											render: ({ title }) => <Text>{title as string}</Text>,
 											sortable: true,
 										},
 										{
 											accessor: 'publication.date',
 											title: 'Дата публикации',
-											render: (article: DiverseMaterial) => <Text>{article.publication_date}</Text>,
+											render: ({ publication_date }) => <Text>{publication_date as string}</Text>,
 											sortable: true,
 										},
 										{
 											accessor: 'details.link',
 											title: 'Читать',
-											render: (article: DiverseMaterial) => (
+											render: ({ id }) => (
 												<Button
-													compact
+													size='compact-md'
 													component='a'
 													variant='outline'
-													onClick={() => handleReadClick(article)}>
+													onClick={() => handleReadClick(id as string)}>
 													Читать
 												</Button>
 											),

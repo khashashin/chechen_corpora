@@ -1,6 +1,6 @@
 import { Anchor, Badge, Box, Group } from '@mantine/core';
 import { useQuery } from '@tanstack/react-query';
-import { useNavigate } from '@tanstack/react-location';
+import { useNavigate } from 'react-router-dom';
 import { getRandomWords } from '../pages/search/services/api';
 
 function SearchHintWords() {
@@ -16,7 +16,7 @@ function SearchHintWords() {
 						<Anchor
 							onClick={(event) => {
 								event.preventDefault();
-								navigate({ to: `/search?q=${word}` });
+								navigate(`/search?q=${word}`);
 							}}>
 							{word}
 						</Anchor>

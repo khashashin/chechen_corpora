@@ -1,14 +1,14 @@
-import { useNavigate, useRouter } from '@tanstack/react-location';
 import { notifications } from '@mantine/notifications';
 import { memo, useEffect, useState } from 'react';
 import { Paper, Stack, Text, Button } from '@mantine/core';
-import { useAuth } from '../../providers/auth-provider';
+import { useNavigate, useParams } from 'react-router-dom';
+import { useAuth } from '../../providers/AuthProvider';
 
 function Verify() {
-	const router = useRouter();
+	const params = useParams();
 	const navigate = useNavigate();
 	const { updateVerification } = useAuth();
-	const { userId, secret } = router.state.location.search;
+	const { userId, secret } = params;
 
 	const [isVerified, setIsVerified] = useState(false);
 	const [isLoading, setIsLoading] = useState(true);
@@ -34,7 +34,7 @@ function Verify() {
 			{isVerified && (
 				<Paper>
 					<Text>Ваш аккаунт успешно подтвержден</Text>
-					<Button onClick={() => navigate({ to: '/' })}>На главную</Button>
+					<Button onClick={() => navigate('/')}>На главную</Button>
 				</Paper>
 			)}
 			{!isLoading && !isVerified && (
@@ -45,7 +45,7 @@ function Verify() {
 						alignItems: 'center',
 					}}>
 					<Text>Произошла ошибка при верификации</Text>
-					<Button onClick={() => navigate({ to: '/' })} mt={12}>
+					<Button onClick={() => navigate('/')} mt={12}>
 						На главную
 					</Button>
 				</Paper>

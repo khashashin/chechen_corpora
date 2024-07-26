@@ -10,12 +10,13 @@ import {
 	TextInput,
 	Text,
 	useMantineTheme,
+	useMantineColorScheme,
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import 'dayjs/locale/ru';
 import { DatePickerInput } from '@mantine/dates';
-import { IconAlertCircle } from '@tabler/icons';
-import { RiDeleteBin4Line } from 'react-icons/all';
+import { IconAlertCircle } from '@tabler/icons-react';
+import { RiDeleteBin4Line } from 'react-icons/ri';
 import { Book } from '../../../models/book';
 import { Source } from '../../../models/base';
 
@@ -26,6 +27,7 @@ type BookMetaDrawerProps = {
 };
 
 function BookMetaDrawer(props: BookMetaDrawerProps) {
+	const { colorScheme } = useMantineColorScheme();
 	const { bookMeta, opened, onClose } = props;
 	const theme = useMantineTheme();
 	const form = useForm({
@@ -63,7 +65,7 @@ function BookMetaDrawer(props: BookMetaDrawerProps) {
 			<Paper
 				style={{
 					position: 'relative',
-					backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[7] : theme.white,
+					backgroundColor: colorScheme === 'dark' ? theme.colors.dark[7] : theme.white,
 				}}>
 				<form noValidate>
 					<TextInput

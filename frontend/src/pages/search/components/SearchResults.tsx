@@ -1,8 +1,8 @@
 import { ActionIcon, Box, Group, Paper, Stack } from '@mantine/core';
 import { useMediaQuery } from '@mantine/hooks';
 import { memo, useState } from 'react';
-import { BsChevronBarContract, BsChevronBarExpand } from 'react-icons/all';
 import { escapeRegExp } from 'lodash';
+import { BsChevronBarContract, BsChevronBarExpand } from 'react-icons/bs';
 import SearchUniqueWords from './SearchUniqueWords';
 import SharedUtils from '../../../shared/utils';
 import SearchWordPopularityChart from './SearchWordPopularityChart';
@@ -48,7 +48,7 @@ function SearchResults(props: SearchResultsProps) {
 
 	return (
 		<Box
-			sx={{
+			style={{
 				minHeight: 'calc(100vh - 280px)',
 			}}>
 			{isLoading && <p>Loading...</p>}
@@ -56,7 +56,7 @@ function SearchResults(props: SearchResultsProps) {
 			{searchData?.results.length > 0 && (
 				<SearchWordPopularityChart chartData={SharedUtils.getChartData(searchData)} />
 			)}
-			<Group position='apart' spacing='md' align='start'>
+			<Group justify='apart' gap='md' align='start'>
 				{searchData?.unique_words.length > 0 && (
 					<SearchUniqueWords uniqueWords={searchData?.unique_words} />
 				)}
@@ -79,13 +79,13 @@ function SearchResults(props: SearchResultsProps) {
 				</h1>
 			)}
 			{searchData && (
-				<Stack spacing={isMobile ? 'md' : 'xl'}>
+				<Stack gap={isMobile ? 'md' : 'xl'}>
 					{searchData?.results.map((item: any) => (
 						<Paper
 							key={item.uuid}
 							shadow='sm'
 							p={isMobile ? 'md' : 'xl'}
-							sx={{
+							style={{
 								cursor: 'pointer',
 							}}
 							onClick={() => {
@@ -95,7 +95,7 @@ function SearchResults(props: SearchResultsProps) {
 									setOpened((o) => [...o, item.uuid]);
 								}
 							}}>
-							<Group position='apart' spacing='md' noWrap>
+							<Group justify='apart' gap='md' flex='noWrap'>
 								{getSearchItemContent(item)}
 								{opened.includes(item.uuid) ? (
 									<ActionIcon

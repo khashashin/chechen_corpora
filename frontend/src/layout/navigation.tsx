@@ -1,11 +1,11 @@
-import { Group, Navbar, ThemeIcon, UnstyledButton, Text } from '@mantine/core';
+import { Group, ThemeIcon, UnstyledButton, Text, useMantineColorScheme, Box } from '@mantine/core';
 import { ReactNode } from 'react';
 import { RiCharacterRecognitionLine, RiArticleFill } from 'react-icons/ri';
 import { SiBookstack } from 'react-icons/si';
 import { IoNewspaperSharp } from 'react-icons/io5';
 import { GiMaterialsScience } from 'react-icons/gi';
 import { BiCategoryAlt } from 'react-icons/bi';
-import { Link } from '@tanstack/react-location';
+import { Link } from 'react-router-dom';
 
 type MainLinkProps = {
 	icon: ReactNode;
@@ -16,18 +16,18 @@ type MainLinkProps = {
 };
 
 function MainLink({ icon, color, label, to, id }: MainLinkProps) {
+	const { colorScheme } = useMantineColorScheme();
 	return (
 		<UnstyledButton
-			sx={(theme) => ({
+			style={(theme) => ({
 				display: 'block',
 				width: '100%',
 				padding: theme.spacing.xs,
 				borderRadius: theme.radius.sm,
-				color: theme.colorScheme === 'dark' ? theme.colors.dark[0] : theme.black,
+				color: colorScheme === 'dark' ? theme.colors.dark[0] : theme.black,
 
 				'&:hover': {
-					backgroundColor:
-						theme.colorScheme === 'dark' ? theme.colors.dark[6] : theme.colors.gray[0],
+					backgroundColor: colorScheme === 'dark' ? theme.colors.dark[6] : theme.colors.gray[0],
 				},
 			})}
 			component={Link}
@@ -90,6 +90,7 @@ const data = [
 ];
 
 function MainLinks() {
+	// eslint-disable-next-line react/jsx-props-no-spreading
 	const links = data.map((link) => <MainLink {...link} key={link.label} />);
 	return <div>{links}</div>;
 }
@@ -100,14 +101,14 @@ type AppNavigationProps = {
 
 function AppNavigation({ opened }: AppNavigationProps) {
 	return (
-		<Navbar p='md' hiddenBreakpoint='sm' hidden={!opened} width={{ sm: 200, lg: 300 }}>
-			<Navbar.Section grow mt='md'>
+		<Box p='md' hidden={!opened} style={{ width: '200px' }}>
+			<Box mt='md'>
 				<MainLinks />
-			</Navbar.Section>
-			<Navbar.Section>
+			</Box>
+			<Box>
 				<div>User</div>
-			</Navbar.Section>
-		</Navbar>
+			</Box>
+		</Box>
 	);
 }
 

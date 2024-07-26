@@ -10,10 +10,11 @@ import {
 	Alert,
 	Button,
 	useMantineTheme,
+	useMantineColorScheme,
 } from '@mantine/core';
 import { DatePickerInput } from '@mantine/dates';
 import { RiDeleteBin4Line } from 'react-icons/ri';
-import { IconAlertCircle } from '@tabler/icons';
+import { IconAlertCircle } from '@tabler/icons-react';
 import { useForm } from '@mantine/form';
 import { Source } from '../../../models/base';
 import DiverseMaterial from '../../../models/diverse-materials';
@@ -25,6 +26,7 @@ type MetaInfoProps = {
 };
 
 function MetaInfo(props: MetaInfoProps) {
+	const { colorScheme } = useMantineColorScheme();
 	const { meta, opened, onClose } = props;
 	const theme = useMantineTheme();
 	const form = useForm({
@@ -64,7 +66,7 @@ function MetaInfo(props: MetaInfoProps) {
 			<Paper
 				style={{
 					position: 'relative',
-					backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[7] : theme.white,
+					backgroundColor: colorScheme === 'dark' ? theme.colors.dark[7] : theme.white,
 				}}>
 				<form noValidate>
 					<TextInput

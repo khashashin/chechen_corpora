@@ -10,7 +10,6 @@ class BookAdmin(admin.ModelAdmin):
 
 class PageAdmin(admin.ModelAdmin):
     list_display = ("number", "document")
-    list_filter = ("document",)
     search_fields = ("document__title",)
 
 

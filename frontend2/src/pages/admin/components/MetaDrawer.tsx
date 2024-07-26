@@ -23,11 +23,12 @@ type MetaDrawerProps = {
   opened: boolean;
   onClose: (values: Document) => void;
   meta: Document;
+  getMetaComponent: () => JSX.Element | null;
 };
 
 function MetaDrawer(props: MetaDrawerProps) {
   const { colorScheme } = useMantineColorScheme();
-  const { meta, opened, onClose } = props;
+  const { meta, opened, onClose, getMetaComponent } = props;
   const theme = useMantineTheme();
   const form = useForm({
     initialValues: {
@@ -37,8 +38,6 @@ function MetaDrawer(props: MetaDrawerProps) {
       sources: meta.sources,
     },
   });
-
-  const MetaFields = meta.getMeta();
 
   const handleDeleteSource = (index: number) => {
     if (form.values.sources === undefined) return;
@@ -87,7 +86,7 @@ function MetaDrawer(props: MetaDrawerProps) {
             {...form.getInputProps('summary')} // eslint-disable-line react/jsx-props-no-spreading
           />
           {/* Meta attributes. Each interface which extends Document implements the getMeta which returns JSX.Element */}
-          {MetaFields}
+          {getMetaComponent()}
           <DatePickerInput
             mt="md"
             value={

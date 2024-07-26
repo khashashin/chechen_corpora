@@ -1,9 +1,9 @@
 /* eslint-disable react/jsx-props-no-spreading,no-nested-ternary */
 import { Anchor, Button, PasswordInput, Stack, TextInput } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
-import { useNavigate } from '@tanstack/react-location';
 import { useForm } from '@mantine/form';
-import { useAuth } from '../../providers/auth-provider';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../providers/AuthProvider';
 
 function Registration() {
 	const { register } = useAuth();
@@ -42,7 +42,7 @@ function Registration() {
 	const handleRegister = async () => {
 		register(form.values.email, form.values.password, form.values.name)
 			.then(() => {
-				navigate({ to: '/' });
+				navigate('/');
 				notifications.show({
 					title: 'Успешная регистрация',
 					message: 'Вы успешно зарегистрировались. Подтвердите свой аккаунт по ссылке в письме.',
@@ -87,7 +87,7 @@ function Registration() {
 				<Anchor<'a'>
 					onClick={(event) => {
 						event.preventDefault();
-						navigate({ to: '/auth/login' });
+						navigate('/auth/login');
 					}}
 					href='/auth/login'
 					size='sm'>

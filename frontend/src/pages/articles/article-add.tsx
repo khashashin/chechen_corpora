@@ -17,12 +17,12 @@ import {
 	IconFilePlus,
 	IconFileX,
 	IconLayoutSidebarLeftCollapse,
-} from '@tabler/icons';
+} from '@tabler/icons-react';
 import { useMutation } from '@tanstack/react-query';
 import { DataTable } from 'mantine-datatable';
 import { useEffect, useState } from 'react';
 import { notifications } from '@mantine/notifications';
-import { useNavigate } from '@tanstack/react-location';
+import { useNavigate } from 'react-router-dom';
 import Article from '../../models/article';
 import Page from '../../models/page';
 import { PAGE_SIZE } from '../../shared/constants';
@@ -47,7 +47,7 @@ function ArticleAdd() {
 	const navigate = useNavigate();
 
 	const onSaveSuccess = () => {
-		navigate({ to: '/admin/articles' });
+		navigate('/admin/articles');
 		notifications.show({
 			title: 'Успешное сохранение',
 			message: 'Материал успешно сохранен',
@@ -137,12 +137,12 @@ function ArticleAdd() {
 				opened={drawerOpen}
 				articleMeta={articleMeta}
 			/>
-			<Group position='apart'>
-				<Stack spacing='xs'>
+			<Group justify='apart'>
+				<Stack gap='xs'>
 					<Title>Добавить статью</Title>
 					<Text>Вставляйте текст статьи постранично</Text>
 				</Stack>
-				<Group spacing='xl'>
+				<Group gap='xl'>
 					<ActionIcon title='Загрузка файлов пока не поддерживается' disabled>
 						<IconBookUpload />
 					</ActionIcon>
@@ -180,7 +180,7 @@ function ArticleAdd() {
 						</ActionIcon>
 					</Button.Group>
 					{!isMobile && (
-						<Button leftIcon={<IconDeviceFloppy />} onClick={() => handleArticleSave()}>
+						<Button leftSection={<IconDeviceFloppy />} onClick={() => handleArticleSave()}>
 							Сохранить
 						</Button>
 					)}
@@ -213,7 +213,7 @@ function ArticleAdd() {
 							},
 						},
 					]}
-					withBorder
+					withTableBorder
 					borderRadius='sm'
 					withColumnBorders
 					totalRecords={pages.length}

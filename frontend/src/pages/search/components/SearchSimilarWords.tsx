@@ -1,6 +1,6 @@
 import { Anchor, Badge, Box, Group } from '@mantine/core';
-import { useNavigate } from '@tanstack/react-location';
 import { memo } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 type SearchSimilarWordsProps = {
 	similarWords: string[];
@@ -19,7 +19,7 @@ function SearchSimilarWords(props: SearchSimilarWordsProps) {
 						<Anchor
 							onClick={(event) => {
 								event.preventDefault();
-								navigate({ to: `/search?q=${item}` });
+								navigate(`/search?q=${item}`);
 							}}>
 							{item}
 						</Anchor>

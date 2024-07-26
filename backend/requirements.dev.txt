@@ -1,0 +1,11 @@
+Django==5.0.1
+drf-spectacular==0.27.0
+drf-spectacular-sidecar==2024.1.1
+python-dotenv==1.0.0
+django-cors-headers==4.3.1
+django-appwrite==1.6.0
+djangorestframework==3.14.0
+django-hashid-field==3.4.0
+sentry-sdk==1.39.2
+nltk==3.8.1
+psycopg==3.1.17

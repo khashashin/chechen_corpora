@@ -1,7 +1,7 @@
-import { useNavigate } from '@tanstack/react-location';
-import { ActionIcon, Group, Header } from '@mantine/core';
-import { IconX } from '@tabler/icons';
+import { ActionIcon, Box, Group } from '@mantine/core';
 import { memo } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { IconX } from '@tabler/icons-react';
 import ColorSchemeToggle from '../../../components/ColorSchemeToggle';
 import HeaderBrand from '../../../components/HeaderBrand';
 
@@ -9,12 +9,12 @@ function SearchHeader() {
 	const navigate = useNavigate();
 
 	const handleSearchClose = () => {
-		return navigate({ to: '/' });
+		return navigate('/');
 	};
 
 	return (
-		<Header height={60} px='md'>
-			<Group position='apart' sx={{ height: '100%' }}>
+		<Box style={{ height: '60px' }} px='md'>
+			<Group justify='apart' style={{ height: '100%' }}>
 				<HeaderBrand />
 
 				<Group>
@@ -24,7 +24,7 @@ function SearchHeader() {
 					</ActionIcon>
 				</Group>
 			</Group>
-		</Header>
+		</Box>
 	);
 }
 

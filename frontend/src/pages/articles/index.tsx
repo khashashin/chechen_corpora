@@ -11,14 +11,13 @@ import {
 	Box,
 } from '@mantine/core';
 import { useDebouncedValue } from '@mantine/hooks';
-import { useNavigate } from '@tanstack/react-location';
 import { useQuery } from '@tanstack/react-query';
 import { sortBy } from 'lodash';
 import { DataTable, DataTableSortStatus } from 'mantine-datatable';
 import { useEffect, useState } from 'react';
 import { BiSearchAlt } from 'react-icons/bi';
 import { FaPlus } from 'react-icons/fa';
-import Article from '../../models/article';
+import { useNavigate } from 'react-router-dom';
 import { getArticles } from './services/api';
 
 const PAGE_SIZES = [5, 20, 50];
@@ -68,28 +67,22 @@ function ArticlesPage() {
 		);
 	}, [debouncedQuery, articles]);
 
-	const handleReadClick = (article: Article) => {
-		const { id } = article;
-		if (!id) return undefined;
-		return navigate({
-			to: `/admin/articles/${id}`,
-		});
+	const handleReadClick = (id: string) => {
+		return navigate(`/admin/articles/${id}`);
 	};
 
 	return (
 		<>
-			<Group position='apart'>
-				<Stack spacing='xs'>
+			<Group justify='apart'>
+				<Stack gap='xs'>
 					<Title>Список статей</Title>
 					<Text>Выберите статью чтобы ознакомится с содержимым</Text>
 				</Stack>
 				<Button
 					onClick={() => {
-						navigate({
-							to: '/admin/articles/add',
-						});
+						navigate('/admin/articles/add');
 					}}
-					rightIcon={<FaPlus />}>
+					rightSection={<FaPlus />}>
 					Добавить статью
 				</Button>
 			</Group>
@@ -101,11 +94,11 @@ function ArticlesPage() {
 					{articles && (
 						<>
 							<Grid align='center' mb='md'>
-								<Grid.Col xs={8} sm={9}>
+								<Grid.Col span={{ xs: 8, sm: 9 }}>
 									<TextInput
-										sx={{ flexBasis: '50%' }}
+										style={{ flexBasis: '50%' }}
 										placeholder='Поиск...'
-										icon={<BiSearchAlt size={16} />}
+										leftSection={<BiSearchAlt size={16} />}
 										value={query}
 										onChange={(e) => setQuery(e.currentTarget.value)}
 									/>
@@ -114,7 +107,7 @@ function ArticlesPage() {
 							<Box>
 								<DataTable
 									fetching={isLoading}
-									loaderVariant='oval'
+									loaderType='oval'
 									shadow='md'
 									borderRadius='sm'
 									withBorder
@@ -124,31 +117,31 @@ function ArticlesPage() {
 									recordsPerPageOptions={PAGE_SIZES}
 									recordsPerPageLabel='Количество записей на странице'
 									onRecordsPerPageChange={setPageSize}
-									records={records}
+									records={records as Record<string, unknown>[]}
 									page={page}
 									onPageChange={(p) => setPage(p)}
 									columns={[
 										{
 											accessor: 'title',
 											title: 'Заголовок',
-											render: (article: Article) => <Text>{article.title}</Text>,
+											render: ({ title }) => <Text>{title as string}</Text>,
 											sortable: true,
 										},
 										{
 											accessor: 'publication.date',
 											title: 'Дата публикации',
-											render: (article: Article) => <Text>{article.publication_date}</Text>,
+											render: ({ publication_date }) => <Text>{publication_date as string}</Text>,
 											sortable: true,
 										},
 										{
 											accessor: 'details.link',
 											title: 'Читать',
-											render: (article: Article) => (
+											render: ({ id }) => (
 												<Button
-													compact
+													size='compact-md'
 													component='a'
 													variant='outline'
-													onClick={() => handleReadClick(article)}>
+													onClick={() => handleReadClick(id as string)}>
 													Читать
 												</Button>
 											),

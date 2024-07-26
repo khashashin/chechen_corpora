@@ -1,16 +1,49 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 
 import { useMutation } from '@tanstack/react-query';
 import { notifications } from '@mantine/notifications';
 import { useNavigate } from 'react-router-dom';
+import { TextInput } from '@mantine/core';
 import { Book } from './Book';
 import { Document } from '../components/Document';
 import { createBook } from './API';
 import DocAdd from '../components/DocAdd';
 
+type BookMetaProps = {
+  isbn: string;
+  setBookMeta: (values: any) => void;
+};
+
+function BookMeta({ isbn, setBookMeta }: BookMetaProps) {
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setBookMeta((prevMeta: Book) => {
+      const newState = { ...prevMeta, isbn: event.target.value };
+      return newState;
+    });
+  };
+
+  return (
+    <TextInput
+      label="ISBN"
+      placeholder="Enter the ISBN number"
+      value={isbn}
+      onChange={handleInputChange}
+    />
+  );
+}
+
 function BooksAdd() {
-  const [bookMeta, setBookMeta] = useState<Document>();
   const navigate = useNavigate();
+
+  const [bookMeta, setBookMeta] = useState<Book | undefined>();
+
+  const metaComponent = useMemo(() => {
+    if (bookMeta) {
+      return <BookMeta isbn={bookMeta.isbn} setBookMeta={setBookMeta} />;
+    }
+
+    return null;
+  }, [bookMeta, setBookMeta]);
 
   const onSaveSuccess = () => {
     navigate('/admin/books');
@@ -33,32 +66,19 @@ function BooksAdd() {
     onError: onSaveError,
   });
 
-  const handleBookSave = () => {
-    if (!bookMeta.title) {
-      setPopoverOpened(true);
-      return;
-    }
-
-    // setIsSaved(true);
-
-    // remove id property from pages
-    const pagesWithoutId = pages.map((p) => {
-      const { id, ...rest } = p;
-      return rest;
-    });
-
-    const date = bookMeta.publication_date
-      ? new Date(bookMeta.publication_date)
+  const handleBookSave = (newMeta: Book) => {
+    const date = newMeta.publication_date
+      ? new Date(newMeta.publication_date)
       : null;
 
     const book = {
-      title: bookMeta.title,
-      summary: bookMeta.summary,
-      isbn: bookMeta.isbn,
+      title: newMeta.title,
+      summary: newMeta.summary,
+      isbn: newMeta.isbn,
       publication_date: date
         ? `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`
         : date,
-      sources: bookMeta.sources,
+      sources: newMeta.sources,
       pages: pagesWithoutId,
     } as Book;
 
@@ -67,9 +87,10 @@ function BooksAdd() {
 
   return (
     <DocAdd
-      handleSave={handleBookSave}
-      metaState={bookMeta}
-      setMetaState={setBookMeta}
+      handleOnSave={handleBookSave}
+      metaState={bookMeta as Document}
+      setMetaState={setBookMeta as (values: Document) => void}
+      getMetaComponent={() => metaComponent}
     />
   );
 }

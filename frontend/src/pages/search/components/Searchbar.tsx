@@ -1,34 +1,9 @@
-import {
-	ActionIcon,
-	Box,
-	createStyles,
-	Group,
-	Loader,
-	Text,
-	TextInput,
-	useMantineTheme,
-} from '@mantine/core';
+import { ActionIcon, Box, Group, Loader, Text, TextInput, useMantineTheme } from '@mantine/core';
 import { AiOutlineSearch } from 'react-icons/ai';
 import { BsArrowRightShort } from 'react-icons/bs';
 import { memo, useEffect, useState } from 'react';
 import { useDebouncedValue, useFocusTrap } from '@mantine/hooks';
-import { useSearch } from '@tanstack/react-location';
-
-const BREAKPOINT = '@media (max-width: 755px)';
-
-const useStyles = createStyles((theme) => ({
-	controls: {
-		marginTop: `calc(${theme.spacing.xl} * 2)`,
-
-		[BREAKPOINT]: {
-			marginTop: theme.spacing.xl,
-		},
-	},
-
-	control: {
-		width: '100%',
-	},
-}));
+import { useParams } from 'react-router-dom';
 
 type SearchbarProps = {
 	onSearchResult: (result: any) => void;
@@ -40,34 +15,33 @@ function Searchbar(props: SearchbarProps) {
 
 	const [searchQuery, setSearchQuery] = useState<string>('');
 
-	const search = useSearch();
+	const params = useParams();
 	const [debouncedResult] = useDebouncedValue(searchQuery, 500);
 	const focusTrapRef = useFocusTrap();
 
 	const theme = useMantineTheme();
-	const { classes } = useStyles();
 
 	useEffect(() => {
 		onSearchResult(debouncedResult);
 	}, [debouncedResult, onSearchResult]);
 
 	useEffect(() => {
-		const { q } = search as any;
+		const { q } = params as any;
 
 		if (q) {
 			setSearchQuery(q);
 		}
-	}, [search]);
+	}, [params]);
 
 	return (
-		<Group className={classes.controls} spacing={3}>
+		<Group gap={3}>
 			<Text fz='sm'>
 				Введите слово или словосочетание для поиска (вместо буквы Ӏ вы можете использовать цифру 1)
 			</Text>
 			<TextInput
 				ref={focusTrapRef}
 				value={searchQuery}
-				icon={<AiOutlineSearch size={24} />}
+				leftSection={<AiOutlineSearch size={24} />}
 				size='lg'
 				rightSection={
 					<ActionIcon size={32} radius='xl' color={theme.primaryColor} variant='filled'>
@@ -76,14 +50,13 @@ function Searchbar(props: SearchbarProps) {
 				}
 				placeholder='Поиск по корпусу'
 				rightSectionWidth={42}
-				className={classes.control}
 				onChange={(event) => {
 					setSearchQuery(event.currentTarget.value);
 				}}
 			/>
 			{isLoading && (
 				<Box
-					sx={{
+					style={{
 						display: 'flex',
 						justifyContent: 'center',
 						alignItems: 'center',

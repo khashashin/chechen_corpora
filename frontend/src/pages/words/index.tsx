@@ -2,8 +2,8 @@ import { ActionIcon, Anchor, Box, Container, Divider, Paper, Tabs, TextInput } f
 import { useMediaQuery } from '@mantine/hooks';
 import { Fragment, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { IconFilter, IconX } from '@tabler/icons';
-import { useNavigate } from '@tanstack/react-location';
+import { IconFilter, IconX } from '@tabler/icons-react';
+import { useNavigate } from 'react-router-dom';
 import { getUniqueWords } from './services/api';
 import PublicHeader from '../../components/header/public-header';
 import FooterSection from '../../components/footer/footer-section';
@@ -20,7 +20,7 @@ function WordsPage() {
 			<PublicHeader />
 			<Box my='xl'>
 				<TextInput
-					icon={<IconFilter />}
+					leftSection={<IconFilter />}
 					label='Фильтр'
 					rightSection={
 						<ActionIcon onClick={() => setFilterText('')}>
@@ -46,7 +46,7 @@ function WordsPage() {
 					})}>
 					<Tabs.List
 						grow
-						sx={{
+						style={{
 							overflowX: 'scroll',
 							'&::-webkit-scrollbar': {
 								display: 'none',
@@ -78,7 +78,7 @@ function WordsPage() {
 											<Anchor
 												onClick={(event) => {
 													event.preventDefault();
-													navigate({ to: `/search?q=${word}` });
+													navigate(`/search?q=${word}`);
 												}}>
 												{word}
 											</Anchor>
@@ -98,7 +98,7 @@ function WordsPage() {
 											<Anchor
 												onClick={(event) => {
 													event.preventDefault();
-													navigate({ to: `/search?q=${word}` });
+													navigate(`/search?q=${word}`);
 												}}>
 												{word}
 											</Anchor>

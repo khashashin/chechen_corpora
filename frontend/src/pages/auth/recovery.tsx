@@ -1,14 +1,14 @@
 /* eslint-disable no-nested-ternary,react/jsx-props-no-spreading */
-import { useNavigate, useRouter } from '@tanstack/react-location';
 import { useForm } from '@mantine/form';
 import { Button, PasswordInput, Stack } from '@mantine/core';
-import { useAuth } from '../../providers/auth-provider';
+import { useNavigate, useParams } from 'react-router-dom';
+import { useAuth } from '../../providers/AuthProvider';
 
 function Recovery() {
-	const router = useRouter();
+	const params = useParams();
 	const navigate = useNavigate();
 	const { updateRecovery } = useAuth();
-	const { userId, secret } = router.state.location.search;
+	const { userId, secret } = params;
 
 	const form = useForm({
 		initialValues: {
@@ -37,7 +37,7 @@ function Recovery() {
 		console.log('userId', userId);
 		console.log('secret', secret);
 		await updateRecovery(userId, secret, form.values.password, form.values.repeatPassword);
-		navigate({ to: '/' });
+		navigate('/');
 	};
 
 	return (

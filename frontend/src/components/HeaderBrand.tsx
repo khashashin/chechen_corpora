@@ -1,6 +1,6 @@
 import { UnstyledButton } from '@mantine/core';
-import { Link } from '@tanstack/react-location';
 import { memo } from 'react';
+import { Link } from 'react-router-dom';
 import BrandLogo from './BrandLogo';
 
 function HeaderBrand() {

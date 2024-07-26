@@ -37,5 +37,5 @@ export interface Document {
   pages?: Page[];
 
 	// method which each document should have to get additional meta information
-	getMeta: () => JSX.Element;
+	getMeta?: () => JSX.Element;
 }

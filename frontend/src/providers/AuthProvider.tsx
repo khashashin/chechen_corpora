@@ -19,7 +19,6 @@ const {
 	VITE_OPEN_R_ENDPOINT,
 	VITE_OPEN_R_SECURE_MODE,
 	VITE_PROJECT_DOMAIN,
-	VITE_LS_SESSION_KEY,
 } = import.meta.env;
 
 const client = new Client();
@@ -41,6 +40,7 @@ const tracker = new Tracker({
 
 type User = Models.Account<Models.Preferences>;
 type AuthContextTypes = {
+	authIsLoading: boolean;
 	user: User | null;
 	session: Models.Session | null;
 	jwt: Models.Jwt | null;
@@ -61,69 +61,14 @@ type AuthContextTypes = {
 const AuthContext = createContext<AuthContextTypes | null>(null);
 
 export default function AuthProvider({ children }: { children: ReactNode }) {
+	const [isLoading, setIsLoading] = useState(true);
 	const [user, setUser] = useState<User | null>(null);
 	const [session, setSession] = useState<Models.Session | null>(null);
 	const [jwt, setJWT] = useState<Models.Jwt | null>(null);
 
-	const fetchUser = useCallback(async () => {
-		try {
-			return await account.get();
-		} catch (err) {
-			console.error('Unable to fetch user.', err);
-			return null;
-		}
-	}, []);
-
-	const fetchSession = useCallback(async () => {
-		try {
-			return await account.getSession('current');
-		} catch (err) {
-			console.error('Unable to fetch session.', err);
-			return null;
-		}
-	}, []);
-
-	const fetchJWT = useCallback(async () => {
-		try {
-			return await account.createJWT();
-		} catch (err) {
-			console.error('Unable to fetch JWT.', err);
-			return null;
-		}
-	}, []);
-
 	const isAuthenticated = useMemo(() => {
-		const status = {
-			isLoggedIn: true,
-		};
-
-		if (!user?.status) {
-			status.isLoggedIn = false;
-		}
-
-		if (!user?.emailVerification) {
-			status.isLoggedIn = false;
-		}
-
-		if (!user?.email) {
-			status.isLoggedIn = false;
-		}
-
-		return status.isLoggedIn;
+		return !!user?.status && !!user?.emailVerification && !!user?.email;
 	}, [user]);
-
-	// Checks if there is a valid session in local storage.
-	const isSessionValid = useMemo(() => {
-		// Check if a session exists in local storage
-		const localSession = localStorage.getItem(VITE_LS_SESSION_KEY);
-		if (!localSession) return false;
-
-		// Get the expiration date from the session
-		const { expire } = JSON.parse(localSession);
-
-		// Check if the expiration date is after the current date/time
-		return new Date(expire).getTime() > Date.now();
-	}, []);
 
 	// Logs the user in with the provided email and password,
 	// and optionally remembers the session in local storage.
@@ -143,16 +88,6 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
 
 				setUser(currentUser);
 				setJWT(currentJWT);
-
-				// If the user requested to remember the session, store the session details in local storage
-				if (remember) {
-					localStorage.setItem(
-						`${VITE_LS_SESSION_KEY}`,
-						JSON.stringify({ expire: emailSession.expire })
-					);
-					localStorage.setItem(`${VITE_LS_SESSION_KEY}-jwt`, currentJWT.jwt);
-					localStorage.setItem(`${VITE_LS_SESSION_KEY}-user-id`, currentUser.$id);
-				}
 			})
 			// If there was an error during login, reject the Promise with an Error
 			.catch((err) => Promise.reject(new Error('Unable to login user. [ERROR]: ', err)));
@@ -176,18 +111,16 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
 	}, []);
 
 	const logout = useCallback(async () => {
-		fetchSession()
-			.then(async (currentSession: Models.Session | null) => {
-				if (currentSession) await account.deleteSession(currentSession.$id);
-				setSession(null);
-				setUser(null);
-				setJWT(null);
-				localStorage.removeItem(VITE_LS_SESSION_KEY);
-				localStorage.removeItem(`${VITE_LS_SESSION_KEY}-user-id`);
-				localStorage.removeItem(`${VITE_LS_SESSION_KEY}-jwt`);
-			})
-			.catch((err) => Promise.reject(new Error('Unable to logout user. [ERROR]: ', err)));
-	}, [fetchSession]);
+		try {
+			const currentSession = await account.getSession('current');
+			if (currentSession) await account.deleteSession(currentSession.$id);
+			setSession(null);
+			setUser(null);
+			setJWT(null);
+		} catch (err) {
+			console.error('Unable to logout user. [ERROR]: ', err);
+		}
+	}, []);
 
 	const createRecovery = useCallback(async (email: string) => {
 		account.createRecovery(email, `${VITE_PROJECT_DOMAIN}/auth/recovery`).catch((err) => {
@@ -215,41 +148,43 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
 	}, []);
 
 	useEffect(() => {
-		fetchUser().then((currentUser) => {
-			setUser(currentUser);
-		});
-		fetchSession().then(async (currentSession) => {
-			setSession(currentSession);
-		});
-		fetchJWT().then((currentJWT) => {
-			setJWT(currentJWT);
-		});
-	}, [fetchUser, fetchSession, fetchJWT]);
+		(async () => {
+			try {
+				const currentAccount = await account.get();
+				const currentSession = await account.getSession('current');
+				const currentJWT = await account.createJWT();
 
-	useEffect(() => {
-		if (!isSessionValid) {
-			logout();
-		}
-	}, [isSessionValid, logout]);
+				setUser(currentAccount);
+				setSession(currentSession);
+				setJWT(currentJWT);
 
-	useEffect(() => {
-		tracker.start();
-		const configureTracker = async () => {
-			const isLoggedIn = await isAuthenticated;
-			if (isLoggedIn && isSessionValid && user) {
-				tracker.setUserID(user?.email);
-				Sentry.setUser({ email: user?.email });
-			} else {
-				Sentry.setUser(null);
+				setIsLoading(false);
+			} catch (err) {
+				setIsLoading(false);
+				console.error('Unable to fetch JWT.', err);
 			}
-		};
+		})();
+	}, []);
 
-		configureTracker();
-	}, [user, isAuthenticated, isSessionValid]);
+	useEffect(() => {
+		(async () => {
+			try {
+				tracker.start();
+
+				if (user) {
+					tracker.setUserID(user?.email);
+					Sentry.setUser({ email: user?.email });
+				}
+			} catch (err) {
+				console.error('Unable to start tracker. [ERROR]: ', err);
+			}
+		})();
+	}, [user]);
 
 	const api = useMemo(() => {
 		return {
 			user,
+			authIsLoading: isLoading,
 			isAuthenticated,
 			login,
 			register,
@@ -263,6 +198,7 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
 	}, [
 		user,
 		isAuthenticated,
+		isLoading,
 		login,
 		register,
 		logout,

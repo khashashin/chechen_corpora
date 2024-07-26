@@ -52,6 +52,7 @@ class Document(models.Model):
     class Meta:
         abstract = True
 
+
 class Page(models.Model):
     id = HashidAutoField(primary_key=True)
     number = models.IntegerField()
@@ -61,7 +62,10 @@ class Page(models.Model):
     document = GenericForeignKey('content_type', 'object_id')
 
     def __str__(self):
-        return f"{self.document.title} - {self.number}"
+        if self.document:
+            return f"{self.document.title} - {self.number}"
+        else:
+            return f"Page {self.number} (No Document)"
 
     class Meta:
         indexes = [
@@ -73,9 +77,11 @@ class Book(Document):
     isbn = models.CharField(max_length=255, null=True, blank=True)
     pages = GenericRelation(Page, related_query_name='book')
 
+
 class Article(Document):
     volume = models.CharField(max_length=255, null=True, blank=True)
     pages = GenericRelation(Page, related_query_name='article')
+
 
 class Diverse(Document):
     pages = GenericRelation(Page, related_query_name='diverse')

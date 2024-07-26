@@ -19,10 +19,10 @@ import {
 	IconDeviceFloppy,
 	IconFileX,
 	IconBookUpload,
-} from '@tabler/icons';
+} from '@tabler/icons-react';
 import { useMutation } from '@tanstack/react-query';
-import { useNavigate } from '@tanstack/react-location';
 import { notifications } from '@mantine/notifications';
+import { useNavigate } from 'react-router-dom';
 import BookMetaDrawer from './components/BookMetaInfo';
 import { BookUtils } from './services/utils';
 import UploadFileModal from './components/UploadFileModal';
@@ -53,7 +53,7 @@ function BooksAdd() {
 	const navigate = useNavigate();
 
 	const onSaveSuccess = () => {
-		navigate({ to: '/admin/books' });
+		navigate('/admin/books');
 		notifications.show({
 			title: 'Успешное сохранение',
 			message: 'Материал успешно сохранен',
@@ -187,12 +187,12 @@ function BooksAdd() {
 	return (
 		<>
 			<BookMetaDrawer onClose={handleBookMetaChange} opened={drawerOpen} bookMeta={bookMeta} />
-			<Group position='apart'>
-				<Stack spacing='xs'>
+			<Group justify='apart'>
+				<Stack gap='xs'>
 					<Title>Добавить книгу</Title>
 					<Text>Вставляйте текст книги постранично</Text>
 				</Stack>
-				<Group spacing='xl'>
+				<Group gap='xl'>
 					<ActionIcon title='Загрузить файл' onClick={onBookUploadClick}>
 						<IconBookUpload />
 					</ActionIcon>
@@ -230,7 +230,7 @@ function BooksAdd() {
 						</ActionIcon>
 					</Button.Group>
 					{!isMobile && (
-						<Button leftIcon={<IconDeviceFloppy />} onClick={() => handleBookSave()}>
+						<Button leftSection={<IconDeviceFloppy />} onClick={() => handleBookSave()}>
 							Сохранить
 						</Button>
 					)}
@@ -263,7 +263,7 @@ function BooksAdd() {
 							},
 						},
 					]}
-					withBorder
+					withTableBorder
 					borderRadius='sm'
 					withColumnBorders
 					totalRecords={pages.length}

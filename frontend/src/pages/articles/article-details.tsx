@@ -1,39 +1,20 @@
-import { Box, Button, createStyles, Group, Space, Stack, Text, Title } from '@mantine/core';
-import { MakeGenerics, useMatch, useNavigate } from '@tanstack/react-location';
+import { Box, Button, Group, Space, Stack, Text, Title } from '@mantine/core';
 import { DataTable } from 'mantine-datatable';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { BiEdit } from 'react-icons/bi';
-import Article from '../../models/article';
+import { useNavigate } from 'react-router-dom';
 import { Author, Genre, Publisher, Source } from '../../models/base';
 import { PAGE_SIZE } from '../../shared/constants';
 
-const useStyles = createStyles((theme) => ({
-	meta: {
-		display: 'flex',
-		padding: '4px 8px',
-		border: '1px solid',
-		borderColor: theme.colorScheme === 'dark' ? theme.colors.gray[7] : theme.colors.gray[4],
-	},
-}));
-
-export type LocationGenerics = MakeGenerics<{
-	LoaderData: {
-		article: Article;
-	};
-}>;
-
 function ArticleDetailsPage() {
-	const {
-		data: { article },
-	} = useMatch<LocationGenerics>();
-	const { classes } = useStyles();
+	const article = useMemo<any>(() => ({}), []);
 
 	const [page, setPage] = useState(1);
 	const [records, setRecords] = useState(article?.pages?.slice(0, PAGE_SIZE));
 	const navigate = useNavigate();
 
 	useEffect(() => {
-		if (!article) navigate({ to: '/articles' });
+		if (!article) navigate('/articles');
 		const from = (page - 1) * PAGE_SIZE;
 		const to = from + PAGE_SIZE;
 		setRecords(article?.pages?.slice(from, to));
@@ -44,16 +25,16 @@ function ArticleDetailsPage() {
 			{!article && <Text>Загрузка...</Text>}
 			{article && (
 				<>
-					<Group position='apart'>
-						<Stack spacing='xs'>
+					<Group justify='apart'>
+						<Stack gap='xs'>
 							<Title>{article.title}</Title>
 							<Box
-								sx={{
+								style={{
 									display: 'flex',
 									flexWrap: 'wrap',
 								}}>
 								{article.authors && article.authors.length > 0 && (
-									<Box className={classes.meta}>
+									<Box>
 										{article.authors.length > 1 ? 'Авторы:' : 'Автор:'}
 										&nbsp;
 										{article.authors.map((author: Author) => (
@@ -62,7 +43,7 @@ function ArticleDetailsPage() {
 									</Box>
 								)}
 								{article.genres && article.genres.length > 0 && (
-									<Box className={classes.meta}>
+									<Box>
 										{article.genres.length > 1 ? 'Жанры:' : 'Жанр:'}
 										&nbsp;
 										{article.genres.map((genre: Genre) => (
@@ -71,7 +52,7 @@ function ArticleDetailsPage() {
 									</Box>
 								)}
 								{article.publisher && article.publisher.length > 0 && (
-									<Box className={classes.meta}>
+									<Box>
 										{article.publisher.length > 1 ? 'Издательства:' : 'Издательство:'}
 										&nbsp;
 										{article.publisher.map((publisher: Publisher) => (
@@ -80,7 +61,7 @@ function ArticleDetailsPage() {
 									</Box>
 								)}
 								{article.sources && article.sources.length > 0 && (
-									<Box className={classes.meta}>
+									<Box>
 										{article.sources.length > 1 ? 'Источники:' : 'Источник:'}
 										&nbsp;
 										{article.sources.map((source: Source) => (
@@ -88,32 +69,32 @@ function ArticleDetailsPage() {
 										))}
 									</Box>
 								)}
-								<Box className={classes.meta}>Время публикации: {article.publication_date}</Box>
+								<Box>Время публикации: {article.publication_date}</Box>
 							</Box>
 						</Stack>
 						<Button
 							onClick={() => {
 								console.log('edit');
 							}}
-							rightIcon={<BiEdit />}>
+							rightSection={<BiEdit />}>
 							Редактировать
 						</Button>
 					</Group>
 					<Space h='md' />
-					<Box sx={{ height: 600 }}>
+					<Box style={{ height: 600 }}>
 						<DataTable
 							records={records}
 							columns={[
 								{
 									accessor: 'id',
 									title: '',
-									render: (record) => <Text sx={{ height: '501px' }}>{record.text}</Text>,
+									render: ({ id }) => <Text style={{ height: '501px' }}>{id as string}</Text>,
 									titleStyle: {
 										display: 'none',
 									},
 								},
 							]}
-							withBorder
+							withTableBorder
 							borderRadius='sm'
 							withColumnBorders
 							totalRecords={article.pages?.length}

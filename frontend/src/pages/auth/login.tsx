@@ -35,7 +35,7 @@ function Login() {
 	const handleLogin = async () => {
 		login(form.values.email, form.values.password, form.values.remember)
 			.then(() => {
-				navigate({ to: '/' });
+				navigate('/');
 				notifications.show({
 					title: 'Успешный вход',
 					message: 'Вы успешно вошли в систему',
@@ -64,16 +64,16 @@ function Login() {
 					required
 					{...form.getInputProps('password')}
 				/>
-				<Group position='apart' mt='lg'>
+				<Group justify='apart' mt='lg'>
 					<Checkbox
 						label='Запомнить меня'
-						sx={{ lineHeight: 1 }}
+						style={{ lineHeight: 1 }}
 						{...form.getInputProps('remember')}
 					/>
 					<Anchor<'a'>
 						onClick={(event) => {
 							event.preventDefault();
-							navigate({ to: '/auth/forgot-password' });
+							navigate('/auth/forgot-password');
 						}}
 						href='forgot-password'
 						size='sm'>

@@ -16,8 +16,8 @@ import { FaPlus } from 'react-icons/fa';
 import { BiSearchAlt } from 'react-icons/bi';
 import { useDebouncedValue } from '@mantine/hooks';
 import { DataTable, DataTableSortStatus } from 'mantine-datatable';
-import { useNavigate } from '@tanstack/react-location';
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { getBooks } from './services/api';
 import { Book } from '../../models/book';
 
@@ -68,28 +68,22 @@ function BooksPage() {
 		);
 	}, [debouncedQuery, books]);
 
-	const handleReadClick = (book: Book) => {
-		const { id } = book;
-		if (!id) return undefined;
-		return navigate({
-			to: `/admin/books/${id}`,
-		});
+	const handleReadClick = (id: string) => {
+		return navigate(`/admin/books/${id}`);
 	};
 
 	return (
 		<>
-			<Group position='apart'>
-				<Stack spacing='xs'>
+			<Group justify='apart'>
+				<Stack gap='xs'>
 					<Title>Список книг</Title>
 					<Text>Выберите книгу чтобы ознакомится с содержимом</Text>
 				</Stack>
 				<Button
 					onClick={() => {
-						navigate({
-							to: '/admin/books/add',
-						});
+						navigate('/admin/books/add');
 					}}
-					rightIcon={<FaPlus />}>
+					rightSection={<FaPlus />}>
 					Добавить книгу
 				</Button>
 			</Group>
@@ -101,11 +95,11 @@ function BooksPage() {
 					{books && (
 						<>
 							<Grid align='center' mb='md'>
-								<Grid.Col xs={8} sm={9}>
+								<Grid.Col span={{ xs: 8, sm: 9 }}>
 									<TextInput
-										sx={{ flexBasis: '50%' }}
+										style={{ flexBasis: '50%' }}
 										placeholder='Поиск...'
-										icon={<BiSearchAlt size={16} />}
+										leftSection={<BiSearchAlt size={16} />}
 										value={query}
 										onChange={(e) => setQuery(e.currentTarget.value)}
 									/>
@@ -131,24 +125,24 @@ function BooksPage() {
 										{
 											accessor: 'title',
 											title: 'Заголовок',
-											render: (book: Book) => <Text>{book.title}</Text>,
+											render: ({ title }) => <Text>{title as string}</Text>,
 											sortable: true,
 										},
 										{
 											accessor: 'publication.date',
 											title: 'Дата публикации',
-											render: (book: Book) => <Text>{book.publication_date}</Text>,
+											render: ({ publication_date }) => <Text>{publication_date as string}</Text>,
 											sortable: true,
 										},
 										{
 											accessor: 'details.link',
 											title: 'Читать',
-											render: (book: Book) => (
+											render: ({ id }) => (
 												<Button
-													compact
+													size='compact-md'
 													component='a'
 													variant='outline'
-													onClick={() => handleReadClick(book)}>
+													onClick={() => handleReadClick(id as string)}>
 													Читать
 												</Button>
 											),

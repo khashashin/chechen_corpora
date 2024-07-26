@@ -19,10 +19,10 @@ import {
 	IconFilePlus,
 	IconFileX,
 	IconLayoutSidebarLeftCollapse,
-} from '@tabler/icons';
+} from '@tabler/icons-react';
 import { DataTable } from 'mantine-datatable';
 import { notifications } from '@mantine/notifications';
-import { useNavigate } from '@tanstack/react-location';
+import { useNavigate } from 'react-router-dom';
 import DiverseMaterial from '../../models/diverse-materials';
 import Page from '../../models/page';
 import { PAGE_SIZE } from '../../shared/constants';
@@ -46,7 +46,7 @@ function AddMaterial() {
 	const navigate = useNavigate();
 
 	const onSaveSuccess = () => {
-		navigate({ to: '/admin/diverse-materials' });
+		navigate('/admin/diverse-materials');
 		notifications.show({
 			title: 'Успешное сохранение',
 			message: 'Материал успешно сохранен',
@@ -131,12 +131,12 @@ function AddMaterial() {
 	return (
 		<>
 			<MetaInfo opened={drawerOpen} onClose={handleMetaChange} meta={metaInfo} />
-			<Group position='apart'>
-				<Stack spacing='xs'>
+			<Group justify='apart'>
+				<Stack gap='xs'>
 					<Title>Добавить статью</Title>
 					<Text>Вставляйте текст статьи постранично</Text>
 				</Stack>
-				<Group spacing='xl'>
+				<Group gap='xl'>
 					<ActionIcon title='Загрузка файлов пока не поддерживается' disabled>
 						<IconBookUpload />
 					</ActionIcon>
@@ -174,7 +174,7 @@ function AddMaterial() {
 						</ActionIcon>
 					</Button.Group>
 					{!isMobile && (
-						<Button leftIcon={<IconDeviceFloppy />} onClick={() => handleMaterialSave()}>
+						<Button leftSection={<IconDeviceFloppy />} onClick={() => handleMaterialSave()}>
 							Сохранить
 						</Button>
 					)}
@@ -188,6 +188,7 @@ function AddMaterial() {
 			<Space h='md' />
 			<Box>
 				<DataTable
+					withTableBorder
 					records={records}
 					columns={[
 						{
@@ -207,15 +208,12 @@ function AddMaterial() {
 							},
 						},
 					]}
-					withBorder
 					borderRadius='sm'
 					withColumnBorders
 					totalRecords={pages.length}
 					recordsPerPage={PAGE_SIZE}
 					page={page}
-					onPageChange={(p) => setPage(p)}
-					horizontalSpacing='xs'
-					verticalSpacing='xs'
+					onPageChange={(newPage) => setPage(newPage)}
 				/>
 			</Box>
 		</>

@@ -1,44 +1,34 @@
-import { ReactNode, useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Container, Title, Text, Anchor, Paper } from '@mantine/core';
-import { useNavigate, useRouter } from '@tanstack/react-location';
-import { useAuth } from '../../providers/auth-provider';
+import { Outlet, useLocation, useNavigate } from 'react-router-dom';
+import { useAuth } from '../../providers/AuthProvider';
 import PublicHeader from '../../components/header/public-header';
 
-type AuthWrapperProps = {
-	children: ReactNode;
-};
-
-function AuthWrapper({ children }: AuthWrapperProps) {
+function AuthWrapper() {
 	const [title, setTitle] = useState('Вход в систему');
 	const [subtitle, setSubtitle] = useState('У вас еще нет учетной записи?');
 	const [linkText, setLinkText] = useState('Создать учетную запись');
 	const [linkTo, setLinkTo] = useState('/auth/register');
-	const router = useRouter();
+	const location = useLocation();
 	const navigate = useNavigate();
-
-	const {
-		state: {
-			location: { pathname },
-		},
-	} = router;
 
 	const { isAuthenticated } = useAuth();
 
 	const handleRedirect = useCallback(async () => {
 		const isLoggedIn = await isAuthenticated;
 		if (isLoggedIn) {
-			navigate({ to: '/auth/logout' });
+			navigate('/auth/logout');
 		} else {
-			navigate({ to: '/auth/login' });
+			navigate('/auth/login');
 		}
 	}, [isAuthenticated, navigate]);
 
 	const handleLinkOnClick = useCallback(() => {
-		navigate({ to: linkTo });
+		navigate(linkTo);
 	}, [linkTo, navigate]);
 
 	useEffect(() => {
-		switch (pathname) {
+		switch (location.pathname) {
 			case '/auth/login':
 				handleRedirect();
 				setTitle('Вход в систему');
@@ -85,16 +75,16 @@ function AuthWrapper({ children }: AuthWrapperProps) {
 				setLinkTo('/auth/register');
 				break;
 		}
-	}, [pathname, handleRedirect]);
+	}, [handleRedirect, location.pathname]);
 
 	return (
 		<Container size='lg'>
 			<PublicHeader />
 			<Container size={400} mt={30}>
-				<Title align='center' sx={{ fontWeight: 900 }}>
+				<Title ta='center' style={{ fontWeight: 900 }}>
 					{title}
 				</Title>
-				<Text color='dimmed' size='sm' align='center' mt={5}>
+				<Text color='dimmed' size='sm' ta='center' mt={5}>
 					{subtitle}{' '}
 					<Anchor<'a'>
 						size='sm'
@@ -108,7 +98,7 @@ function AuthWrapper({ children }: AuthWrapperProps) {
 				</Text>
 
 				<Paper withBorder shadow='md' p={30} mt={30} radius='md'>
-					{children}
+					<Outlet />
 				</Paper>
 			</Container>
 		</Container>

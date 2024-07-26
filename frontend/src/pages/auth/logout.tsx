@@ -1,7 +1,7 @@
 import { Stack, Text, Button } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
-import { useNavigate } from '@tanstack/react-location';
-import { useAuth } from '../../providers/auth-provider';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../providers/AuthProvider';
 
 function Logout() {
 	const { user, logout } = useAuth();
@@ -10,7 +10,7 @@ function Logout() {
 	const handleLogout = async () => {
 		logout()
 			.then(() => {
-				navigate({ to: '/auth/login' });
+				navigate('/auth/login');
 				notifications.show({
 					title: 'Успешный выход',
 					message: 'Вы успешно вышли из аккаунта',
@@ -26,7 +26,7 @@ function Logout() {
 
 	return (
 		<Stack>
-			<Text size='lg' weight={500}>
+			<Text size='lg' fw={500}>
 				Вы авторизованы как:
 			</Text>
 			<Text>

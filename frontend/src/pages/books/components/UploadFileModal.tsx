@@ -1,34 +1,11 @@
 import { Dropzone, FileWithPath } from '@mantine/dropzone';
-import { Button, createStyles, Group, Modal, Text } from '@mantine/core';
-import { IconCloudUpload, IconDownload, IconX } from '@tabler/icons';
+import { Button, Group, Modal, Text, useMantineColorScheme, useMantineTheme } from '@mantine/core';
+import { IconCloudUpload, IconDownload, IconX } from '@tabler/icons-react';
 import { memo, useRef } from 'react';
 import { useMutation } from '@tanstack/react-query';
 import { notifications } from '@mantine/notifications';
 import { uploadJson } from '../services/api';
 import { BookCreateResponse, JSONFile } from '../../../models/book';
-
-const useStyles = createStyles((theme) => ({
-	wrapper: {
-		position: 'relative',
-		marginBottom: 30,
-	},
-
-	dropzone: {
-		borderWidth: 1,
-		paddingBottom: 50,
-	},
-
-	icon: {
-		color: theme.colorScheme === 'dark' ? theme.colors.dark[3] : theme.colors.gray[4],
-	},
-
-	control: {
-		position: 'absolute',
-		width: 250,
-		left: 'calc(50% - 125px)',
-		bottom: -20,
-	},
-}));
 
 type UploadFileModalProps = {
 	dropZoneOpened: boolean;
@@ -38,8 +15,9 @@ type UploadFileModalProps = {
 };
 
 function UploadFileModal(props: UploadFileModalProps) {
+	const { colorScheme } = useMantineColorScheme();
+	const theme = useMantineTheme();
 	const { dropZoneOpened, setDropZoneOpened, setIsLoading, onBookUpload } = props;
-	const { classes, theme } = useStyles();
 	const dropZoneRef = useRef<() => void>(null);
 	const mutation = useMutation({
 		mutationFn: uploadJson,
@@ -101,18 +79,17 @@ function UploadFileModal(props: UploadFileModalProps) {
 
 	return (
 		<Modal opened={dropZoneOpened} onClose={() => setDropZoneOpened(false)} withCloseButton={false}>
-			<div className={classes.wrapper}>
+			<div>
 				<Dropzone
 					openRef={dropZoneRef}
 					onDrop={onDrop}
-					className={classes.dropzone}
 					radius='md'
 					accept={['application/json', 'text/plain', 'text/csv']}
 					maxSize={30 * 1024 ** 2}
 					maxFiles={1}
 					loading={mutation.isLoading}>
 					<div style={{ pointerEvents: 'none' }}>
-						<Group position='center'>
+						<Group justify='center'>
 							<Dropzone.Accept>
 								<IconDownload size={50} color={theme.colors[theme.primaryColor][6]} stroke={1.5} />
 							</Dropzone.Accept>
@@ -122,31 +99,27 @@ function UploadFileModal(props: UploadFileModalProps) {
 							<Dropzone.Idle>
 								<IconCloudUpload
 									size={50}
-									color={theme.colorScheme === 'dark' ? theme.colors.dark[0] : theme.black}
+									color={colorScheme === 'dark' ? theme.colors.dark[0] : theme.black}
 									stroke={1.5}
 								/>
 							</Dropzone.Idle>
 						</Group>
 
-						<Text align='center' weight={700} size='lg' mt='xl'>
+						<Text ta='center' fw={700} size='lg' mt='xl'>
 							<Dropzone.Accept>Отпустите файл, чтобы загрузить его</Dropzone.Accept>
 							<Dropzone.Reject>
 								Неверный формат файла. Попробуйте загрузить другой файл.
 							</Dropzone.Reject>
 							<Dropzone.Idle>Перетащите файл сюда или нажмите на кнопку ниже</Dropzone.Idle>
 						</Text>
-						<Text align='center' size='sm' mt='xs' color='dimmed'>
+						<Text ta='center' size='sm' mt='xs' color='dimmed'>
 							Drag&apos;n&apos;Drop Только файлы с расширением <i>.json, .txt, .csv</i> и размером
 							не более <i>30 МБ</i> могут быть загружены.
 						</Text>
 					</div>
 				</Dropzone>
 
-				<Button
-					className={classes.control}
-					size='md'
-					radius='xl'
-					onClick={() => dropZoneRef.current?.()}>
+				<Button size='md' radius='xl' onClick={() => dropZoneRef.current?.()}>
 					Загрузить файл
 				</Button>
 			</div>

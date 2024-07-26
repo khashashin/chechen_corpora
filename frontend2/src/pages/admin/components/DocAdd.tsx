@@ -28,11 +28,11 @@ const PAGE_SIZE = 1;
 
 type DocAddProps = {
   metaState: Document;
-  setMetaState: (values: Document) => void;
-  handleSave: () => void;
+  handleOnSave: (values: Document) => void;
+  getMetaComponent: () => JSX.Element | null;
 };
 
-function DocAdd({ metaState, setMetaState, handleSave }: DocAddProps) {
+function DocAdd({ metaState, handleOnSave, getMetaComponent }: DocAddProps) {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [pages, setPages] = useState<Page[]>([
     { text: '', number: 1, id: uuidv4() },
@@ -48,8 +48,7 @@ function DocAdd({ metaState, setMetaState, handleSave }: DocAddProps) {
     setRecords(pages.slice(from, to));
   }, [page, pages]);
 
-  const handleMetaChange = (values: Document) => {
-    setMetaState(values);
+  const handleMetaChange = () => {
     setDrawerOpen(false);
   };
 
@@ -74,12 +73,22 @@ function DocAdd({ metaState, setMetaState, handleSave }: DocAddProps) {
     setPage(pages.length - 1);
   };
 
+  const handleSave = (newMeta: Document) => {
+    if (!newMeta.title) {
+      setPopoverOpened(true);
+      return;
+    }
+
+    handleOnSave(newMeta);
+  };
+
   return (
     <>
       <MetaDrawer
         onClose={handleMetaChange}
         opened={drawerOpen}
         meta={metaState}
+        getMetaComponent={getMetaComponent}
       />
       <Group justify="space-between">
         <Stack gap="xs">

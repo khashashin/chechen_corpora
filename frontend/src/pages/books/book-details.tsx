@@ -1,39 +1,21 @@
-import { Button, Group, Space, Stack, Title, Text, Box, createStyles } from '@mantine/core';
-import { useMatch, MakeGenerics, useNavigate } from '@tanstack/react-location';
+import { Button, Group, Space, Stack, Title, Text, Box } from '@mantine/core';
 import { BiEdit } from 'react-icons/bi';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { DataTable } from 'mantine-datatable';
+import { useNavigate } from 'react-router-dom';
 import { Book } from '../../models/book';
 import { Author, Genre, Publisher, Source } from '../../models/base';
 import { PAGE_SIZE } from '../../shared/constants';
 
-const useStyles = createStyles((theme) => ({
-	meta: {
-		display: 'flex',
-		padding: '4px 8px',
-		border: '1px solid',
-		borderColor: theme.colorScheme === 'dark' ? theme.colors.gray[7] : theme.colors.gray[4],
-	},
-}));
-
-export type LocationGenerics = MakeGenerics<{
-	LoaderData: {
-		book: Book;
-	};
-}>;
-
 function BookDetailsPage() {
-	const {
-		data: { book },
-	} = useMatch<LocationGenerics>();
-	const { classes } = useStyles();
+	const book = useMemo<any>(() => ({}), []);
 
 	const [page, setPage] = useState(1);
 	const [records, setRecords] = useState(book?.pages?.slice(0, PAGE_SIZE));
 	const navigate = useNavigate();
 
 	useEffect(() => {
-		if (!book) navigate({ to: '/books' });
+		if (!book) navigate('/books');
 		const from = (page - 1) * PAGE_SIZE;
 		const to = from + PAGE_SIZE;
 		setRecords(book?.pages?.slice(from, to));
@@ -44,16 +26,16 @@ function BookDetailsPage() {
 			{!book && <Text>Загрузка...</Text>}
 			{book && (
 				<>
-					<Group position='apart'>
-						<Stack spacing='xs'>
+					<Group justify='apart'>
+						<Stack gap='xs'>
 							<Title>{book.title}</Title>
 							<Box
-								sx={{
+								style={{
 									display: 'flex',
 									flexWrap: 'wrap',
 								}}>
 								{book.authors && book.authors.length > 0 && (
-									<Box className={classes.meta}>
+									<Box>
 										{book.authors.length > 1 ? 'Авторы:' : 'Автор:'}
 										&nbsp;
 										{book.authors.map((author: Author) => (
@@ -62,7 +44,7 @@ function BookDetailsPage() {
 									</Box>
 								)}
 								{book.genres && book.genres.length > 0 && (
-									<Box className={classes.meta}>
+									<Box>
 										{book.genres.length > 1 ? 'Жанры:' : 'Жанр:'}
 										&nbsp;
 										{book.genres.map((genre: Genre) => (
@@ -71,7 +53,7 @@ function BookDetailsPage() {
 									</Box>
 								)}
 								{book.publisher && book.publisher.length > 0 && (
-									<Box className={classes.meta}>
+									<Box>
 										{book.publisher.length > 1 ? 'Издательства:' : 'Издательство:'}
 										&nbsp;
 										{book.publisher.map((publisher: Publisher) => (
@@ -80,7 +62,7 @@ function BookDetailsPage() {
 									</Box>
 								)}
 								{book.sources && book.sources.length > 0 && (
-									<Box className={classes.meta}>
+									<Box>
 										{book.sources.length > 1 ? 'Источники:' : 'Источник:'}
 										&nbsp;
 										{book.sources.map((source: Source) => (
@@ -88,32 +70,32 @@ function BookDetailsPage() {
 										))}
 									</Box>
 								)}
-								<Box className={classes.meta}>Время публикации: {book.publication_date}</Box>
+								<Box>Время публикации: {book.publication_date}</Box>
 							</Box>
 						</Stack>
 						<Button
 							onClick={() => {
 								console.log('edit');
 							}}
-							rightIcon={<BiEdit />}>
+							rightSection={<BiEdit />}>
 							Редактировать
 						</Button>
 					</Group>
 					<Space h='md' />
-					<Box sx={{ height: 600 }}>
+					<Box style={{ height: 600 }}>
 						<DataTable
 							records={records}
 							columns={[
 								{
 									accessor: 'id',
 									title: '',
-									render: (record) => <Text sx={{ height: '501px' }}>{record.text}</Text>,
+									render: ({ id }) => <Text style={{ height: '501px' }}>{id as string}</Text>,
 									titleStyle: {
 										display: 'none',
 									},
 								},
 							]}
-							withBorder
+							withTableBorder
 							borderRadius='sm'
 							withColumnBorders
 							totalRecords={book.pages?.length}
