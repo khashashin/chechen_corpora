@@ -6,18 +6,40 @@ services:
     build:
       context: ./backend
     restart: unless-stopped
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.${SERVICE}-api.rule=(Host(`${DOMAIN_NAME}`) && PathPrefix(`/api`))"
-      - "traefik.http.routers.${SERVICE}-api.entrypoints=web-secure"
-      - "traefik.http.routers.${SERVICE}-api.tls.certresolver=letsEncrypt"
     volumes:
       - staticfiles:/app/staticfiles
       - mediafiles:/app/media
     command: >
       bash -c "python manage.py migrate
       && gunicorn core.wsgi:application --bind 0.0.0.0:8000"
-    env_file: ./backend/.env
+    environment:
+      - ALLOWED_HOSTS
+      - APPWRITE_PROJECT_API_KEY
+      - APPWRITE_PROJECT_ENDPOINT
+      - APPWRITE_PROJECT_ID
+      - CORS_ALLOWED_ORIGINS
+      - CORS_ALLOW_CREDENTIALS
+      - CORS_ALLOW_HEADERS
+      - CSRF_COOKIE_HTTPONLY
+      - CSRF_COOKIE_NAME
+      - CSRF_COOKIE_SAMESITE
+      - CSRF_COOKIE_SECURE
+      - DB_ENGINE
+      - DB_HOST
+      - DB_NAME
+      - DB_PASSWORD
+      - DB_PORT
+      - DB_SSL_MODE
+      - DB_USER
+      - DEBUG
+      - DJANGO_SETTINGS_MODULE
+      - HASHID_FIELD_SALT
+      - PYTHONDONTWRITEBYTECODE
+      - PYTHONUNBUFFERED
+      - SECRET_KEY
+      - SESSION_COOKIE_HTTPONLY
+      - SESSION_COOKIE_SAMESITE
+      - SESSION_COOKIE_SECURE
     expose:
       - 8000
     networks:
@@ -27,16 +49,11 @@ services:
     build:
       context: ./
       dockerfile: Dockerfile
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.${SERVICE}-client.rule=Host(`${DOMAIN_NAME}`)"
-      - "traefik.http.routers.${SERVICE}-client.entrypoints=web-secure"
-      - "traefik.http.routers.${SERVICE}-client.tls.certresolver=letsEncrypt"
     volumes:
       - staticfiles:/app/staticfiles
       - mediafiles:/app/media
     expose:
-      - 80
+      - 8090
     networks:
       - web
     depends_on:
