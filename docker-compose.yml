@@ -52,8 +52,8 @@ services:
     volumes:
       - staticfiles:/app/staticfiles
       - mediafiles:/app/media
-    expose:
-      - 8090
+    ports:
+      - '8090:80'
     networks:
       - web
     depends_on:
