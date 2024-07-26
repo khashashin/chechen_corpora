@@ -49,12 +49,7 @@ type AuthContextTypes = {
 	register: (email: string, password: string, name?: string) => Promise<void>;
 	logout: () => Promise<void>;
 	createRecovery: (email: string) => Promise<void>;
-	updateRecovery: (
-		userId: unknown,
-		secret: unknown,
-		password: string,
-		passwordRepeat: string
-	) => Promise<void>;
+	updateRecovery: (userId: unknown, secret: unknown, password: string) => Promise<void>;
 	updateVerification: (userId: unknown, secret: unknown) => Promise<void>;
 };
 
@@ -130,7 +125,7 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
 	const login = useCallback(async (email: string, password: string, remember: boolean) => {
 		// Attempt to create an email session with the provided credentials
 		account
-			.createEmailSession(email, password)
+			.createEmailPasswordSession(email, password)
 			.then(async (emailSession) => {
 				// If successful, set the session state in the component
 				setSession(emailSession);
@@ -165,7 +160,7 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
 			.then(async (currentUser) => {
 				// Create an email session and send verification email in parallel
 				await Promise.all([
-					account.createEmailSession(email, password),
+					account.createEmailPasswordSession(email, password),
 					account.createVerification(`${VITE_PROJECT_DOMAIN}/auth/verify`),
 				]).catch((err) => Promise.reject(new Error('Unable to register user. [ERROR]: ', err)));
 
@@ -195,16 +190,13 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
 		});
 	}, []);
 
-	const updateRecovery = useCallback(
-		async (userId: unknown, secret: unknown, password: string, passwordRepeat: string) => {
-			const idString = userId as string;
-			const secretString = secret as string;
-			account.updateRecovery(idString, secretString, password, passwordRepeat).catch((err) => {
-				Promise.reject(new Error('Unable to update recovery. [ERROR]: ', err));
-			});
-		},
-		[]
-	);
+	const updateRecovery = useCallback(async (userId: unknown, secret: unknown, password: string) => {
+		const idString = userId as string;
+		const secretString = secret as string;
+		account.updateRecovery(idString, secretString, password).catch((err) => {
+			Promise.reject(new Error('Unable to update recovery. [ERROR]: ', err));
+		});
+	}, []);
 
 	const updateVerification = useCallback(async (userId: unknown, secret: unknown) => {
 		const idString = userId as string;

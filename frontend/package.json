@@ -33,7 +33,7 @@
 		"@tiptap/react": "^2.0.0-beta.209",
 		"@tiptap/starter-kit": "^2.0.0-beta.209",
 		"@types/lodash": "^4.14.191",
-		"appwrite": "^10.2.0",
+		"appwrite": "^15.0.0",
 		"axios": "^1.2.3",
 		"dayjs": "^1.11.7",
 		"embla-carousel-react": "^7.0.8",

@@ -36,7 +36,7 @@ function Recovery() {
 	const handleRecovery = async () => {
 		console.log('userId', userId);
 		console.log('secret', secret);
-		await updateRecovery(userId, secret, form.values.password, form.values.repeatPassword);
+		await updateRecovery(userId, secret, form.values.password);
 		navigate({ to: '/' });
 	};
 
