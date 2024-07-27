@@ -39,7 +39,7 @@ const tracker = new Tracker({
 	},
 });
 
-type User = Models.Account<Models.Preferences>;
+type User = Models.User<Models.Preferences>;
 type AuthContextTypes = {
 	user: User | null;
 	session: Models.Session | null;
