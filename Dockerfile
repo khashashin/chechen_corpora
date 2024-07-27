@@ -3,6 +3,8 @@ FROM node:18-alpine AS build
 
 # Set the NODE_OPTIONS environment variable to increase memory limit
 ENV NODE_OPTIONS="--max-old-space-size=4096"
+ENV VITE_AUTH_ENDPOINT="https://fb.gibbit.ch/v1"
+ENV VITE_AUTH_PROJECT_ID="ce-lang-comm-corpora"
 
 # Set working directory
 RUN mkdir -p /app
