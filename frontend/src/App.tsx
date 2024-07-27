@@ -4,7 +4,6 @@ import { useState } from 'react';
 import { ReactLocation } from '@tanstack/react-location';
 import CookieConsent from 'react-cookie-consent';
 import AppRoutes from './routes/main';
-import AuthProvider from './providers/auth-provider';
 import EnvProvider from './providers/env-provider';
 
 export const location = new ReactLocation();
@@ -22,21 +21,18 @@ function App() {
 				withNormalizeCSS>
 				<Notifications />
 				<EnvProvider>
-					<AuthProvider>
-						<AppRoutes location={location} />
-						<CookieConsent
-							location='bottom'
-							buttonText='Я согласен'
-							cookieName='CeCorporaCookie'
-							style={{ background: '#2B373B' }}
-							buttonStyle={{ color: '#4e503b', fontSize: '13px' }}
-							expires={150}>
-							Этот сайт использует файлы cookie для улучшения работы сайта и его контента. Так же мы
-							используем сторонние сервисы, которые могут собирать информацию о вас. Продолжая
-							использовать сайт, вы соглашаетесь с использованием файлов cookie и сторонних
-							сервисов.
-						</CookieConsent>
-					</AuthProvider>
+					<AppRoutes location={location} />
+					<CookieConsent
+						location='bottom'
+						buttonText='Я согласен'
+						cookieName='CeCorporaCookie'
+						style={{ background: '#2B373B' }}
+						buttonStyle={{ color: '#4e503b', fontSize: '13px' }}
+						expires={150}>
+						Этот сайт использует файлы cookie для улучшения работы сайта и его контента. Так же мы
+						используем сторонние сервисы, которые могут собирать информацию о вас. Продолжая
+						использовать сайт, вы соглашаетесь с использованием файлов cookie и сторонних сервисов.
+					</CookieConsent>
 				</EnvProvider>
 			</MantineProvider>
 		</ColorSchemeProvider>
