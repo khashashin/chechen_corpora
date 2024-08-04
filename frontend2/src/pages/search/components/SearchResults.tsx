@@ -1,8 +1,13 @@
 import { ActionIcon, Box, Paper, Stack } from '@mantine/core';
 import { useMediaQuery } from '@mantine/hooks';
 import { memo, useState } from 'react';
+import { notifications } from '@mantine/notifications';
 import { escapeRegExp } from 'lodash-es';
-import { BsChevronBarContract, BsChevronBarExpand } from 'react-icons/bs';
+import {
+  BsChevronBarContract,
+  BsChevronBarExpand,
+  BsClipboard,
+} from 'react-icons/bs';
 import uuidv4 from 'src/utils/uuidv4';
 import SearchUniqueWords from './SearchUniqueWords';
 import SearchWordPopularityChart from './SearchWordPopularityChart';
@@ -15,6 +20,30 @@ type SearchResultsProps = {
   isLoading: boolean;
   searchQuery: string;
 };
+
+function CopyToClipboard({ text }: { text: string }) {
+  const copyToClipboard = () => {
+    navigator.clipboard.writeText(text);
+    notifications.show({
+      title: 'Скопировано',
+      message: 'Скопировано в буфер обмена',
+    });
+  };
+
+  return (
+    <ActionIcon
+      component="span"
+      variant="transparent"
+      title="Copy Sentence"
+      onClick={(e) => {
+        e.stopPropagation();
+        copyToClipboard();
+      }}
+    >
+      <BsClipboard />
+    </ActionIcon>
+  );
+}
 
 function SearchResults(props: SearchResultsProps) {
   const { searchData, isLoading, searchQuery } = props;
@@ -51,6 +80,14 @@ function SearchResults(props: SearchResultsProps) {
     }${highlightedSentence} ${item.next_sentence ? item.next_sentence : ''}`;
 
     return <span dangerouslySetInnerHTML={{ __html: content }} />;
+  };
+
+  const toggleOpened = (uuid: string) => {
+    setOpened((prevState) =>
+      prevState.includes(uuid)
+        ? prevState.filter((id) => id !== uuid)
+        : [...prevState, uuid],
+    );
   };
 
   return (
@@ -114,30 +151,26 @@ function SearchResults(props: SearchResultsProps) {
                   justifyContent: 'space-between',
                 }}
               >
-                {getSearchItemContent(item)}
-                {opened.includes(item.uuid) ? (
-                  <ActionIcon
-                    component="span"
-                    mb="auto"
-                    variant="transparent"
-                    title={isMobile ? 'Свернуть' : 'Свернуть предложение'}
-                    onClick={() =>
-                      setOpened((o) => o.filter((id) => id !== item.uuid))
-                    }
-                  >
+                <Box>
+                  {getSearchItemContent(item)}
+                  <CopyToClipboard text={item.sentence} />
+                </Box>
+                <ActionIcon
+                  component="span"
+                  mb="auto"
+                  variant="transparent"
+                  title={isMobile ? 'Свернуть' : 'Свернуть предложение'}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    toggleOpened(item.uuid);
+                  }}
+                >
+                  {opened.includes(item.uuid) ? (
                     <BsChevronBarContract />
-                  </ActionIcon>
-                ) : (
-                  <ActionIcon
-                    component="span"
-                    mb="auto"
-                    variant="transparent"
-                    title={isMobile ? 'Развернуть' : 'Развернуть предложение'}
-                    onClick={() => setOpened((o) => [...o, item.uuid])}
-                  >
+                  ) : (
                     <BsChevronBarExpand />
-                  </ActionIcon>
-                )}
+                  )}
+                </ActionIcon>
               </Box>
               {opened.includes(item.uuid) && item.origin.sources.length > 0 && (
                 <>
@@ -145,7 +178,10 @@ function SearchResults(props: SearchResultsProps) {
                   <ul>
                     {item.origin.sources.map(
                       (source: string, index: number) => (
-                        <li key={JSON.stringify([uuidv4, index])}>{source}</li>
+                        <li key={JSON.stringify([uuidv4, index])}>
+                          {source}
+                          <CopyToClipboard text={source} />
+                        </li>
                       ),
                     )}
                   </ul>
