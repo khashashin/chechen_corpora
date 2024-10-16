@@ -51,7 +51,6 @@ type AuthContextTypes = {
     userId: unknown,
     secret: unknown,
     password: string,
-    passwordRepeat: string,
   ) => Promise<void>;
   updateVerification: (userId: unknown, secret: unknown) => Promise<void>;
 };
@@ -80,16 +79,16 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
           // If successful, set the session state in the component
           setSession(emailSession);
 
-          // Get the current user and JWT token in parallel, and update the component state
-          const [currentUser, currentJWT] = await Promise.all([
-            account.get(),
-            account.createJWT(),
-          ]).catch((err) =>
-            Promise.reject(new Error(`Unable to login user. [ERROR]: ${err}`)),
-          );
+          const currentUser = await account.get();
+          const currentJWT = await account.createJWT();
 
           setUser(currentUser);
           setJWT(currentJWT);
+
+          // If the user wants to remember the session, store the session ID in local storage
+          if (remember) {
+            localStorage.setItem('rememberSession', emailSession.$id);
+          }
         })
         // If there was an error during login, reject the Promise with an Error
         .catch((err) =>
@@ -102,25 +101,22 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
   // Registers a new user with the given email, password, and optional name.
   const register = useCallback(
     async (email: string, password: string, name = '') => {
-      account
-        .create(ID.unique(), email, password, name)
-        .then(async (currentUser) => {
-          // Create an email session and send verification email in parallel
-          await Promise.all([
-            account.createEmailPasswordSession(email, password),
-            account.createVerification(`${VITE_PROJECT_DOMAIN}/auth/verify`),
-          ]).catch((err) =>
-            Promise.reject(
-              new Error(`Unable to register user. [ERROR]: ${err}`),
-            ),
-          );
-
-          // Set the current user as the registered user
-          setUser(currentUser);
-        })
-        .catch((err) =>
-          Promise.reject(new Error(`Unable to register user. [ERROR]: ${err}`)),
+      try {
+        const newUser = await account.create(
+          ID.unique(),
+          email,
+          password,
+          name,
         );
+        await account.createEmailPasswordSession(email, password);
+        await account.createVerification(
+          `${VITE_PROJECT_DOMAIN}/auth/account-confirm`,
+        );
+
+        setUser(newUser);
+      } catch (err) {
+        log.error('Unable to register user. [ERROR]: ', err);
+      }
     },
     [],
   );
@@ -172,13 +168,24 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     (async () => {
       try {
-        const currentAccount = await account.get();
-        const currentSession = await account.getSession('current');
-        const currentJWT = await account.createJWT();
+        const currentSession = await account
+          .getSession('current')
+          .then(async (newSession) => {
+            const currentJWT = await account.createJWT();
+            const currentAccount = await account.get();
+            setJWT(currentJWT);
+            setUser(currentAccount);
 
-        setUser(currentAccount);
+            return newSession;
+          });
+
+        // if no remember key in local storage, logout and return
+        if (currentSession && !localStorage.getItem('rememberSession')) {
+          await account.deleteSession(currentSession.$id);
+          return;
+        }
+
         setSession(currentSession);
-        setJWT(currentJWT);
 
         setIsLoading(false);
       } catch (err) {

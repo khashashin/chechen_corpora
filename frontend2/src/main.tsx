@@ -15,11 +15,13 @@ import '@mantine/notifications/styles.css';
 import '@mantine/dropzone/styles.css';
 import 'mantine-datatable/styles.css';
 
+const { VITE_APP_VERSION } = import.meta.env;
+
 // Checking if the current hostname is not localhost
 if (window.location.hostname !== 'localhost') {
   Sentry.init({
     dsn: 'https://a995ea29fe37452dbf6644e8270bff92@sentry.khas.dev/7',
-    release: '1.0.0',
+    release: VITE_APP_VERSION,
     autoSessionTracking: false,
     tracesSampleRate: 1.0,
     integrations: [new Sentry.BrowserTracing()],

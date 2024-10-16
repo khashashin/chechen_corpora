@@ -49,14 +49,20 @@ function AuthWrapper() {
         setLinkTo('/');
         break;
       case '/auth/forgot-password':
-        setTitle('Восстановление пароля');
+        setTitle('Сброс пароля');
         setSubtitle('У вас уже есть учетная запись?');
         setLinkText('Войти в систему');
         setLinkTo('/auth/login');
         break;
-      case '/auth/verify':
-        setTitle('Подтверждение электронной почты');
-        setSubtitle('');
+      case '/auth/confirm-email':
+        setTitle('Подтверждение');
+        setSubtitle('Проверьте свою электронную почту.');
+        setLinkText('На главную');
+        setLinkTo('/');
+        break;
+      case '/auth/account-confirm':
+        setTitle('Подтверждение');
+        setSubtitle('Подтверждение электронной почты.');
         setLinkText('На главную');
         setLinkTo('/');
         break;

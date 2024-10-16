@@ -30,9 +30,13 @@ function LoadingScreen({ title, icon = undefined }: LoadingScreenProps) {
   ];
 
   // Перейти на главную
-  setTimeout(() => {
-    setShowGoHome(true);
-  }, 4000);
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      setShowGoHome(true);
+    }, 4000);
+
+    return () => clearTimeout(timeout);
+  }, []);
 
   useEffect(() => {
     if (icon !== undefined) return undefined;

@@ -9,6 +9,12 @@ import LoadingScreen from './components/LoadingScreen';
 const PageNotFound = lazy(() => import('./pages/PageNotFound'));
 const AuthWrapper = lazy(() => import('./pages/auth/AuthWrapper'));
 const Login = lazy(() => import('./pages/auth/Login'));
+const Register = lazy(() => import('./pages/auth/Register'));
+const ForgotPassword = lazy(() => import('./pages/auth/ForgotPassword'));
+const RecoveryEmailSent = lazy(() => import('./pages/auth/RecoveryEmailSent'));
+const ResetPassword = lazy(() => import('./pages/auth/ResetPassword'));
+const AccountConfirm = lazy(() => import('./pages/auth/AccountConfirm'));
+const Logout = lazy(() => import('./pages/auth/Logout'));
 const AppShell = lazy(() => import('./pages/admin/AppShell'));
 const BooksPage = lazy(() => import('./pages/admin/books/Books'));
 const BooksAdd = lazy(() => import('./pages/admin/books/BookAdd'));
@@ -36,6 +42,12 @@ function App() {
         <Route path="/words" element={<WordsPage />} />
         <Route path="/auth" element={<S><AuthWrapper /></S>}>
           <Route path="/auth/login" element={<S><Login /></S>} />
+          <Route path="/auth/register" element={<S><Register /></S>} />
+          <Route path="/auth/forgot-password" element={<S><ForgotPassword /></S>} />
+          <Route path="/auth/confirm-email" element={<S><RecoveryEmailSent /></S>} />
+          <Route path="/auth/logout" element={<S><Logout /></S>} />
+          <Route path="/auth/recovery" element={<S><ResetPassword /></S>} />
+          <Route path="/auth/account-confirm" element={<S><AccountConfirm /></S>} />
         </Route>
 
         {/* private routes */}

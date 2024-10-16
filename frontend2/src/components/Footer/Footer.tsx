@@ -1,18 +1,23 @@
 import {
   Container,
-  Group,
+  Stack,
   Anchor,
   useMantineTheme,
   useMantineColorScheme,
 } from '@mantine/core';
 import { useMediaQuery } from '@mantine/hooks';
-import { memo } from 'react';
 import BrandLogo from 'src/components/Header/BrandLogo';
+
+const { VITE_APP_VERSION } = import.meta.env;
 
 const links = [
   {
     link: 'mailto:info@dosham.info',
     label: 'Написать нам: info@dosham.info',
+  },
+  {
+    link: `https://github.com/khashashin/chechen_corpora/commit/${VITE_APP_VERSION}`,
+    label: `Version: ${VITE_APP_VERSION}`,
   },
 ];
 
@@ -24,9 +29,9 @@ function Footer() {
   const items = links.map((link) => (
     <Anchor
       c="dimmed"
+      target="_blank"
       key={link.label}
       href={link.link}
-      onClick={(event) => event.preventDefault()}
       size="sm"
     >
       {link.label}
@@ -48,15 +53,15 @@ function Footer() {
       }}
     >
       <BrandLogo />
-      <Group
+      <Stack
         style={{
           marginTop: isXs ? theme.spacing.md : 0,
         }}
       >
         {items}
-      </Group>
+      </Stack>
     </Container>
   );
 }
 
-export default memo(Footer);
+export default Footer;

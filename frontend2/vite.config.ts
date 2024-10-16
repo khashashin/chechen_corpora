@@ -2,6 +2,9 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import { VitePWA } from 'vite-plugin-pwa';
 import { VitePluginRadar } from 'vite-plugin-radar';
+import { execSync } from 'child_process';
+
+const commitHash = execSync('git rev-parse --short HEAD').toString().trim();
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -36,6 +39,9 @@ export default defineConfig({
 			},
 		}),
   ],
+	define: {
+		'import.meta.env.VITE_APP_VERSION': JSON.stringify(commitHash),
+	},
   resolve: {
     alias: {
       src: '/src',
